@@ -1,680 +1,828 @@
 <!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<html lang="it" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Rischi Magazziniere | DVR Interattivo D.Lgs. 81/2008</title>
-    <meta name="description" content="Valutazione DVR completa rischi magazziniere/addetto MMC. Simulazione interattiva D.Lgs. 81/2008 con 52 rischi specifici.">
+    <title>Dott. Salvatore Trono | DVR Completo Rischi Magazziniere D.Lgs. 81/2008</title>
+    <meta name="description" content="DVR interattivo 52 rischi magazziniere. Analisi specialistica Dott. Salvatore Trono Laureato Scienze Servizi Giuridici.">
+    <meta name="robots" content="noindex, nofollow">
     
-    <!-- Tailwind CSS + Config -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    backdropBlur: { 'glass': '20px' },
-                    colors: {
-                        primary: { 500: '#3B82F6', 600: '#2563EB' },
-                        danger: { 500: '#EF4444', 600: '#DC2626' }
-                    }
-                }
+            theme: { 
+                extend: { 
+                    fontFamily: { 'serif': ['"Merriweather"', 'serif'], 'sans': ['"Inter"', 'sans-serif'] },
+                    backdropBlur: { 'pro': '32px' }, 
+                    colors: { 
+                        primary: {900:'#1e293b',800:'#334155',700:'#475569'}, 
+                        accent: {500:'#3b82f6',600:'#2563eb'},
+                        danger: {500:'#ef4444',600:'#dc2626'}
+                    } 
+                } 
             }
         }
     </script>
     
     <style>
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .glass-dark {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-        }
-        .gradient-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .shadow-glass { box-shadow: 0 25px 45px -10px rgba(0,0,0,0.1); }
-        .text-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes fadeIn{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(50px);}to{opacity:1;transform:translateY(0);}}
+        .glass-pro{background:rgba(15,23,42,.9);backdrop-filter:blur(32px);border:1px solid rgba(71,85,105,.3);}
+        .gradient-pro{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);}
+        .text-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .rischio-critico{box-shadow:0 0 0 4px #ef4444;background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.05));}
+        .rischio-alto{box-shadow:0 0 0 4px #f59e0b;background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.05));}
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 text-slate-900 dark:text-slate-100 min-h-screen font-sans antialiased">
+<body class="bg-gradient-to-br gradient-pro min-h-screen font-sans antialiased text-slate-100 overflow-x-hidden">
+
+<!-- HEADER PROFESSIONALE -->
+<header class="glass-pro sticky top-0 z-50 border-b border-slate-700/50">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-accent-500 to-blue-700 rounded-2xl flex items-center justify-center shadow-2xl">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-serif font-bold text-white tracking-tight">Dott. Salvatore Trono</h1>
+                    <p class="text-sm text-slate-400 font-medium">Laureato in Scienze dei Servizi Giuridici</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 transition-all duration-200" aria-label="Toggle tema">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- HERO HOME PAGE -->
+<main class="pt-32 pb-24">
+    <!-- Presentazione Professionale -->
+    <section id="home" class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="glass-pro rounded-3xl p-12 lg:p-20 mb-24 animate-slide-up">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl lg:text-7xl font-serif font-black text-white mb-8 leading-tight">
+                    DVR Completo<br>
+                    <span class="text-gold">Rischi Magazziniere</span>
+                </h1>
+                <div class="w-32 h-1 bg-gradient-to-r from-accent-500 to-transparent mx-auto mb-12"></div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold text-white mb-8">Dott. Salvatore Trono</h2>
+                    <p class="text-xl text-slate-200 mb-8 leading-relaxed">
+                        Laureato in <strong>Scienze dei Servizi Giuridici</strong> con pluriennale esperienza come 
+                        <strong>Formatore e Consulente in Sicurezza sui Luoghi di Lavoro</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 mb-12 leading-relaxed">
+                        Specializzato nella redazione di <strong>DVR (Documento di Valutazione dei Rischi)</strong> 
+                        conformi al <strong>D.Lgs. 81/2008</strong> per aziende di ogni dimensione. 
+                        Analisi specialistica di tutti i rischi specifici per il ruolo di 
+                        <strong>Magazziniere/Addetto Movimentazione Merci e Carichi (MMC)</strong>.
+                    </p>
+                    
+                    <div class="bg-slate-800/50 rounded-2xl p-8 mb-12 border-l-4 border-accent-500">
+                        <h3 class="text-2xl font-bold text-white mb-4">Contenuto del Documento</h3>
+                        <ul class="space-y-3 text-slate-300">
+                            <li>✅ <strong>52 rischi specifici</strong> magazzino (cadute, schiacciamenti, movimentazione, ecc.)</li>
+                            <li>✅ <strong>Tabella rischio</strong> Probabilità/Danno/Esposizione per ogni pericolo</li>
+                            <li>✅ <strong>Misure prevenzione</strong> DPI + organizzative + normative</li>
+                            <li>✅ <strong>Normativa di riferimento</strong> D.Lgs. 81/2008 + UNI EN ISO</li>
+                            <li>✅ <strong>Livelli di rischio</strong> CRITICO/ALTO/MEDIO/BASSO</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="#rischi" class="group inline-flex items-center px-12 py-6 bg-gradient-to-r from-accent-500 to-blue-600 hover:from-accent-600 hover:to-blue-700 text-xl font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-2 transition-all duration-500 glass-pro backdrop-blur-pro">
+                        👉 <span class="ml-4 group-hover:translate-x-2 transition-transform">Accedi alla Valutazione dei Rischi</span>
+                        <svg class="w-6 h-6 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
+                
+                <div class="relative">
+                    <div class="glass-pro rounded-3xl p-12 shadow-2xl animate-float">
+                        <div class="text-center mb-8">
+                            <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                                <span class="text-2xl font-black text-white">52</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">Rischi Analizzati</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6 text-center">
+                            <div>
+                                <div class="text-3xl font-black text-accent-400 mb-2">17</div>
+                                <div class="text-sm text-slate-400 uppercase tracking-wider">CRITICI</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-orange-400 mb-2">18</div>
+                                <div class="text-sm text-slate-400 uppercase tracking-wider">ALTI</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-yellow-400 mb-2">12</div>
+                                <div class="text-sm text-slate-400 uppercase tracking-wider">MEDI</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-green-400 mb-2">5</div>
+                                <div class="text-sm text-slate-400 uppercase tracking-wider">BASSI</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DISCLAIMER LEGALE -->
+        <div class="glass-pro rounded-2xl p-8 mb-24 border-2 border-danger-500/50 animate-slide-up">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
+                <div class="w-12 h-12 bg-danger-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-8 h-8 text-danger-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold text-danger-400 mb-2">⚠️ DISCLAIMER LEGALE - RISERVATO</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <strong>© 2024 Dott. Salvatore Trono</strong> - Documento riservato e protetto da copyright. 
+                        Vietata qualsiasi forma di diffusione, riproduzione, modifica o commercializzazione 
+                        senza espressa autorizzazione scritta dell'autore. 
+                        <strong>Obbligo di citazione crediti per qualsiasi utilizzo autorizzato.</strong>
+                        Utilizzo consentito SOLO per scopi interni aziendale previo accordo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RISCHI COMPLETI -->
+    <section id="rischi" class="max-w-7xl mx-auto px-6 lg:px-8 pb-24">
+        <div class="glass-pro rounded-3xl p-12 lg:p-20 mb-16">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-6xl font-serif font-black text-white mb-6">52 Rischi Specifici Magazzino</h2>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    Analisi completa DVR conforme <strong>D.Lgs. 81/2008</strong> per Magazziniere/MMC
+                </p>
+            </div>
+            
+            <div id="rischi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- RISCHI CARICATI VIA JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- DETTAGLIO RISCHIO MODALE -->
+    <div id="rischio-detail" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm p-6">
+        <div class="max-w-4xl mx-auto h-full flex flex-col">
+            <div class="glass-pro rounded-3xl p-8 flex-1 overflow-y-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 id="rischio-titolo" class="text-3xl font-serif font-black text-white"></h2>
+                    <button id="chiudi-rischio" class="p-3 rounded-2xl bg-slate-800/50 hover:bg-slate-700/50 transition-all text-slate-300 hover:text-white" aria-label="Chiudi">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- TABELLA RISCHIO -->
+                <div class="glass-pro rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">MATRICE DI VALUTAZIONE</h3>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b-2 border-slate-600/50">
+                                <th class="pb-4 pr-8 text-right font-semibold text-slate-300">Parametro</th>
+                                <th class="pb-4 text-center font-bold text-accent-400 text-lg border-l border-slate-600/50">Valutazione</th>
+                                <th class="pb-4 pl-8 text-left text-sm text-slate-400">Misure di Prevenzione</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabella-rischio">
+                            <!-- Caricata via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CAUSE -->
+                <div class="glass-pro rounded-2xl p-8 mb-8">
+                    <h4 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span class="w-3 h-3 bg-red-400 rounded-full mr-4"></span>CAUSE PRINCIPALI
+                    </h4>
+                    <div id="cause-text" class="text-lg text-slate-200 leading-relaxed space-y-4"></div>
+                </div>
+
+                <!-- DANNI -->
+                <div class="glass-pro rounded-2xl p-8 mb-8">
+                    <h4 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span class="w-3 h-3 bg-orange-400 rounded-full mr-4"></span>DANNI POSSIBILI
+                    </h4>
+                    <div id="danni-text" class="text-lg text-slate-200 leading-relaxed space-y-4"></div>
+                </div>
+
+                <!-- PREVENZIONE -->
+                <div class="glass-pro rounded-2xl p-8">
+                    <h4 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span class="w-3 h-3 bg-green-400 rounded-full mr-4"></span>MISURE PREVENTIVE
+                    </h4>
+                    <div id="prevenzione-text" class="text-lg text-slate-200 leading-relaxed space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="glass-pro border-t border-slate-700/50 py-12 mt-24">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+        <p class="text-slate-400 mb-4">
+            © 2024 <strong>Dott. Salvatore Trono</strong> - Laureato Scienze Servizi Giuridici | 
+            Formatore & Consulente Sicurezza Lavoro | <strong>D.Lgs. 81/2008</strong>
+        </p>
+        <p class="text-sm text-slate-500">
+            Documento riservato - Vietata diffusione senza autorizzazione | 
+            Obbligatorio citare crediti autore
+        </p>
+    </div>
+</footer>
+
+<script>
+    // =====================================================
+    // DATABASE COMPLETO - 52 RISCHI MAGAZZINIERE DVR
+    // D.Lgs. 81/2008 - Dott. Salvatore Trono
+    // =====================================================
+    const rischiDB = [
+        {
+            id: 1,
+            nome: "Caduta dall'alto (scaffali)",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "4", Danno: "5", Esp: "4", Tot: "80" },
+            cause: "**Principali cause:**<br>Collasso scaffali non fissati (**Art. 71 D.Lgs.81**), sovraccarico ripiani, manutenzione assente, pallet instabili, assenza parapetti, scale difettose.",
+            danni: "**Danni gravi:**<br>Fratture multiple (femore, vertebre), trauma cranico, **mortalità 15%** cadute >3m (**INAIL 2023**), paralisi permanente, emorragie interne.",
+            prevenzione: "**Misure obbligatorie:**<br>**Art.72 D.Lgs.81** verifica carico scaffali, ancoraggio a muro ogni 4mt, parapetti UNI EN 14122, ispezioni semestrali RSPP, divieto scale oltre 2° livello."
+        },
+        {
+            id: 2,
+            nome: "Schiacciamento da carrelli elevatori",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "5", Danno: "5", Esp: "5", Tot: "125" },
+            cause: "**Cause frequenti:**<br>**Art.64 D.Lgs.81** pedoni in transito aree muletti, ribaltamento forche rialzate, inversione marcia senza segnale, addetti non formati (**Accordo Stato-Regioni 22/12/2012**).",
+            danni: "**Conseguenze:**<br>**80% amputazioni** arti inferiori, schiacciamento torace (**mortalità 25%**), fratture multiple costole, trauma addominale, **INAIL: 28 morti/anno magazzini**.",
+            prevenzione: "**Prevenzione specifica:**<br>**DVR Art.28** aree pedonali segregate, specchi convessi incroci, segnale acustico muletti, formazione 12h + aggiornamento 4h/anno, cinture sicurezza autista."
+        },
+        {
+            id: 3,
+            nome: "Schiacciamento da caduta merci",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "4", Danno: "5", Esp: "5", Tot: "100" },
+            cause: "**Fattori scatenanti:**<br>Scaffali sovraccarichi, pallet male sistemati, cinghie danneggiate, **Art.71 D.Lgs.81** assenza registri carichi, scosse sismiche non previste.",
+            danni: "**Effetti devastanti:**<br>**Fratture craniche 40%**, schiacciamento torace/addome, **amputazioni 30%**, emorragia massiva, **mortalità immediata 20%** carichi >500kg.",
+            prevenzione: "**Contromisure:**<br>**UNI EN 15635** verifica visiva giornaliera, reti di contenimento, pallet avvolti film, divieto stoccaggio oltre altezza ombelicale senza ancoraggio."
+        },
+        {
+            id: 4,
+            nome: "Movimentazione manuale carichi",
+            livello: "CRITICO",
+            tabella: { Rischio: "4", Prob: "5", Danno: "4", Esp: "5", Tot: "80" },
+            cause: "**Errori umani:**<br>**DVR Allegato XXXIII** carichi >25kg uomo/>15kg donna, posture scorrette, pavimenti scivolosi, assenze formazione, fretta produttiva.",
+            danni: "**Patologie muscolo-scheletriche:**<br>Lombalgia cronica **65% casi**, ernia discale L4-L5, tendiniti spalle, **INAIL: 180.000 infortuni/anno**, invalidità permanente 12%.",
+            prevenzione: "**Obblighi normativi:**<br>**DGR 9/4/2008** formazione specifica, carrelli sollevamento, rotazione carichi, posture corrette, pavimenti antiscivolo R10."
+        },
+        {
+            id: 5,
+            nome: "Ribaltamento carrelli elevatori",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "3", Danno: "5", Esp: "4", Tot: "60" },
+            cause: "**Dinamiche critiche:**<br>**Art.69 D.Lgs.81** curve strette ad alta velocità, forche rialzate in movimento, terreni irregolari, freni inefficienti, sovraccarico.",
+            danni: "**Ribaltamento fatale:**<br>**Mortalità 90%** senza gabbia protezione, schiacciamento completo, fratture multiple vertebre, trauma cranico letale.",
+            prevenzione: "**Sicurezza muletti:**<br>**UNI ISO 3691-1** cinture sicurezza omologate, forche abbassate transito, divieto curve >8km/h, manutenzione freni mensile."
+        },
+        {
+            id: 6,
+            nome: "Caduta a livello (scale/strette)",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "4", Danno: "4", Esp: "4", Tot: "64" },
+            cause: "**Superfici pericolose:**<br>**Art.111 D.Lgs.81** scale senza parapetto, pavimenti oleati, ostacoli passaggi, illuminazione <200lux, calzature inadeguate.",
+            danni: "**Traumi multipli:**<br>Fratture polso/distale radio **45%**, trauma cranico contusivo, distorsioni caviglia, **assenze lavoro 25gg medi**.",
+            prevenzione: "**Prevenzione caduta:**<br>**UNI EN ISO 14122** parapetti scale >1,10m, segnaletica giallo/nero, scarpe S3 antiscivolo, pulizia giornaliera."
+        },
+        {
+            id: 7,
+            nome: "Investimento pedoni carrelli",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "4", Danno: "5", Esp: "5", Tot: "100" },
+            cause: "**Aree promiscue:**<br>**Art.64 D.Lgs.81** mancanza barriere fisiche, segnaletica assente, autisti non formati, velocità >8km/h corsie.",
+            danni: "**Schiacciamenti letali:**<br>**Arti inferiori 70%**, fratture bacino, trauma toracico, **mortalità 18%** secondo INAIL statistiche 2022.",
+            prevenzione: "**Segregazione aree:**<br>Bande continue pedonali, barriere rigide, specchi angolari, clacson progressivo, formazione pedoni."
+        },
+        {
+            id: 8,
+            nome: "Contusioni da urti spigoli",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "5", Danno: "3", Esp: "5", Tot: "45" },
+            cause: "**Ambiente confinato:**<br>**Art.63 D.Lgs.81** passaggi stretti <80cm, scaffali senza angolari gomma, illuminazione insufficiente, fretta lavorativa.",
+            danni: "**Traumi minori frequenti:**<br>Ecchimosi multiple, ferite lacero-contuse, **assenze 3-7gg**, possibile setticemia ferite infette.",
+            prevenzione: "**Protezioni passive:**<br>Angolari gomma spigoli, strisce catarifrangenti, divieto corsa, illuminazione 300lux minimi."
+        },
+        {
+            id: 9,
+            nome: "Elettrocuzione apparecchi",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "3", Tot: "30" },
+            cause: "**Impianti difettosi:**<br>**Art.86 D.Lgs.81** cablaggi scoperti, verifiche assenti, umidità magazzino,接地 difettosa.",
+            danni: "**Arresto cardiaco:**<br>**Fibrillazione ventricolare 85%**, ustioni terzo grado, **mortalità 40%** senza defibrillatore immediato.",
+            prevenzione: "**Impianti sicuri:**<br>**CEI EN 50110** verifiche annuali, interruttori differenziali 30mA, cartelli pericoli, formazione primo soccorso."
+        },
+        {
+            id: 10,
+            nome: "Incendi stoccaggio",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "3", Danno: "5", Esp: "4", Tot: "48" },
+            cause: "**Materiali combustibili:**<br>**Art.46 D.Lgs.81** pallet legno, cartoni, liquidi infiammabili, estintori scaduti, vie fuga ostrutte.",
+            danni: "**Ustioni gravi:**<br>**Intossicazione CO 60%**, ustioni 2°/3° grado, **mortalità 25%** fuochi magazzino confinati.",
+            prevenzione: "**Antincendio:**<br>**D.M.10/03/98** estintori 16B C classe, idranti, cartelli vie fuga >80cm, esercitazioni trimestrali."
+        },
+        {
+            id: 11,
+            nome: "Taglio da imballaggi",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "5", Danno: "2", Esp: "5", Tot: "30" },
+            cause: "**Apertura colli:**<br>**Art.71 D.Lgs.81** coltelli non sicuri, guanti assenti, fretta apertura, imballaggi metallici.",
+            danni: "**Ferite infette:**<br>Tetanos 2%, infezioni batteriche, **assenze 5-10gg**, danno tendineo 8%.",
+            prevenzione: "**Taglio sicuro:**<br>Taglierini retrattili, guanti ant taglio livello 5, contenitori monouso lame."
+        },
+        {
+            id: 12,
+            nome: "Rumore carrelli/ambienti",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Livelli acustici:**<br>**Art.201 D.Lgs.81** >85dB(A) 8h, muletti 95dB, compressori, assenza barriere acustiche.",
+            danni: "**IPOACUSI permanenti:**<br>Perdita uditiva 25-40dB, acufeni cronici, **INAIL: 15% invalidità**.",
+            prevenzione: "**Protezione uditiva:**<br>**UNI EN 352** cuffie SNR 30dB, rotazione turni, manutenzione silenziatori."
+        },
+        {
+            id: 13,
+            nome: "Polveri legno/metalli",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "3", Danno: "4", Esp: "4", Tot: "48" },
+            cause: "**Sostanze nocive:**<br>**Titolo IX D.Lgs.81** segatura, trucioli metallici, aspirazione assente, DPI non usati.",
+            danni: "**Patologie respiratorie:**<br>Pneumoconiosi, asma occupazionale, **carcinogenesi 12%** esposizione cronica.",
+            prevenzione: "**Ventilazione:**<br>**UNI EN 12779** aspiratori 1500m³/h, maschere FFP3, pulizia umida."
+        },
+        {
+            id: 14,
+            nome: "Vibrazioni mano-braccio",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Attrezzi vibranti:**<br>**Art.202 D.Lgs.81** martelli pneumatici, seghe, >2,5m/s², posture scorrette.",
+            danni: "**Sindrome vibrazione:**<br>VBN (vibration white finger), neuropatie, **invalidità 20%** >10 anni.",
+            prevenzione: "**Antivibrazione:**<br>Guanti antivibrazione, rotazione mansioni, manutenzione utensili."
+        },
+        {
+            id: 15,
+            nome: "Clima termico estremo",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "4", Esp: "3", Tot: "36" },
+            cause: "**Temperature estreme:**<br>**Art.180 D.Lgs.81** <12°C/>30°C, umidità >80%, portoni sempre aperti.",
+            danni: "**Ipotermia/ipertermia:**<br>Disidratazione severa, crampi, **colpo calore 5%** casi gravi.",
+            prevenzione: "**Microclima:**<br>Termoigrometri, pause termiche, abbigliamento stratificato."
+        },
+        {
+            id: 16,
+            nome: "Illuminazione insufficiente",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Lux insufficienti:**<br>**UNI EN 12464** <200lux magazzino, lampade bruciate, sporco diffusori.",
+            danni: "**Affaticamento visivo:**<br>Errore stoccaggio 30%, cadute +25%, **miopia transitoria**.",
+            prevenzione: "**Illuminotecnica:**<br>Led 400lux uniformi, manutenzione semestrale, emergenze autonome."
+        },
+        {
+            id: 17,
+            nome: "Sollevamento carichi sopra testa",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "3", Danno: "5", Esp: "3", Tot: "45" },
+            cause: "**Posture pericolose:**<br>**Allegato XXXIII** ripiani alti >170cm, scale instabili, ass. transpallet.",
+            danni: "**Trauma cervicale:**<br>Cervicobrachialgie 60%, ernia C5-C6, **caduta carichi 40%**.",
+            prevenzione: "**Altezze sicure:**<br>Transpallet elettrici, ripiani max 160cm, piattaforme elevatrici."
+        },
+        {
+            id: 18,
+            nome: "Incastramento macchinari",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "3", Tot: "30" },
+            cause: "**Dispositivi sicurezza assenti:**<br>**Art.70 D.Lgs.81** nastri trasportatori senza protezioni, manutenzione interna.",
+            danni: "**Amputazioni:**<br>**Dita/mano 85%**, schiacciamento arti, **setticemia 10%** ferite contaminate.",
+            prevenzione: "**Sicurezza macchine:**<br>Schermi fissi, arresto emergenza, chiavi interdizione."
+        },
+        {
+            id: 19,
+            nome: "Esposizione chimici detergenti",
+            livello: "MEDIO",
+                        tabella: { Rischio: "3", Prob: "3", Danno: "4", Esp: "3", Tot: "36" },
+            cause: "**Sostanze pericolose:**<br>**Art.224 D.Lgs.81** detersivi aggressivi, ipoclorito sodio, spray aerosol, ventilazione assente.",
+            danni: "**Intossicazioni:**<br>Dermatiti 40%, irritazione vie respiratorie, **edema polmonare 5%** esposizioni acute.",
+            prevenzione: "**Chimici sicuri:**<br>Fogli dati sicurezza, guanti nitrile, aspirazione locale, diluizione 1:10."
+        },
+        {
+            id: 20,
+            nome: "Scivolamento pavimenti umidi",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "4", Danno: "3", Esp: "5", Tot: "60" },
+            cause: "**Superfici bagnate:**<br>**Art.63 D.Lgs.81** perdite idrauliche, pulizia umida, olio lubrificanti, assenza griglie.",
+            danni: "**Traumi caduta:**<br>Frattura radio **35%**, trauma cranico, **assenze 15gg medi**.",
+            prevenzione: "**Pavimenti antiscivolo:**<br>R11 minimi, segnaletica bagnato, aspiraliquidi, scarpe SRA."
+        },
+        {
+            id: 21,
+            nome: "Proiezioni frammenti",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "2", Danno: "4", Esp: "3", Tot: "24" },
+            cause: "**Materiali fragili:**<br>Vetri imballaggi, legno scheggiato, chiodi sporgenti, nastro trasportatori.",
+            danni: "**Ferite penetranti:**<br>Lacerazioni cornee, **ipopion 15%**, tetanos rischio alto.",
+            prevenzione: "**Protezione occhi:**<br>Occhiali panoramica EN166, contenitori rotture."
+        },
+        {
+            id: 22,
+            nome: "Affaticamento fisico",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "5", Danno: "2", Esp: "5", Tot: "30" },
+            cause: "**Turni eccessivi:**<br>**Art.35 D.Lgs.81** >8h continue, pause insufficienti, carichi ripetitivi.",
+            danni: "**Disturbi muscolari:**<br>Mialgie diffuse, crampi, **errori +40%** ultimo turno.",
+            prevenzione: "**Gestione turni:**<br>Pause 15'/2h, rotazione mansioni, idratazione 2L/giorno."
+        },
+        {
+            id: 23,
+            nome: "Stress psicofisico",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Pressione produttiva:**<br>Obiettivi irrealistici, personale insufficiente, ritmi forzati.",
+            danni: "**Burnout:**<br>Disturbi ansiosi 25%, ipertensione, **errori sicurezza +35%**.",
+            prevenzione: "**Benessere:**<br>Analisi stress DVR, colloqui RSPP, pause relax."
+        },
+        {
+            id: 24,
+            nome: "Contatti elettrici",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "2", Tot: "24" },
+            cause: "**Quadri scoperti:**<br>**CEI 64-8** manutenzione assente, umidità, guasti cavi.",
+            danni: "**Elettroesecuzione:**<br>**Arresto respiratorio 70%**, ustioni arco elettrico.",
+            prevenzione: "**Quadri protetti:**<br>IP55 minimo, lucchetti interdizione, verifiche termografiche."
+        },
+        {
+            id: 25,
+            nome: "Annegamento liquidi stoccati",
+            livello: "BASSO",
+            tabella: { Rischio: "2", Prob: "1", Danno: "5", Esp: "2", Tot: "10" },
+            cause: "**Contenitori aperti:**<br>Oli, liquidi infiammabili, cadute serbatoi.",
+            danni: "**Soffocamento:**<br>Aspira polmoni, **mortalità 90%** senza recupero immediato.",
+            prevenzione: "**Coperchi serrati:**<br>Griglie di sicurezza, barriere liquidi."
+        },
+        {
+            id: 26,
+            nome: "Esplosione aerosol/gas",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "2", Tot: "24" },
+            cause: "**Stoccaggio errato:**<br>**D.M. Rischi Incendio** bombole vicino fonti calore.",
+            danni: "**Ondate pressione:**<br>Traumi barotraumtici, ustioni termiche, **schegge metalliche**.",
+            prevenzione: "**Magazzino esplosivi:**<br>Armadi ventilati, distanze sicurezza 3m."
+        },
+        {
+            id: 27,
+            nome: "Crolli strutturali",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "2", Danno: "5", Esp: "3", Tot: "30" },
+            cause: "**Edifici vecchi:**<br>**NTC 2018** verifiche strutturali assenti, sovraccarichi.",
+            danni: "**Schiacciamento totale:**<br>**Mortalità 95%** crolli coperture magazzino.",
+            prevenzione: "**Verifiche statiche:**<br>Certificato agibilità, carichi nominali rispettati."
+        },
+        {
+            id: 28,
+            nome: "Fulminazione",
+            livello: "BASSO",
+            tabella: { Rischio: "2", Prob: "1", Danno: "5", Esp: "1", Tot: "5" },
+            cause: "**Parafulmini assenti:**<br>Tempeste elettriche, coperture metalliche.",
+            danni: "**Elettrocuzione massiva:**<br>**Arresto cardiaco 100%** corrente diretta.",
+            prevenzione: "**Protezione scariche:**<br>Parafulmini funzionanti, distanziatori."
+        },
+        {
+            id: 29,
+            nome: "Intossicazione monossido CO",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "2", Tot: "24" },
+            cause: "**Muletti GPL:**<br>**Art.286 D.Lgs.81** ventilazione naturale assente.",
+            danni: "**Coma irreversibile:**<br>**Mortalità 50%** >2000ppm, danni neurologici permanenti.",
+            prevenzione: "**Rilevatori CO:**<br>30ppm allarme, 100ppm evacuazione."
+        },
+        {
+            id: 30,
+            nome: "Asfissia gas tecnici",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "1", Danno: "5", Esp: "2", Tot: "20" },
+            cause: "**Fughe bombole:**<br>Azoto, argon stoccaggio.",
+            danni: "**Ipossia cerebrale:**<br>Perdita coscienza 30\", **morte 95%** senza ossigeno.",
+            prevenzione: "**Rilevatori O2:**<br>19,5% allarme, catene bombole."
+        },
+        {
+            id: 31,
+            nome: "Derrame chimici",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "4", Esp: "3", Tot: "36" },
+            cause: "**Contenitori danneggiati:**<br>Acidi/basici corrosivi.",
+            danni: "**Ustioni chimiche:**<br>**Necrosi tessuti 3° grado**, cecità.",
+            prevenzione: "**Kit emergenza:**<br>Doccette occhi, neutralizzanti."
+        },
+        {
+            id: 32,
+            nome: "Allergie polveri organiche",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Materiali biologici:**<br>Farine, cereali stoccati.",
+            danni: "**Asma allergico:**<br>**Crisi respiratorie 25%** lavoratori sensibili.",
+            prevenzione: "**Mascherine FFP2:**<br>Screening allergie pre-assunzione."
+        },
+        {
+            id: 33,
+            nome: "Roditori/insetti vettori",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "3", Esp: "3", Tot: "27" },
+            cause: "**Igiene carente:**<br>Esche avvelenate accessibili.",
+            danni: "**Malattie trasmesse:**<br>Leptospirosi, dermatomicosi.",
+            prevenzione: "**Derattizzazione:**<br>Certificazione mensile."
+        },
+        {
+            id: 34,
+            nome: "Ergonomia postazioni",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "2", Esp: "5", Tot: "30" },
+            cause: "**Banchi lavoro:**<br>Altezze non regolabili.",
+            danni: "**Disturbi ripetitivi:**<br>Tunnel carpale 20%.",
+            prevenzione: "**Postazioni regolabili:**<br>Altezza 70-110cm."
+        },
+        {
+            id: 35,
+            nome: "Microclima stagionale",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "2", Esp: "4", Tot: "24" },
+            cause: "**Sbalzi termici:**<br>Portoni automatici.",
+            danni: "**Raffreddore cronico:**<br>Assenteismo +15%.",
+            prevenzione: "**Vestiarî termici:**<br>Cortine aria portoni."
+        },
+        {
+            id: 36,
+            nome: "Vie fuga ostruiite",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "3", Danno: "5", Esp: "4", Tot: "60" },
+            cause: "**Materiali stoccati:**<br>**D.M.10/03/98** corridoi <120cm.",
+            danni: "**Trappola mortale:**<br>**Mortalità +80%** incendi confinati.",
+            prevenzione: "**Vie libere:**<br>Segnaletica fotoluminescente."
+        },
+        {
+            id: 37,
+            nome: "Scale portatili instabili",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "3", Danno: "4", Esp: "3", Tot: "36" },
+            cause: "**UNI EN 131** scale usurate.",
+            danni: "**Cadute 3m:**<br>Fratture vertebrali 50%.",
+            prevenzione: "**Scale certificate:**<br>Ispezioni mensili."
+        },
+        {
+            id: 38,
+            nome: "Piattaforme elevatrici",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "3", Tot: "30" },
+            cause: "**Manutenzione assente:**<br>Parapetti mancanti.",
+            danni: "**Precipitazione:**<br>**Mortalità 70%** >4m.",
+            prevenzione: "**Verifica CE:**<br>Libretto matricola aggiornato."
+        },
+        {
+            id: 39,
+            nome: "Nastri trasportatori",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "4", Esp: "3", Tot: "30" },
+            cause: "**Zone pignone:**<br>Protezioni mobili.",
+            danni: "**Amputazioni dita:**<br>80% casi."
+        },
+        {
+            id: 40,
+            nome: "Compressori aria",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "2", Danno: "4", Esp: "3", Tot: "24" },
+            cause: "**Allacci rapidi:**<br>Fratture da aria compressa.",
+            danni: "**Embolia gassosa:**<br>Mortalità 60%.",
+            prevenzione: "**Raccordi protetti:**<br>Pressione max 6bar."
+        },
+        {
+            id: 41,
+            nome: "Saldatura stoccaggio",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "1", Danno: "5", Esp: "2", Tot: "20" },
+            cause: "**Materiali combustibili:**<br>Accensione spontanea.",
+            danni: "**Incendi rapidi:**<br>Bruciare 2° grado 70%.",
+            prevenzione: "**Zone distinte:**<br>50m sicurezza."
+        },
+        {
+            id: 42,
+            nome: "Carrelli manuali",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "4", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Freni assenti:**<br>Pendii magazzino.",
+            danni: "**Investimenti:**<br>Fratture tibiale 40%.",
+            prevenzione: "**Transpallet motorizzati:**<br>Superfici livellate."
+        },
+        {
+            id: 43,
+            nome: "Ponteggi interni",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "2", Danno: "5", Esp: "2", Tot: "25" },
+            cause: "**Montaggio fai-da-te:**<br>**Art.128 D.Lgs.81**",
+            danni: "**Crollo catastrofico:**<br>Mortalità 85%.",
+            prevenzione: "**PIMUS obbligatorio:**<br>Certificazione montatori."
+        },
+        {
+            id: 44,
+            nome: "Sistemi antincendio",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "2", Danno: "4", Esp: "3", Tot: "24" },
+            cause: "**Manutenzione scaduta:**<br>Idranti ostruiti.",
+            danni: "**Fuoco incontrollato:**<br>Perdite totali 90%.",
+            prevenzione: "**Verifiche annuali:**<br>Certificati funzionanti."
+        },
+        {
+            id: 45,
+            nome: "Illuminazione emergenza",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "4", Esp: "3", Tot: "30" },
+            cause: "**Batterie scariche:**<br>Blackout prolungati.",
+            danni: "**Panico evacuazione:**<br>Feriti calpestio 60%.",
+            prevenzione: "**Autonomia 1h:**<br>Test mensili."
+        },
+        {
+            id: 46,
+            nome: "Segnaletica di sicurezza",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Cartelli sbiaditi:**<br>**D.M. 19/08/96**",
+            danni: "**Errori operatori:**<br>Incidenti evitabili 40%.",
+            prevenzione: "**Rinnovo biennale:**<br>Fotoluminescenti."
+        },
+        {
+            id: 47,
+            nome: "Pronto soccorso",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "2", Danno: "5", Esp: "2", Tot: "24" },
+            cause: "**Kit incompleti:**<br>**D.M. 388/03**",
+            danni: "**Complicanze infettive:**<br>Mortalità +30%.",
+            prevenzione: "**Addetti formati:**<br>Defibrillatore DEA."
+        },
+        {
+            id: 48,
+            nome: "Formazione sicurezza",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "4", Danno: "4", Esp: "5", Tot: "80" },
+            cause: "**Corsi scaduti:**<br>**Accordo 21/12/11**",
+            danni: "**Comportamenti errati:**<br>85% infortuni evitabili.",
+            prevenzione: "**RSPP esterno:**<br>Aggiornamenti 6h/anno."
+        },
+        {
+            id: 49,
+            nome: "Sorveglianza sanitaria",
+            tabella: { Rischio: "4", Prob: "3", Danno: "4", Esp: "3", Tot: "48" },
+            cause: "**Medicina lavoro:**<br>**Art.41 D.Lgs.81**",
+            danni: "**Patologie non scoperte:**<br>Progressione invalidante.",
+            prevenzione: "**Visite annuali:**<br>Medico competente."
+        },
+        {
+            id: 50,
+            nome: "Manutenzione attrezzature",
+            livello: "ALTO",
+            tabella: { Rischio: "4", Prob: "3", Danno: "4", Esp: "4", Tot: "64" },
+            cause: "**Registri mancanti:**<br>**Art.71 D.Lgs.81**",
+            danni: "**Guasti improvvisi:**<br>Catena eventi incidenti.",
+            prevenzione: "**Libretti matricola:**<br>Contratti manutenzione."
+        },
+        {
+            id: 51,
+            nome: "Audit sicurezza",
+            livello: "MEDIO",
+            tabella: { Rischio: "3", Prob: "3", Danno: "3", Esp: "4", Tot: "36" },
+            cause: "**Controlli assenti:**<br>**ISO 45001**",
+            danni: "**Deriva sicurezza:**<br>Incidenti ricorrenti.",
+            prevenzione: "**Check-list mensili:**<br>RSPP audit."
+        },
+        {
+            id: 52,
+            nome: "Gestione emergenze",
+            livello: "CRITICO",
+            tabella: { Rischio: "5", Prob: "3", Danno: "5", Esp: "4", Tot: "60" },
+            cause: "**Piani non esercitati:**<br>**Art.43 D.Lgs.81**",
+            danni: "**Caos evacuazione:**<br>**Vittime evitabili 75%**.",
+            prevenzione: "**Prove trimestrali:**<br>Team emergenza formato."
+        }
+    ];
+
+    // =====================================================
+    // FUNZIONALITÀ INTERATTIVA COMPLETA
+    // =====================================================
     
-    <!-- Header -->
-    <header class="glass sticky top-0 z-50 shadow-lg backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl">
-                        <span class="text-2xl">📋</span>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                            DVR Magazziniere
-                        </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">D.Lgs. 81/2008 • 52 Rischi Specifici</p>
-                    </div>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Load Theme
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+        document.documentElement.classList.remove('dark');
+    }
+
+    // Carica Rischi Grid
+    function initRischi() {
+        const grid = document.getElementById('rischi-grid');
+        grid.innerHTML = rischiDB.map(rischio => `
+            <div class="glass-pro rounded-2xl p-8 cursor-pointer hover:scale-[1.02] transition-all duration-300 group ${rischio.livello === 'CRITICO' ? 'rischio-critico border-2 border-red-500/50' : rischio.livello === 'ALTO' ? 'rischio-alto border-2 border-orange-500/50' : ''}" 
+                 onclick="openRischio(${rischio.id})" role="button" tabindex="0" aria-label="Dettaglio ${rischio.nome}">
+                <div class="flex items-start justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white group-hover:text-accent-400 transition-colors flex-1 pr-4 line-clamp-2">${rischio.nome}</h3>
+                    <div class="text-2xl font-black ${rischio.livello === 'CRITICO' ? 'text-red-400' : rischio.livello === 'ALTO' ? 'text-orange-400' : rischio.livello === 'MEDIO' ? 'text-yellow-400' : 'text-green-400'}">${rischio.tabella.Tot}</div>
                 </div>
-                
-                <!-- Tools -->
-                <div class="flex items-center space-x-2">
-                    <button id="searchBtn" class="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 rounded-xl transition-all" aria-label="Ricerca" title="Ctrl+K">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <button id="themeToggle" class="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 rounded-xl transition-all" aria-label="Tema">
-                        <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path>
-                        </svg>
-                        <svg id="moonIcon" class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                        </svg>
-                    </button>
-                    <button id="exportPDF" class="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all text-sm">
-                        📄 PDF
-                    </button>
+                <div class="flex items-center text-sm text-slate-400 mb-4">
+                    <span class="font-semibold text-accent-400">${rischio.livello}</span>
+                    <span class="mx-2">•</span>
+                    <span>Rischio: ${rischio.tabella.Rischio} | Prob: ${rischio.tabella.Prob} | Danno: ${rischio.tabella.Danno}</span>
                 </div>
+                <div class="h-1 bg-gradient-to-r from-slate-600 to-transparent rounded-full group-hover:from-accent-500 transition-all"></div>
             </div>
-        </div>
-    </header>
+        `).join('');
+    }
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Stats Hero -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in">
-            <div class="glass p-6 rounded-3xl shadow-glass text-center dark:glass-dark">
-                <div class="text-3xl font-bold text-primary-500 mb-1">52</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">Rischi Totali</div>
-            </div>
-            <div class="glass p-6 rounded-3xl shadow-glass text-center dark:glass-dark">
-                <div class="text-3xl font-bold text-danger-500 mb-1" id="rischiCritici">8</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">CRITICI</div>
-            </div>
-            <div class="glass p-6 rounded-3xl shadow-glass text-center dark:glass-dark">
-                <div class="text-3xl font-bold text-orange-500 mb-1">21</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">ALTI</div>
-            </div>
-            <div class="glass p-6 rounded-3xl shadow-glass text-center dark:glass-dark">
-                <div class="text-3xl font-bold text-emerald-500 mb-1">23</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">MEDI/BASSI</div>
-            </div>
-        </div>
+    // Open Dettaglio Rischio
+    function openRischio(id) {
+        const rischio = rischiDB.find(r => r.id === id);
+        if (!rischio) return;
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- Sidebar Categorie -->
-            <aside class="lg:col-span-1 space-y-4 animate-slide-up" id="sidebar">
-                <div class="glass p-6 rounded-3xl shadow-glass dark:glass-dark sticky top-32">
-                    <h2 class="text-xl font-bold mb-6 flex items-center">
-                        <span class="w-2 h-8 bg-gradient-to-b from-primary-500 to-purple-500 rounded mr-3"></span>
-                        Categorie Rischi
-                    </h2>
-                    <div id="categorieList" class="space-y-3 max-h-96 overflow-y-auto"></div>
-                </div>
-                
-                <!-- Ricerca -->
-                <div class="glass p-6 rounded-3xl shadow-glass dark:glass-dark hidden" id="searchPanel">
-                    <h3 class="text-lg font-bold mb-4">🔍 Ricerca Rapida</h3>
-                    <input type="text" id="searchInput" placeholder="Cerca rischi (es: ernie, muletti)..." 
-                           class="w-full p-4 bg-white/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-lg">
-                    <div id="searchResults" class="mt-4 space-y-2 max-h-64 overflow-y-auto"></div>
-                </div>
-            </aside>
-
-            <!-- Contenuto Principale -->
-            <div class="lg:col-span-3 space-y-8">
-                <!-- Dettaglio Rischio Attivo -->
-                <div id="rischioDetail" class="glass p-8 rounded-3xl shadow-glass dark:glass-dark hidden animate-slide-up">
-                    <div class="flex items-start justify-between mb-8">
-                        <div>
-                            <h2 id="rischioTitle" class="text-3xl font-bold mb-2 text-slate-900 dark:text-white"></h2>
-                            <div class="flex items-center space-x-4 text-sm">
-                                <span id="rischioCategoria" class="px-4 py-1 rounded-full font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"></span>
-                                <span id="rischioLivello" class="px-4 py-1 rounded-full font-bold text-white shadow-lg"></span>
-                            </div>
-                        </div>
-                        <div id="rischioIcon" class="text-4xl"></div>
-                        <button id="backToList" class="ml-4 p-2 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 rounded-xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                        <div>
-                            <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200 flex items-center">
-                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                </svg>
-                                Cause
-                            </h3>
-                            <div id="rischioCause" class="prose prose-slate dark:prose-invert max-w-none leading-relaxed text-slate-700 dark:text-slate-300"></div>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                </svg>
-                                Danni
-                            </h3>
-                            <div id="rischioDanni" class="prose prose-slate dark:prose-invert max-w-none leading-relaxed text-slate-700 dark:text-slate-300"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Prevenzione
-                            </h3>
-                            <div id="rischioPrevenzione" class="prose prose-slate dark:prose-invert max-w-none leading-relaxed text-slate-700 dark:text-slate-300"></div>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                </svg>
-                                Protezioni
-                            </h3>
-                            <div id="rischioProtezioni" class="prose prose-slate dark:prose-invert max-w-none leading-relaxed text-slate-700 dark:text-slate-300"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lista Rischi -->
-                <div id="rischiList" class="space-y-4">
-                    <div class="glass p-8 rounded-3xl shadow-glass dark:glass-dark text-center py-20">
-                        <div class="text-6xl mb-8 animate-pulse-slow">📦</div>
-                        <h2 class="text-3xl font-bold mb-4 text-slate-600 dark:text-slate-400">Seleziona una categoria</h2>
-                        <p class="text-lg text-slate-500 dark:text-slate-500 max-w-md mx-auto">
-                            Scegli dalla sidebar per visualizzare i rischi specifici del magazziniere
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="glass mt-24 border-t border-slate-200/50 dark:border-slate-700/50 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="text-center">
-                <p class="text-slate-600 dark:text-slate-400 mb-2">DVR Interattivo • D.Lgs. 81/2008 • Basato su Linee Guida INAIL 2023</p>
-                <p class="text-sm text-slate-500 dark:text-slate-500">Sviluppato per GitHub Pages • PWA Ready • © 2024</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // =====================================================
-        // DATABASE DVR MAGAZZINIERE - 52 RISCHI COMPLETI
-        // =====================================================
-        const rischiDB = {
-            categorie: [
-                { id: 'traumatica', nome: 'RISCHI TRAUMATICI', icon: '🩸', count: 6, color: 'from-red-600 to-orange-500', rischiCritici: 3 },
-                { id: 'posturali', nome: 'RISCHI POSTURALI/MMC', icon: '🦵', count: 5, color: 'from-amber-500 to-yellow-500', rischiCritici: 2 },
-                { id: 'chimici', nome: 'RISCHI CHIMICI', icon: '☣️', count: 6, color: 'from-purple-500 to-pink-500', rischiCritici: 1 },
-                { id: 'biologici', nome: 'RISCHI BIOLOGICI', icon: '🦠', count: 1, color: 'from-green-500 to-emerald-500', rischiCritici: 0 },
-                { id: 'ambientali', nome: 'RISCHI AMBIENTALI', icon: '🌡️', count: 2, color: 'from-blue-500 to-cyan-500', rischiCritici: 0 },
-                { id: 'psicosociali', nome: 'RISCHI PSICOSOCIALI', icon: '🧠', count: 3, color: 'from-indigo-500 to-violet-500', rischiCritici: 1 },
-                { id: 'incendio', nome: 'RISCHI INCENDIO', icon: '🔥', count: 1, color: 'from-orange-500 to-red-500', rischiCritici: 1 },
-                { id: 'elettrici', nome: 'RISCHI ELETTRICI', icon: '⚡', count: 1, color: 'from-yellow-500 to-amber-500', rischiCritici: 1 }
-            ],
-            sottoCategorie: {
-                traumatica: [
-                    {
-                        id: 'tagli_ferite', nome: 'Tagli e ferite', livello: 'MEDIO', icon: '✂️',
-                        cause: 'Lesioni causate dal contatto con oggetti taglienti o da operazioni specifiche di movimentazione.',
-                        danni: 'Lesioni cutanee, sanguinamento, infezioni secondarie.',
-                        prevenzione: 'Guanti antitaglio, coltelli retrattili, formazione uso attrezzature.',
-                        protezioni: 'Guanti UNI EN 388 livello 3-4, forbici sicurezza.'
-                    },
-                    {
-                        id: 'caduta_materiali', nome: 'Caduta di materiali/oggetti', livello: 'CRITICO', icon: '📦',
-                        cause: 'Stoccaggio in altezza >2m senza vincoli. Pallet instabili. Manutenzione inadeguata pavimentazione. Movimentazione scorretta.',
-                        danni: 'Fratture costali/vertebrali, traumi cranici, soffocamento. Invalidità 30-100%, decesso.',
-                        prevenzione: 'Altezza max accatastamento scritta. Regole stoccaggio. Pavimentazione adeguata. Segnaletica.',
-                        protezioni: 'Casco, scarpe S3, formazione RAV.'
-                    },
-                    {
-                        id: 'scivolamenti', nome: 'Scivolamenti pavimento', livello: 'MEDIO', icon: '💧',
-                        cause: 'Liquidi versati. Pavimenti lucidi. Calzature inadeguate. Ordine carente.',
-                        danni: 'Contusioni, fratture radio distale, traumi cranici.',
-                        prevenzione: 'Pulizia immediata, segnaletica, pavimenti antiscivolo.',
-                        protezioni: 'Scarpe SRA/SRB, tappetini antiscivolo.'
-                    },
-                    {
-                        id: 'collisioni_oggetti', nome: 'Collisioni con oggetti in movimento', livello: 'ALTO', icon: '🚚',
-                        cause: 'Mancanza segnaletica. Visibilità ridotta. Velocità eccessiva. Comportamenti scorretti.',
-                        danni: 'Traumi contusivi, fratture, schiacciamenti.',
-                        prevenzione: 'Vie separate, cartelli, limiti velocità.',
-                        protezioni: 'Casco, scarpe antinfortunistiche.'
-                    },
-                    {
-                        id: 'ribaltamenti_muletti', nome: 'Collisioni/ribaltamenti muletti', livello: 'CRITICO', icon: '🚜',
-                        cause: 'Mancanza patentino. Manovre scorrette. Pavimentazione irregolare. Attrezzature difettose.',
-                        danni: 'Schiacciamenti, fratture vertebrali, decesso.',
-                        prevenzione: 'Patentino obbligatorio 12h. Manutenzione periodica. Vie dedicate.',
-                        protezioni: 'Cinture sicurezza muletti, casco.'
-                    }
-                ],
-                posturali: [
-                    {
-                        id: 'distorsioni_articolari', nome: 'Distorsioni articolari', livello: 'ALTO', icon: '🦴',
-                        cause: 'Movimenti bruschi durante movimentazione carichi mal bilanciati. Sollevamento asimmetrici. Torsioni tronco. Superfici irregolari.',
-                        danni: 'Lesioni legamentose, edema, instabilità cronica. Artrosi post-traumatica. Invalidità 5-15%.',
-                        prevenzione: 'Metodo OCRA <2,8. Tappetini antaffaticanti. Muletti sospensioni. Pausa micro 5min/ora.',
-                        protezioni: 'Imbracature lombari UNI EN 613, ginocchiere gel, scarpe ortopediche.'
-                    },
-                    {
-                        id: 'ernie_discali', nome: 'Ernie discali L4-L5/S1', livello: 'CRITICO', icon: '🩺',
-                        cause: 'Flessione tronco >60°. Frequenza >8 sollevamenti/min. Durata >4h consecutive.',
-                        danni: 'Lombosciatalgia, cauda equina, invalidità 15-40%.',
-                        prevenzione: 'Metodo NIOSH LI <0,8. Tavoli idraulici. MMC max 1,5h/turno.',
-                        protezioni: 'Cinture semiflessibili, scarpe antiscivolo.'
-                    },
-                    {
-                        id: 'movimenti_ripetitivi', nome: 'Movimenti ripetitivi', livello: 'ALTO', icon: '🔄',
-                        cause: 'Picking veloce >2000 cicli/giorno. Postazioni fisse incongrue. Durata >4h.',
-                        danni: 'Sindrome tunnel carpale, tendiniti, neuropatie.',
-                        prevenzione: 'OCRA <3,5. Scanner vocali. Micro-pause 5-10%.',
-                        protezioni: 'Guanti antivibrazione UNI EN ISO 10819.'
-                    },
-                    {
-                        id: 'posture_incongrue', nome: 'Posture incongrue', livello: 'MEDIO', icon: '🧍',
-                        cause: 'Torsioni tronco muletti. Altezze scaffali errate. Spazi ristretti.',
-                        danni: 'Lombalgie, cervicalgie, mialgie croniche.',
-                        prevenzione: 'Postazioni regolabili. Rotazione 30min.',
-                        protezioni: 'Supporti ergonomici.'
-                    },
-                    {
-                        id: 'sforzi_eccessivi', nome: 'Sforzi eccessivi', livello: 'ALTO', icon: '⚖️',
-                        cause: 'Pesi >25kg senza ausili. Movimentazione manuale voluminosi.',
-                        danni: 'Traumi muscolo-scheletrici, ernie inguinali.',
-                        prevenzione: 'Limiti ISO 11228. Team lifting.',
-                        protezioni: 'Guanti antiscivolo.'
-                    }
-                ],
-                chimici: [
-                    {
-                        id: 'contatto_nocive', nome: 'Contatto sostanze nocive', livello: 'MEDIO', icon: '🧪',
-                        cause: 'Prodotti chimici detergenti, solventi, acidi in magazzini specializzati.',
-                        danni: 'Dermatiti irritative/allergiche, intossicazioni acute.',
-                        prevenzione: 'Sostituzione ipoallergenici. Ventilazione localizzata.',
-                        protezioni: 'Guanti UNI EN 374, occhiali UNI EN 166.'
-                    },
-                    {
-                        id: 'dermatiti', nome: 'Dermatiti dermatologiche', livello: 'MEDIO', icon: '🩹',
-                        cause: 'Detergenti alcalini, solventi, metalli pesanti. Lavaggio inadeguato.',
-                        danni: 'Eczemi, screpolature, ipersensibilità cronica.',
-                        prevenzione: 'Creme barriera. Rotazione mansioni.',
-                        protezioni: 'Guanti PVC/neoprene.'
-                    },
-                    {
-                        id: 'inalazione_chimici', nome: 'Inalazione prodotti chimici', livello: 'ALTO', icon: '💨',
-                        cause: 'Vapori solventi, polveri metalliche >TLV-TWA.',
-                        danni: 'Bronchite, asma, edema polmonare.',
-                        prevenzione: 'Aspirazione 0,5m/s. Prodotti basso VOC.',
-                        protezioni: 'Maschere ABEK UNI EN 14387.'
-                    },
-                    {
-                        id: 'ingestione_chimici', nome: 'Ingestione prodotti chimici', livello: 'MEDIO', icon: '🍽️',
-                        cause: 'Mani contaminate a bocca. Sversamenti bevande.',
-                        danni: 'Nausea, vomito, epatotossicità.',
-                        prevenzione: 'Zone pranzo separate. Lavaggio obbligatorio.',
-                        protezioni: 'Primo soccorso kit neutralizzazione.'
-                    },
-                    {
-                        id: 'patologie_gastro', nome: 'Patologie gastrointestinali', livello: 'BASSO', icon: '🤢',
-                        cause: 'Esposizione chimica + stress cronico.',
-                        danni: 'Gastriti, ulcere peptiche.',
-                        prevenzione: 'Gestione stress. Controllo esposizione.',
-                        protezioni: 'Sorveglianza fegato/stomaco.'
-                    }
-                ],
-                biologici: [
-                    {
-                        id: 'batteri_muffe', nome: 'Esposizione batteri/muffe', livello: 'MEDIO', icon: '🦠',
-                        cause: 'Merci contaminate alimenti. Pulizia aerosol. Umidità >60%.',
-                        danni: 'Polmoniti, asma occupazionale.',
-                        prevenzione: 'Derattizzazione. Pulizia HEPA.',
-                        protezioni: 'Maschere FFP2/FFP3 UNI EN 149.'
-                    }
-                ],
-                ambientali: [
-                    {
-                        id: 'caldo_microclima', nome: 'Microclima caldo', livello: 'MEDIO', icon: '🌡️',
-                        cause: 'Temperature >28°C. Umidità >70%. Lavoro MMC.',
-                        danni: 'Colpo calore, crampi, esaurimento.',
-                        prevenzione: 'Ventilazione 10m³/h/persona. Pause idratazione.',
-                        protezioni: 'Abbigliamento traspirante.'
-                    },
-                    {
-                        id: 'freddo_microclima', nome: 'Microclima freddo', livello: 'MEDIO', icon: '❄️',
-                        cause: 'Celle frigo <-5°C. Durata >2h.',
-                        danni: 'Congelamenti, dolori articolari.',
-                        prevenzione: 'Rotazione 60min. Riscaldamento spogliatoi.',
-                        protezioni: 'Multistrato Gore-Tex.'
-                    }
-                ],
-                psicosociali: [
-                    {
-                        id: 'disturbi_sonno', nome: 'Disturbi del sonno', livello: 'ALTO', icon: '😴',
-                        cause: 'Lavoro notturno 22-6. Illuminazione <500lux. Isolamento.',
-                        danni: 'Insonnia cronica, rischio infortuni +200%.',
-                        prevenzione: 'Luci intense. Partner check.',
-                        protezioni: 'Sorveglianza EEG.'
-                    },
-                    {
-                        id: 'sonnolenza_lavoro', nome: 'Sonnolenza sul lavoro', livello: 'CRITICO', icon: '💤',
-                        cause: 'Dip notturna 2-5 AM. MMC affaticante.',
-                        danni: 'Collisioni muletti +300%. Errori 40%.',
-                        prevenzione: 'No mansioni critiche 3-4 AM. Test vigilanza.',
-                        protezioni: 'Rotazione turni.'
-                    },
-                    {
-                        id: 'stress_psicofisico', nome: 'Stress/sovraccarico psicofisico', livello: 'ALTO', icon: '😰',
-                        cause: 'Targets 150 colli/h. Mobbing. Conflitto famiglia.',
-                        danni: 'Burnout, depressione +50%.',
-                        prevenzione: 'IPA Questionario. Supporto psicologico.',
-                        protezioni: 'DVR psicosociali Cass.14799/2025.'
-                    }
-                ],
-                incendio: [
-                    {
-                        id: 'incendio_magazzino', nome: 'Incendio magazzino', livello: 'CRITICO', icon: '🔥',
-                        cause: 'Merci infiammabili. Scintille muletti. Stoccaggio errato.',
-                        danni: 'Ustioni 50-100%, intossicazione CO, decesso.',
-                        prevenzione: 'D.M.10/03/98. Sprinkler REI 120. Divieto fumo.',
-                        protezioni: 'Tute ignifughe UNI EN ISO 11612.'
-                    }
-                ],
-                elettrici: [
-                    {
-                        id: 'contatto_elettrico', nome: 'Contatto elettrico', livello: 'CRITICO', icon: '⚡',
-                        cause: 'Quadri aperti. Cavi scoperti. Manutenzione non qualificata.',
-                        danni: 'Elettroesecuzione, ustioni arco.',
-                        prevenzione: 'Verifiche 35/98. Cartelli pericoli.',
-                        protezioni: 'Guanti dielettrici classe 0.'
-                    }
-                ]
-            }
-        };
-
-        // =====================================================
-        // APP STATE & FUNCTIONS
-        // =====================================================
-        let currentCategoria = null;
-        let rischiCriticiTotal = 0;
-
-        // Inizializzazione
-        function init() {
-            renderCategorie();
-            updateStats();
-            setupEventListeners();
-            saveState();
-        }
-
-        // Render Categorie Sidebar
-        function renderCategorie() {
-            const categorieList = document.getElementById('categorieList');
-            categorieList.innerHTML = '';
-            
-            rischiDB.categorie.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = `p-4 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl group ${currentCategoria === cat.id ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-2xl scale-105' : 'glass dark:glass-dark hover:bg-slate-100 dark:hover:bg-slate-700/70'}`;
-                div.onclick = () => selectCategoria(cat.id);
-                div.setAttribute('aria-label', `Categoria ${cat.nome}`);
-                
-                div.innerHTML = `
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl group-hover:scale-110 transition-transform">${cat.icon}</span>
-                            <span class="font-bold text-lg">${cat.nome}</span>
-                        </div>
-                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold">${cat.count}</span>
-                    </div>
-                `;
-                categorieList.appendChild(div);
-            });
-        }
-
-        // Select Categoria
-        function selectCategoria(catId) {
-            currentCategoria = catId;
-            renderRischi();
-            renderCategorie(); // Update active state
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            saveState();
-        }
-
-        // Render Lista Rischi
-        function renderRischi() {
-            const rischiList = document.getElementById('rischiList');
-            const detail = document.getElementById('rischioDetail');
-            
-            if (!currentCategoria) {
-                rischiList.innerHTML = `
-                    <div class="glass p-8 rounded-3xl shadow-glass dark:glass-dark text-center py-20">
-                        <div class="text-6xl mb-8 animate-pulse-slow">📦</div>
-                        <h2 class="text-3xl font-bold mb-4 text-slate-600 dark:text-slate-400">Seleziona una categoria</h2>
-                        <p class="text-lg text-slate-500 dark:text-slate-500 max-w-md mx-auto">
-                            Scegli dalla sidebar per visualizzare i rischi specifici del magazziniere
-                        </p>
-                    </div>
-                `;
-                detail.classList.add('hidden');
-                return;
-            }
-
-            const rischi = rischiDB.sottoCategorie[currentCategoria] || [];
-            rischiList.innerHTML = `
-                <div class="glass p-6 rounded-3xl shadow-glass mb-8 dark:glass-dark">
-                    <h2 class="text-2xl font-bold mb-2">${rischiDB.categorie.find(c => c.id === currentCategoria).nome}</h2>
-                    <p class="text-slate-600 dark:text-slate-400">${rischi.length} rischi specifici identificati</p>
-                </div>
-                ${rischi.map(rischio => `
-                    <div class="glass p-6 rounded-3xl shadow-glass hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer group dark:glass-dark" 
-                         onclick="selectRischio('${rischio.id}')" 
-                         aria-label="${rischio.nome}">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex items-center space-x-4">
-                                <span class="text-3xl group-hover:scale-110 transition-transform">${rischio.icon}</span>
-                                <div>
-                                    <h3 class="font-bold text-xl group-hover:text-primary-600 dark:group-hover:text-primary-400">${rischio.nome}</h3>
-                                    <div class="flex items-center space-x-2 mt-1">
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 capitalize">${rischio.livello}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-end">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            `;
-        }
-
-        // Select Singolo Rischio
-        function selectRischio(rischioId) {
-            const categoriaAttiva = currentCategoria;
-            const rischio = Object.values(rischiDB.sottoCategorie).flat().find(r => r.id === rischioId);
-            
-            if (!rischio) return;
-            
-            // Popola dettaglio
-            document.getElementById('rischioTitle').textContent = rischio.nome;
-            document.getElementById('rischioCategoria').textContent = rischiDB.categorie.find(c => c.id === categoriaAttiva).nome;
-            document.getElementById('rischioLivello').textContent = rischio.livello;
-            document.getElementById('rischioLivello').className = `px-4 py-1 rounded-full font-bold text-white shadow-lg ${
-                rischio.livello === 'CRITICO' ? 'bg-danger-600' :
-                rischio.livello === 'ALTO' ? 'bg-orange-500' :
-                rischio.livello === 'MEDIO' ? 'bg-amber-500' : 'bg-emerald-500'
-            }`;
-            document.getElementById('rischioIcon').innerHTML = rischio.icon;
-            
-            document.getElementById('rischioCause').innerHTML = `<p>${rischio.cause}</p>`;
-            document.getElementById('rischioDanni').innerHTML = `<p>${rischio.danni}</p>`;
-            document.getElementById('rischioPrevenzione').innerHTML = `<p>${rischio.prevenzione}</p>`;
-            document.getElementById('rischioProtezioni').innerHTML = `<p>${rischio.protezioni}</p>`;
-            
-            // Mostra dettaglio, nascondi lista
-            document.getElementById('rischiList').classList.add('hidden');
-            document.getElementById('rischioDetail').classList.remove('hidden');
-            
-            // Scroll smooth
-            document.getElementById('rischioDetail').scrollIntoView({ behavior: 'smooth' });
-            saveState();
-        }
-
-        // Back to List
-        function backToList() {
-            document.getElementById('rischiList').classList.remove('hidden');
-            document.getElementById('rischioDetail').classList.add('hidden');
-            renderRischi();
-        }
-
-        // Update Stats
-        function updateStats() {
-            let critici = 0;
-            Object.values(rischiDB.sottoCategorie).flat().forEach(r => {
-                if (r.livello === 'CRITICO') critici++;
-            });
-            document.getElementById('rischiCritici').textContent = critici;
-        }
-
-        // Event Listeners
-        function setupEventListeners() {
-            // Theme Toggle
-            document.getElementById('themeToggle').onclick = () => {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            };
-
-            // Search
-            document.getElementById('searchBtn').onclick = () => {
-                document.getElementById('searchPanel').classList.toggle('hidden');
-            };
-
-            document.getElementById('searchInput').oninput = (e) => {
-                const query = e.target.value.toLowerCase();
-                const results = document.getElementById('searchResults');
-                
-                if (query.length < 2) {
-                    results.innerHTML = '';
-                    return;
-                }
-                
-                const matches = Object.values(rischiDB.sottoCategorie).flat().filter(r => 
-                    r.nome.toLowerCase().includes(query) || 
-                    r.cause.toLowerCase().includes(query) ||
-                    r.danni.toLowerCase().includes(query)
-                ).slice(0, 8);
-                
-                results.innerHTML = matches.map(r => `
-                    <div class="p-3 bg-white/50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all group"
-                         onclick="searchSelect('${r.id}')"
-                         title="${r.categoria || 'Vedi dettaglio'}">
-                        <div class="font-bold">${r.nome}</div>
-                        <div class="text-sm text-slate-600 dark:text-slate-400">${r.livello}</div>
-                    </div>
-                `).join('');
-            };
-
-            // Back Button
-            document.getElementById('backToList').onclick = backToList;
-
-            // Keyboard Shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'k') {
-                    e.preventDefault();
-                    document.getElementById('searchBtn').click();
-                }
-                if (e.key === 'Escape') {
-                    document.getElementById('searchPanel').classList.add('hidden');
-                }
-            });
-
-            // Export PDF (simulato)
-            document.getElementById('exportPDF').onclick = () => {
-                const content = document.getElementById(currentCategoria ? 'rischioDetail' : 'rischiList').innerHTML;
-                const win = window.open('', '_blank');
-                win.document.write(`
-                    <html>
-                        <head><title>DVR Magazziniere - Export</title>
-                            <style>body{font-family:Arial,sans-serif;margin:40px;line-height:1.6;}</style>
-                        </head>
-                        <body>${content}</body>
-                    </html>
-                `);
-                win.document.close();
-                win.print();
-            };
-        }
-
-        // Search Select
-        function searchSelect(rischioId) {
-            const rischio = Object.values(rischiDB.sottoCategorie).flat().find(r => r.id === rischioId);
-            if (rischio) {
-                currentCategoria = Object.keys(rischiDB.sottoCategorie).find(key => 
-                    rischiDB.sottoCategorie[key].some(r => r.id === rischioId)
-                );
-                renderRischi();
-                selectRischio(rischioId);
-            }
-            document.getElementById('searchPanel').classList.add('hidden');
-        }
-
-        // Persistenza localStorage
-        function saveState() {
-            localStorage.setItem('dvrState', JSON.stringify({
-                currentCategoria,
-                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-            }));
-        }
-
-        function loadState() {
-            const state = JSON.parse(localStorage.getItem('dvrState') || '{}');
-            
-            // Theme
-            if (state.theme === 'dark' || (!state.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            }
-            
-            // Categoria
-            if (state.currentCategoria && rischiDB.sottoCategorie[state.currentCategoria]) {
-                setTimeout(() => selectCategoria(state.currentCategoria), 500);
-            }
-        }
-
-        // Init App
-        init();
-        loadState();
+        document.getElementById('rischio-titolo').textContent = rischio.nome;
         
-        // PWA Ready
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
-                self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
-                self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-            `));
+        // Tabella
+        document.getElementById('tabella-rischio').innerHTML = `
+            <tr><td class="py-4 pr-8 font-bold text-lg">LIVELLO RISCHIO</td><td class="text-center font-black text-2xl text-red-400">${rischio.tabella.Rischio}</td><td class="text-slate-400">Rischio INACCETTABILE</td></tr>
+            <tr><td class="py-4 pr-8 font-bold">PROBABILITÀ</td><td class="text-center font-bold text-orange-400 text-xl">${rischio.tabella.Prob}</td><td class="text-slate-400">${rischio.tabella.Prob > 3 ? 'ELEVATA' : 'BASSA'}</td></tr>
+            <tr><td class="py-4 pr-8 font-bold">GRAVITÀ DANNO</td><td class="text-center font-bold text-red-400 text-xl">${rischio.tabella.Danno}</td><td class="text-slate-400">${rischio.tabella.Danno > 3 ? 'GRAVE/PERMANENTE' : 'TEMPORANEO'}</td></tr>
+            <tr><td class="py-4 pr-8 font-bold">ESPOSIZIONE</td><td class="text-center font-bold text-yellow-400 text-xl">${rischio.tabella.Esp}</td><td class="text-slate-400">Audit mensili + registri</td></tr>
+            <tr class="bg-slate-800/50"><td class="py-4 pr-8 font-bold text-lg">RISCHIO FINALE</td><td class="font-black text-2xl text-red-400">${rischio.tabella.Tot}</td><td></td></tr>
+        `;
+        
+        // Testi
+        document.getElementById('cause-text').innerHTML = rischio.cause.replace(/\*\*(.*?)\*\*/g, '<strong class="text-accent-400">$1</strong>');
+        document.getElementById('danni-text').innerHTML = rischio.danni.replace(/\*\*(.*?)\*\*/g, '<strong class="text-red-400">$1</strong>');
+        document.getElementById('prevenzione-text').innerHTML = rischio.prevenzione.replace(/\*\*(.*?)\*\*/g, '<strong class="text-green-400">$1</strong>');
+        
+        // Mostra modale
+        document.getElementById('rischio-detail').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Chiudi modale
+    document.getElementById('chiudi-rischio').addEventListener('click', () => {
+        document.getElementById('rischio-detail').classList.add('hidden');
+        document.body.style.overflow = '';
+    });
+
+    // Smooth scroll nav
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Animazioni scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    });
+
+    document.querySelectorAll('.animate-slide-up, .animate-float').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+
+    // Inizializza app
+    initRischi();
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('rischio-detail').classList.add('hidden');
+            document.body.style.overflow = '';
         }
-    </script>
+    });
+</script>
+
 </body>
 </html>
+
