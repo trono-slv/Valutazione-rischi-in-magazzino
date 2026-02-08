@@ -75,6 +75,35 @@
             text-decoration: underline;
         }
 
+        .risk-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .risk-item:hover {
+            background-color: rgba(74, 107, 175, 0.1);
+        }
+
+        .risk-item.active {
+            background-color: rgba(74, 107, 175, 0.2);
+            border-left: 3px solid var(--accent);
+        }
+
+        .risk-details {
+            display: none;
+            padding: 1rem;
+            margin-top: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .risk-details.active {
+            display: block;
+        }
+
         @media (max-width: 640px) {
             .container {
                 padding: 1rem;
@@ -104,17 +133,45 @@
             </section>
 
             <section class="glass-card">
-                <h2 class="card-title text-2xl">Risultati dell'Analisi</h2>
+                <h2 class="card-title text-2xl">Aree di Rischio</h2>
                 <div class="space-y-3">
-                    <p>Ecco i principali rischi identificati nei magazzini:</p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>Rischi biomeccanici elevati nella movimentazione manuale dei carichi</li>
-                        <li>Rischi traumatici dovuti a cadute e scivolamenti</li>
-                        <li>Rischi posturali legati a movimenti ripetitivi</li>
-                        <li>Rischi ambientali dovuti a sbalzi di temperatura</li>
-                        <li>Rischi psicosociali e da lavoro notturno (disturbi del sonno, stress)</li>
-                    </ul>
-                    <p>Si consiglia di implementare misure correttive per mitigare questi rischi.</p>
+                    <p>Clicca su un'area di rischio per visualizzare i dettagli:</p>
+
+                    <div id="riskItems" class="space-y-2">
+                        <div class="risk-item" data-risk="biomeccanico">
+                            <h3 class="font-semibold">Rischi biomeccanici</h3>
+                            <p class="text-sm text-secondary">Movimentazione manuale dei carichi</p>
+                        </div>
+
+                        <div class="risk-item" data-risk="traumatico">
+                            <h3 class="font-semibold">Rischi traumatici</h3>
+                            <p class="text-sm text-secondary">Cadute e scivolamenti</p>
+                        </div>
+
+                        <div class="risk-item" data-risk="posturale">
+                            <h3 class="font-semibold">Rischi posturali</h3>
+                            <p class="text-sm text-secondary">Movimenti ripetitivi</p>
+                        </div>
+
+                        <div class="risk-item" data-risk="ambientale">
+                            <h3 class="font-semibold">Rischi ambientali</h3>
+                            <p class="text-sm text-secondary">Sbalzi di temperatura</p>
+                        </div>
+
+                        <div class="risk-item" data-risk="psicosociale">
+                            <h3 class="font-semibold">Rischi psicosociali</h3>
+                            <p class="text-sm text-secondary">Stress e disturbi del sonno</p>
+                        </div>
+
+                        <div class="risk-item" data-risk="ergonomico">
+                            <h3 class="font-semibold">Rischi ergonomici</h3>
+                            <p class="text-sm text-secondary">Postazioni di lavoro non ergonomiche</p>
+                        </div>
+                    </div>
+
+                    <div id="riskDetails" class="risk-details">
+                        <!-- I dettagli verranno inseriti qui dinamicamente -->
+                    </div>
                 </div>
             </section>
 
@@ -139,5 +196,103 @@
             </section>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const riskItems = document.querySelectorAll('.risk-item');
+            const riskDetails = document.getElementById('riskDetails');
+
+            // Dati dettagliati per ogni area di rischio
+            const riskData = {
+                biomeccanico: {
+                    title: "Rischi Biomeccanici",
+                    description: "Rischi elevati nella movimentazione manuale dei carichi. Questi rischi possono causare lesioni muscolo-scheletriche come distorsioni, stiramenti e lesioni alla schiena.",
+                    solutions: [
+                        "Utilizzare attrezzature di sollevamento adeguate",
+                        "Formazione specifica per i lavoratori",
+                        "Ridurre il peso dei carichi manuali"
+                    ]
+                },
+                traumatico: {
+                    title: "Rischi Traumatici",
+                    description: "Rischi di cadute e scivolamenti dovuti a superfici bagnate, disordinate o irregolari. Questi possono causare fratture, contusioni e lesioni alla testa.",
+                    solutions: [
+                        "Mantenere le superfici pulite e asciutte",
+                        "Utilizzare tappeti antiscivolo",
+                        "Segnalare tempestivamente eventuali pericoli"
+                    ]
+                },
+                posturale: {
+                    title: "Rischi Posturali",
+                    description: "Rischi legati a movimenti ripetitivi e posture scorrette. Questi possono causare sindromi da sovraccarico biomeccanico come la sindrome del tunnel carpale.",
+                    solutions: [
+                        "Progettare postazioni di lavoro ergonomiche",
+                        "Pianificare pause regolari",
+                        "Eseguire esercizi di stretching"
+                    ]
+                },
+                ambientale: {
+                    title: "Rischi Ambientali",
+                    description: "Rischi dovuti a sbalzi di temperatura, umidità eccessiva o scarsa ventilazione. Questi possono causare malesseri generali e riduzione della produttività.",
+                    solutions: [
+                        "Mantenere una temperatura adeguata",
+                        "Garantire una buona ventilazione",
+                        "Utilizzare abbigliamento protettivo se necessario"
+                    ]
+                },
+                psicosociale: {
+                    title: "Rischi Psicosociali",
+                    description: "Rischi legati a stress, disturbi del sonno e pressione lavorativa. Questi possono causare ansia, depressione e riduzione della qualità della vita.",
+                    solutions: [
+                        "Promuovere un ambiente di lavoro positivo",
+                        "Offrire supporto psicologico",
+                        "Pianificare turni di lavoro adeguati"
+                    ]
+                },
+                ergonomico: {
+                    title: "Rischi Ergonomici",
+                    description: "Rischi derivanti da postazioni di lavoro non ergonomiche. Questi possono causare affaticamento muscolare e lesioni a lungo termine.",
+                    solutions: [
+                        "Progettare postazioni di lavoro ergonomiche",
+                        "Utilizzare sedie e tavoli regolabili",
+                        "Eseguire valutazioni ergonomiche periodiche"
+                    ]
+                }
+            };
+
+            // Gestore eventi per i clic sulle aree di rischio
+            riskItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Rimuovi la classe 'active' da tutti gli elementi
+                    riskItems.forEach(i => i.classList.remove('active'));
+
+                    // Aggiungi la classe 'active' all'elemento cliccato
+                    this.classList.add('active');
+
+                    // Ottieni il tipo di rischio dall'attributo data-risk
+                    const riskType = this.getAttribute('data-risk');
+
+                    // Ottieni i dati dettagliati per il rischio selezionato
+                    const riskInfo = riskData[riskType];
+
+                    // Crea il contenuto HTML per i dettagli del rischio
+                    let detailsHTML = `
+                        <h3 class="text-xl font-semibold mb-2">${riskInfo.title}</h3>
+                        <p class="mb-3">${riskInfo.description}</p>
+                        <h4 class="font-semibold mb-1">Misure correttive consigliate:</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            ${riskInfo.solutions.map(solution => `<li>${solution}</li>`).join('')}
+                        </ul>
+                    `;
+
+                    // Inserisci il contenuto nei dettagli del rischio
+                    riskDetails.innerHTML = detailsHTML;
+
+                    // Aggiungi la classe 'active' alla sezione dei dettagli
+                    riskDetails.classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
