@@ -1790,387 +1790,367 @@
         ];
 
         // ===== UTILITY FUNCTIONS =====
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+function selectRandomQuestions() {
+    const shuffled = shuffleArray(allQuestions);
+    return shuffled.slice(0, CONFIG.totalQuestions).map(q => {
+        const shuffledOptions = q.options.map((opt, idx) => ({
+            text: opt,
+            originalIndex: idx
+        }));
+        return {
+            ...q,
+            options: shuffleArray(shuffledOptions)
+        };
+    });
+}
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ===== TIMER MANAGEMENT =====
+function startTimer() {
+    currentState.timer = setInterval(() => {
+        currentState.timeRemaining--;
+        updateTimerDisplay();
+
+        if (currentState.timeRemaining <= CONFIG.warningTime && currentState.timeRemaining > 0) {
+            document.getElementById('timerWarning').classList.remove('hidden');
+            document.getElementById('timerCircle').style.stroke = '#EF4444';
         }
 
-        function selectRandomQuestions() {
-            const shuffled = shuffleArray(allQuestions);
-            return shuffled.slice(0, CONFIG.totalQuestions).map(q => {
-                const shuffledOptions = q.options.map((opt, idx) => ({
-                    text: opt,
-                    originalIndex: idx
-                }));
-                return {
-                    ...q,
-                    options: shuffleArray(shuffledOptions)
-                };
-            });
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // ===== TIMER MANAGEMENT =====
-        function startTimer() {
-            currentState.timer = setInterval(() => {
-                currentState.timeRemaining--;
-                updateTimerDisplay();
-
-                if (currentState.timeRemaining <= CONFIG.warningTime && currentState.timeRemaining > 0) {
-                    document.getElementById('timerWarning').classList.remove('hidden');
-                    document.getElementById('timerCircle').style.stroke = '#EF4444';
-                }
-
-                if (currentState.timeRemaining <= 0) {
-                    clearInterval(currentState.timer);
-                    submitTest();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const display = document.getElementById('timerDisplay');
-            const circle = document.getElementById('timerCircle');
-            
-            display.textContent = formatTime(currentState.timeRemaining);
-            
-            const progress = currentState.timeRemaining / CONFIG.testDuration;
-            const offset = 283 * (1            const offset = 283 * (1 - progress);
-            circle.style.strokeDashoffset = offset;
-
-            // Cambio colore progressivo
-            if (currentState.timeRemaining <= 60) {
-                circle.style.stroke = '#EF4444'; // Rosso ultimi 60s
-                display.style.color = '#EF4444';
-            } else if (currentState.timeRemaining <= CONFIG.warningTime) {
-                circle.style.stroke = '#F59E0B'; // Arancione warning
-                display.style.color = '#F59E0B';
-            }
-        }
-
-        // ===== PROGRESS MANAGEMENT =====
-        function updateProgress() {
-            const answered = currentState.answers.filter(a => a !== null).length;
-            const percentage = Math.round((answered / CONFIG.totalQuestions) * 100);
-            
-            document.getElementById('progressText').textContent = `${percentage}%`;
-            document.getElementById('progressBar').style.width = `${percentage}%`;
-            document.getElementById('currentQuestionNumber').textContent = currentState.currentIndex + 1;
-            document.getElementById('questionNumberBadge').textContent = currentState.currentIndex + 1;
-
-            updateMinimap();
-        }
-
-        function updateMinimap() {
-            const minimap = document.getElementById('minimap');
-            minimap.innerHTML = '';
-
-            for (let i = 0; i < CONFIG.totalQuestions; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all cursor-pointer';
-                
-                if (currentState.answers[i] !== null) {
-                    dot.className += ' bg-green-500 border-green-600 text-white';
-                    dot.textContent = '✓';
-                } else if (i === currentState.currentIndex) {
-                    dot.className += ' border-orange-500 bg-orange-100 text-orange-700 animate-pulse';
-                    dot.textContent = i + 1;
-                } else {
-                    dot.className += ' bg-gray-200 border-gray-400 text-gray-600';
-                    dot.textContent = i + 1;
-                }
-
-                dot.onclick = () => loadQuestion(i);
-                minimap.appendChild(dot);
-            }
-        }
-
-        // ===== QUESTION RENDERING =====
-        function loadQuestion(index) {
-            if (index < 0 || index >= CONFIG.totalQuestions) return;
-
-            currentState.currentIndex = index;
-            const question = currentState.questions[index];
-
-            document.getElementById('questionText').textContent = question.question;
-
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-
-            question.options.forEach((option, idx) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option-card group';
-                
-                const isSelected = currentState.answers[index] === idx;
-                if (isSelected) {
-                    optionDiv.classList.add('selected');
-                }
-
-                optionDiv.innerHTML = `
-                    <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 rounded-full border-3 flex items-center justify-center font-bold text-lg transition-all"
-                             style="border-color: var(--secondary); color: var(--secondary);">
-                            ${String.fromCharCode(65 + idx)}
-                        </div>
-                        <div class="flex-1 text-lg text-gray-800 leading-relaxed">
-                            ${option.text}
-                        </div>
-                    </div>
-                `;
-
-                optionDiv.onclick = () => selectOption(idx);
-                container.appendChild(optionDiv);
-            });
-
-            updateProgress();
-        }
-
-        // ===== ANSWER SELECTION =====
-        function selectOption(optionIndex) {
-            currentState.answers[currentState.currentIndex] = optionIndex;
-
-            // Auto-avanza alla prossima domanda
-            setTimeout(() => {
-                if (currentState.currentIndex < CONFIG.totalQuestions - 1) {
-                    loadQuestion(currentState.currentIndex + 1);
-                } else {
-                    // Ultima domanda: mostra messaggio
-                    const container = document.getElementById('optionsContainer');
-                    const completionMsg = document.createElement('div');
-                    completionMsg.className = 'mt-6 p-4 bg-green-100 border-2 border-green-500 rounded-lg text-center';
-                    completionMsg.innerHTML = `
-                        <p class="text-green-800 font-bold text-lg">✅ Hai completato tutte le domande!</p>
-                        <p class="text-green-700 mt-2">Puoi rivedere le risposte tramite la minimap o terminare il test.</p>
-                    `;
-                    container.appendChild(completionMsg);
-                }
-            }, 300);
-        }
-
-        // ===== TEST SUBMISSION =====
-        function submitTest() {
+        if (currentState.timeRemaining <= 0) {
+            console.log('⏰ TIMER SCADUTO - Chiamando submitTest()'); // ← DEBUG
             clearInterval(currentState.timer);
+            submitTest();
+        }
+    }, 1000);
+}
 
-            // Calcola risultati
-            let correctCount = 0;
-            const results = currentState.questions.map((q, idx) => {
-                const userAnswerIndex = currentState.answers[idx];
-                const userOption = userAnswerIndex !== null ? q.options[userAnswerIndex] : null;
-                const correctOptionOriginalIndex = q.correct;
-                const isCorrect = userOption && userOption.originalIndex === correctOptionOriginalIndex;
+function updateTimerDisplay() {
+    const display = document.getElementById('timerDisplay');
+    const circle = document.getElementById('timerCircle');
+    
+    display.textContent = formatTime(currentState.timeRemaining);
+    
+    const progress = currentState.timeRemaining / CONFIG.testDuration;
+    const offset = 283 * (1 - progress);
+    circle.style.strokeDashoffset = offset;
 
-                if (isCorrect) correctCount++;
+    // Cambio colore progressivo
+    if (currentState.timeRemaining <= 60) {
+        circle.style.stroke = '#EF4444'; // Rosso ultimi 60s
+        display.style.color = '#EF4444';
+    } else if (currentState.timeRemaining <= CONFIG.warningTime) {
+        circle.style.stroke = '#F59E0B'; // Arancione warning
+        display.style.color = '#F59E0B';
+    }
+}
 
-                return {
-                    question: q.question,
-                    userAnswer: userOption ? userOption.text : "Non risposto",
-                    correctAnswer: q.options.find(opt => opt.originalIndex === correctOptionOriginalIndex).text,
-                    isCorrect: isCorrect,
-                    wasAnswered: userAnswerIndex !== null
-                };
-            });
+// ===== PROGRESS MANAGEMENT =====
+function updateProgress() {
+    const answered = currentState.answers.filter(a => a !== null).length;
+    const percentage = Math.round((answered / CONFIG.totalQuestions) * 100);
+    
+    document.getElementById('progressText').textContent = `${percentage}%`;
+    document.getElementById('progressBar').style.width = `${percentage}%`;
+    document.getElementById('currentQuestionNumber').textContent = currentState.currentIndex + 1;
+    document.getElementById('questionNumberBadge').textContent = currentState.currentIndex + 1;
 
-            const score = (correctCount / CONFIG.totalQuestions) * 100;
-            const passed = score >= (CONFIG.passThreshold * 100);
+    updateMinimap();
+}
 
-            showResults(score, passed, results, correctCount);
+function updateMinimap() {
+    const minimap = document.getElementById('minimap');
+    minimap.innerHTML = '';
+
+    for (let i = 0; i < CONFIG.totalQuestions; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all cursor-pointer';
+        
+        if (currentState.answers[i] !== null) {
+            dot.className += ' bg-green-500 border-green-600 text-white';
+            dot.textContent = '✓';
+        } else if (i === currentState.currentIndex) {
+            dot.className += ' border-orange-500 bg-orange-100 text-orange-700 animate-pulse';
+            dot.textContent = i + 1;
+        } else {
+            dot.className += ' bg-gray-200 border-gray-400 text-gray-600';
+            dot.textContent = i + 1;
         }
 
-        // ===== RESULTS SCREEN =====
-        function showResults(score, passed, results, correctCount) {
-            document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('resultsScreen').classList.remove('hidden');
+        dot.onclick = () => loadQuestion(i);
+        minimap.appendChild(dot);
+    }
+}
 
-            // Card risultato principale
-            const resultCard = document.getElementById('resultCard');
-            resultCard.innerHTML = `
-                <div class="mb-6">
-                    ${passed ? 
-                        '<div class="text-8xl mb-4">🎉</div>' : 
-                        '<div class="text-8xl mb-4">😔</div>'
-                    }
-                    <h1 class="text-5xl font-bold mb-4" style="color: ${passed ? 'var(--success)' : 'var(--danger)'};">
-                        ${passed ? 'SUPERATO!' : 'NON SUPERATO'}
-                    </h1>
-                    <div class="text-6xl font-bold mb-6" style="color: var(--primary);">
-                        ${score.toFixed(1)}%
-                    </div>
-                    <div class="flex justify-center gap-8 text-lg">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-600">${correctCount}</div>
-                            <div class="text-gray-600">Corrette</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-red-600">${CONFIG.totalQuestions - correctCount}</div>
-                            <div class="text-gray-600">Errate</div>
-                        </div>
-                    </div>
+// ===== QUESTION RENDERING =====
+function loadQuestion(index) {
+    if (index < 0 || index >= CONFIG.totalQuestions) return;
+
+    currentState.currentIndex = index;
+    const question = currentState.questions[index];
+
+    document.getElementById('questionText').textContent = question.question;
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+
+    question.options.forEach((option, idx) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-card group';
+        
+        const isSelected = currentState.answers[index] === idx;
+        if (isSelected) {
+            optionDiv.classList.add('selected');
+        }
+
+        optionDiv.innerHTML = `
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full border-3 flex items-center justify-center font-bold text-lg transition-all"
+                     style="border-color: var(--secondary); color: var(--secondary);">
+                    ${String.fromCharCode(65 + idx)}
                 </div>
-                <div class="text-center text-gray-700 italic">
-                    ${passed ? 
-                        '✅ Ottimo lavoro! Hai dimostrato una buona conoscenza dei rischi specifici in magazzino.' : 
-                        '⚠️ Ti consigliamo di rivedere il materiale didattico e riprovare il test.'
-                    }
+                <div class="flex-1 text-lg text-gray-800 leading-relaxed">
+                    ${option.text}
                 </div>
+            </div>
+        `;
+
+        optionDiv.onclick = () => selectOption(idx);
+        container.appendChild(optionDiv);
+    });
+
+    updateProgress();
+}
+
+// ===== ANSWER SELECTION =====
+function selectOption(optionIndex) {
+    currentState.answers[currentState.currentIndex] = optionIndex;
+
+    // Auto-avanza alla prossima domanda
+    setTimeout(() => {
+        if (currentState.currentIndex < CONFIG.totalQuestions - 1) {
+            loadQuestion(currentState.currentIndex + 1);
+        } else {
+            // Ultima domanda: mostra messaggio
+            const container = document.getElementById('optionsContainer');
+            const completionMsg = document.createElement('div');
+            completionMsg.className = 'mt-6 p-4 bg-green-100 border-2 border-green-500 rounded-lg text-center';
+            completionMsg.innerHTML = `
+                <p class="text-green-800 font-bold text-lg">✅ Hai completato tutte le domande!</p>
+                <p class="text-green-700 mt-2">Puoi rivedere le risposte tramite la minimap o terminare il test.</p>
             `;
-
-            // Riepilogo risposte
-            const reviewContainer = document.getElementById('reviewContainer');
-            reviewContainer.innerHTML = '';
-
-            results.forEach((result, idx) => {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = `p-6 rounded-xl border-3 ${
-                    result.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
-                }`;
-
-                resultDiv.innerHTML = `
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
-                            result.isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                        }">
-                            ${result.isCorrect ? '✓' : '✗'}
-                        </div>
-                        <div class="flex-1">
-                            <div class="text-sm font-bold mb-2" style="color: var(--secondary);">
-                                DOMANDA ${idx + 1}
-                            </div>
-                            <div class="text-lg font-semibold text-gray-800 mb-4">
-                                ${result.question}
-                            </div>
-
-                            ${!result.wasAnswered ? `
-                                <div class="p-3 bg-gray-200 rounded-lg mb-3">
-                                    <span class="font-bold text-gray-700">❌ Non hai risposto</span>
-                                </div>
-                            ` : `
-                                <div class="p-3 ${result.isCorrect ? 'bg-green-100' : 'bg-red-100'} rounded-lg mb-3">
-                                    <span class="font-bold ${result.isCorrect ? 'text-green-800' : 'text-red-800'}">
-                                        La tua risposta:
-                                    </span>
-                                    <span class="text-gray-800"> ${result.userAnswer}</span>
-                                </div>
-                            `}
-
-                            ${!result.isCorrect ? `
-                                <div class="p-3 bg-green-100 rounded-lg border-2 border-green-500">
-                                    <span class="font-bold text-green-800">✓ Risposta corretta:</span>
-                                    <span class="text-gray-800"> ${result.correctAnswer}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-
-                reviewContainer.appendChild(resultDiv);
-            });
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            container.appendChild(completionMsg);
         }
+    }, 300);
+}
 
-        // ===== RESET FUNCTIONS =====
-        function resetTest() {
-            currentState.currentIndex = 0;
-            currentState.timeRemaining = CONFIG.testDuration;
-            // Mantieni le stesse domande
-            currentState.answers = new Array(CONFIG.totalQuestions).fill(null);
+// ===== TEST SUBMISSION =====
+function submitTest() {
+    console.log('🚀 submitTest() CHIAMATA'); // ← DEBUG
+    clearInterval(currentState.timer);
 
-            document.getElementById('resultsScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-            document.getElementById('timerWarning').classList.add('hidden');
-            document.getElementById('timerCircle').style.stroke = 'var(--primary)';
-            document.getElementById('timerDisplay').style.color = 'var(--primary)';
+    // Calcola risultati
+    let correctCount = 0;
+    const results = currentState.questions.map((q, idx) => {
+        const userAnswerIndex = currentState.answers[idx];
+        const userOption = userAnswerIndex !== null ? q.options[userAnswerIndex] : null;
+        const correctOptionOriginalIndex = q.correct;
+        const isCorrect = userOption && userOption.originalIndex === correctOptionOriginalIndex;
 
-            loadQuestion(0);
-            startTimer();
-        }
+        if (isCorrect) correctCount++;
 
-        function generateNewTest() {
-            currentState.questions = selectRandomQuestions();
-            currentState.currentIndex = 0;
-            currentState.answers = new Array(CONFIG.totalQuestions).fill(null);
-            currentState.timeRemaining = CONFIG.testDuration;
+        return {
+            question: q.question,
+            userAnswer: userOption ? userOption.text : "Non risposto",
+            correctAnswer: q.options.find(opt => opt.originalIndex === correctOptionOriginalIndex).text,
+            isCorrect: isCorrect,
+            wasAnswered: userAnswerIndex !== null
+        };
+    });
 
-            document.getElementById('resultsScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-            document.getElementById('timerWarning').classList.add('hidden');
-            document.getElementById('timerCircle').style.stroke = 'var(--primary)';
-            document.getElementById('timerDisplay').style.color = 'var(--primary)';
+    const score = (correctCount / CONFIG.totalQuestions) * 100;
+    const passed = score >= (CONFIG.passThreshold * 100);
 
-            loadQuestion(0);
-            startTimer();
-        }
+    console.log('📊 Punteggio:', { correctCount, score, passed }); // ← DEBUG
+    console.log('🎬 Chiamando showResults()...'); // ← DEBUG
 
-        // ===== START TEST =====
-        function startTest() {
-            currentState.questions = selectRandomQuestions();
-            currentState.startTime = Date.now();
+    showResults(score, passed, results, correctCount);
+}
 
-            document.getElementById('welcomeScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
+// ===== RESULTS SCREEN =====
+function showResults(score, passed, results, correctCount) {
+    console.log('✅ showResults() AVVIATA', { score, passed, correctCount }); // ← DEBUG
+    
+    const quizScreen = document.getElementById('quizScreen');
+    const resultsScreen = document.getElementById('resultsScreen');
+    
+    console.log('🔍 Elementi DOM:', { 
+        quizScreen: quizScreen ? 'TROVATO' : 'NULL', 
+        resultsScreen: resultsScreen ? 'TROVATO' : 'NULL' 
+    }); // ← DEBUG
+    
+    if (!quizScreen || !resultsScreen) {
+        console.error('❌ ERRORE CRITICO: Elementi DOM non trovati!');
+        alert('ERRORE: Impossibile mostrare i risultati. Controlla la console.');
+        return;
+    }
+    
+    quizScreen.classList.add('hidden');
+    resultsScreen.classList.remove('hidden');
+    
+    console.log('👁️ Visibilità cambiata'); // ← DEBUG
 
-            loadQuestion(0);
-            startTimer();
-        }
-    </script>
-</body>
-</html>
-    <!-- ===== RESULTS SCREEN ===== -->
-    <div id="resultsScreen" class="container-main min-h-screen py-8 px-4 hidden">
-        <div class="max-w-4xl mx-auto">
-            
-            <!-- Card Risultato Principale -->
-            <div class="card-warehouse text-center mb-8 animate-fade-in">
-                <div id="resultCard">
-                    <!-- Popolato dinamicamente da JS -->
+    // Card risultato principale
+    const resultCard = document.getElementById('resultCard');
+    console.log('🎴 resultCard:', resultCard ? 'TROVATO' : 'NULL'); // ← DEBUG
+    
+    resultCard.innerHTML = `
+        <div class="mb-6">
+            ${passed ? 
+                '<div class="text-8xl mb-4">🎉</div>' : 
+                '<div class="text-8xl mb-4">😔</div>'
+            }
+            <h1 class="text-5xl font-bold mb-4" style="color: ${passed ? 'var(--success)' : 'var(--danger)'};">
+                ${passed ? 'SUPERATO!' : 'NON SUPERATO'}
+            </h1>
+            <div class="text-6xl font-bold mb-6" style="color: var(--primary);">
+                ${score.toFixed(1)}%
+            </div>
+            <div class="flex justify-center gap-8 text-lg">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600">${correctCount}</div>
+                    <div class="text-gray-600">Corrette</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-red-600">${CONFIG.totalQuestions - correctCount}</div>
+                    <div class="text-gray-600">Errate</div>
                 </div>
             </div>
-
-            <!-- Pulsanti Azione -->
-            <div class="flex flex-wrap gap-4 justify-center mb-8">
-                <button onclick="resetTest()" class="btn-secondary">
-                    🔄 RIPETI TEST
-                </button>
-                <button onclick="generateNewTest()" class="btn-primary">
-                    ✨ GENERA NUOVO TEST
-                </button>
-                <a href="https://trono-slv.github.io/Valutazione-dei-rischi-in-magazzino/" 
-                   target="_blank" 
-                   class="btn-secondary">
-                    📚 TORNA ALLE LEZIONI
-                </a>
-            </div>
-
-            <!-- Riepilogo Dettagliato -->
-            <div class="card-warehouse">
-                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3" style="color: var(--secondary);">
-                    <span class="text-4xl">📋</span>
-                    RIEPILOGO DETTAGLIATO
-                </h2>
-                
-                <div id="reviewContainer" class="space-y-4">
-                    <!-- Popolato dinamicamente da JS -->
-                </div>
-            </div>
-
-            <!-- Footer Crediti -->
-            <div class="mt-8 text-center text-gray-500 text-sm">
-                <p>© 2024 - Quiz realizzato da <strong>Dott. Salvatore Trono</strong></p>
-                <p class="mt-2">Piattaforma formativa SSL - Tutti i diritti riservati</p>
-            </div>
-
         </div>
-    </div>
+        <div class="text-center text-gray-700 italic">
+            ${passed ? 
+                '✅ Ottimo lavoro! Hai dimostrato una buona conoscenza dei rischi specifici in magazzino.' : 
+                '⚠️ Ti consigliamo di rivedere il materiale didattico e riprovare il test.'
+            }
+        </div>
+    `;
+
+    console.log('🎨 Card renderizzata'); // ← DEBUG
+
+    // Riepilogo risposte
+    const reviewContainer = document.getElementById('reviewContainer');
+    reviewContainer.innerHTML = '';
+
+    results.forEach((result, idx) => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = `p-6 rounded-xl border-3 ${
+            result.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
+        }`;
+
+        resultDiv.innerHTML = `
+            <div class="flex items-start gap-4 mb-4">
+                <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
+                    result.isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                }">
+                    ${result.isCorrect ? '✓' : '✗'}
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-bold mb-2" style="color: var(--secondary);">
+                        DOMANDA ${idx + 1}
+                    </div>
+                    <div class="text-lg font-semibold text-gray-800 mb-4">
+                        ${result.question}
+                    </div>
+
+                    ${!result.wasAnswered ? `
+                        <div class="p-3 bg-gray-200 rounded-lg mb-3">
+                            <span class="font-bold text-gray-700">❌ Non hai risposto</span>
+                        </div>
+                    ` : `
+                        <div class="p-3 ${result.isCorrect ? 'bg-green-100' : 'bg-red-100'} rounded-lg mb-3">
+                            <span class="font-bold ${result.isCorrect ? 'text-green-800' : 'text-red-800'}">
+                                La tua risposta:
+                            </span>
+                            <span class="text-gray-800"> ${result.userAnswer}</span>
+                        </div>
+                    `}
+
+                    ${!result.isCorrect ? `
+                        <div class="p-3 bg-green-100 rounded-lg border-2 border-green-500">
+                            <span class="font-bold text-green-800">✓ Risposta corretta:</span>
+                            <span class="text-gray-800"> ${result.correctAnswer}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        reviewContainer.appendChild(resultDiv);
+    });
+
+    console.log('📋 Riepilogo renderizzato con', results.length, 'domande'); // ← DEBUG
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('✨ showResults() COMPLETATA'); // ← DEBUG
+}
+
+// ===== RESET FUNCTIONS =====
+function resetTest() {
+    currentState.currentIndex = 0;
+    currentState.timeRemaining = CONFIG.testDuration;
+    currentState.answers = new Array(CONFIG.totalQuestions).fill(null);
+
+    document.getElementById('resultsScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('timerWarning').classList.add('hidden');
+    document.getElementById('timerCircle').style.stroke = 'var(--primary)';
+    document.getElementById('timerDisplay').style.color = 'var(--primary)';
+
+    loadQuestion(0);
+    startTimer();
+}
+
+function generateNewTest() {
+    currentState.questions = selectRandomQuestions();
+    currentState.currentIndex = 0;
+    currentState.answers = new Array(CONFIG.totalQuestions).fill(null);
+    currentState.timeRemaining = CONFIG.testDuration;
+
+    document.getElementById('resultsScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('timerWarning').classList.add('hidden');
+    document.getElementById('timerCircle').style.stroke = 'var(--primary)';
+    document.getElementById('timerDisplay').style.color = 'var(--primary)';
+
+    loadQuestion(0);
+    startTimer();
+}
+
+// ===== START TEST =====
+function startTest() {
+    currentState.questions = selectRandomQuestions();
+    currentState.startTime = Date.now();
+
+    document.getElementById('welcomeScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+
+    loadQuestion(0);
+    startTimer();
+}
 
     <!-- ===== JAVASCRIPT ===== -->
     <script>
