@@ -1723,7 +1723,7 @@
         // ========================================
         
         function startTest() {
-            currentTest = getRandomQuestions(questionBank, 30);
+            currentTest = getRandomQuestions(questionBank, 15);
             currentQuestionIndex = 0;
             userAnswers = [];
             
@@ -1762,7 +1762,7 @@
             updateTimerDisplay();
         }
 
-        function selectAnswer(selectedOption, button) {
+       function selectAnswer(selectedOption, button) {
     const question = currentTest[currentQuestionIndex];
     const correctAnswer = question.options[question.correct];
     const isCorrect = selectedOption === correctAnswer;
@@ -1776,62 +1776,47 @@
         explanation: question.explanation
     });
     
-    // Stop timer
-    clearInterval(timer);
-    
-    // Advance immediately
-    if (currentQuestionIndex < 29) {
+    // Advance immediately to next question
+    if (currentQuestionIndex < TEST_QUESTIONS - 1) {
         currentQuestionIndex++;
         loadQuestion();
-        startTimer();
     } else {
+        // Test completato - ferma timer e mostra riepilogo
+        clearInterval(timer);
         showSummary();
     }
 }
 
-
-        function startTimer() {
-            const timerElement = document.getElementById('timer');
-            
-            timer = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 10) {
-                    timerElement.classList.add('warning');
-                }
-                if (timeLeft <= 5) {
-                    timerElement.classList.remove('warning');
-                    timerElement.classList.add('danger');
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    // Auto-select wrong answer (timeout)
-                    userAnswers.push({
-                        question: currentTest[currentQuestionIndex].question,
-                        selectedAnswer: 'TEMPO SCADUTO',
-                        correctAnswer: currentTest[currentQuestionIndex].options[currentTest[currentQuestionIndex].correct],
-                        isCorrect: false,
-                        explanation: currentTest[currentQuestionIndex].explanation
-                    });
-                    
-                    if (currentQuestionIndex < 29) {
-                        currentQuestionIndex++;
-                        loadQuestion();
-                        startTimer();
-                    } else {
-                        showSummary();
-                    }
-                }
-            }, 1000);
+function startTimer() {
+    timeLeft = 1200; // 20 minuti = 1200 secondi
+    updateTimerDisplay();
+    
+    timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            // Tempo scaduto - mostra riepilogo
+            showSummary();
         }
+    }, 1000);
+}
 
         function updateTimerDisplay() {
-            const timerElement = document.getElementById('timer');
-            timerElement.textContent = `${timeLeft}s`;
-            timerElement.classList.remove('warning', 'danger');
-        }
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Color coding per 20 minuti totali
+    if (timeLeft <= 120) { // Ultimi 2 minuti = rosso
+        timerElement.className = 'text-2xl font-bold text-red-600';
+    } else if (timeLeft <= 300) { // Ultimi 5 minuti = giallo
+        timerElement.className = 'text-2xl font-bold text-yellow-600';
+    } else {
+        timerElement.className = 'text-2xl font-bold text-green-600';
+    }
+}
 
         function showSummary() {
             clearInterval(timer);
