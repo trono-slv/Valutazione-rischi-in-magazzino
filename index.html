@@ -3,387 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Rischi Specifici Magazzino | 30 Minuti</title>
-    <meta name="description" content="Test interattivo sui rischi specifici in ambiente magazzino - 15 domande casuali in 30 minuti">
-    <meta name="author" content="Dott. Salvatore Trono - Esperto SSL">
+    <title>Test Rischi Specifici Magazziniere - 128 Domande</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        :root {
-            --primary: #FF6B00;
-            --secondary: #4A5568;
-            --accent: #FFC107;
-            --bg: #F7FAFC;
-            --danger: #E53E3E;
-            --success: #38A169;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #455A64 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .glass-card {
+        .container-warehouse {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 107, 0, 0.2);
+            border: 2px solid #607D8B;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .warehouse-pattern {
-            background-image: 
-                repeating-linear-gradient(90deg, rgba(255,107,0,0.03) 0px, transparent 2px, transparent 40px),
-                repeating-linear-gradient(0deg, rgba(255,107,0,0.03) 0px, transparent 2px, transparent 40px);
+        .header-industrial {
+            background: linear-gradient(135deg, #37474F 0%, #455A64 100%);
+            border-bottom: 3px solid #FF6F00;
         }
 
-        .option-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid #E2E8F0;
+        .progress-bar-container {
+            background: #B0BEC5;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
-        .option-btn:hover:not(.correct):not(.incorrect) {
-            border-color: var(--primary);
-            transform: translateX(8px);
-            box-shadow: -4px 4px 0 var(--accent);
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #FF6F00 0%, #FFA726 100%);
+            height: 100%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(255, 111, 0, 0.5);
         }
 
-        .option-btn.selected {
-            border-color: var(--primary);
-            background: rgba(255, 107, 0, 0.1);
+        .timer-display {
+            background: linear-gradient(135deg, #263238 0%, #37474F 100%);
+            border: 2px solid #FF6F00;
+            color: #FFF;
+            font-weight: 700;
+            font-size: 1.5rem;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(255, 111, 0, 0.3);
+            animation: pulse-timer 2s infinite;
         }
 
-        .option-btn.correct {
-            background: rgba(56, 161, 105, 0.15);
-            border-color: var(--success);
-        }
-
-        .option-btn.incorrect {
-            background: rgba(229, 62, 62, 0.15);
-            border-color: var(--danger);
+        @keyframes pulse-timer {
+            0%, 100% { box-shadow: 0 4px 16px rgba(255, 111, 0, 0.3); }
+            50% { box-shadow: 0 4px 24px rgba(255, 111, 0, 0.6); }
         }
 
         .timer-warning {
-            animation: pulse-warning 1s infinite;
+            animation: blink-red 1s infinite;
         }
 
-        @keyframes pulse-warning {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+        @keyframes blink-red {
+            0%, 50%, 100% { background: linear-gradient(135deg, #C62828 0%, #D32F2F 100%); }
+            25%, 75% { background: linear-gradient(135deg, #D32F2F 0%, #E53935 100%); }
         }
 
-        .industrial-badge {
-            background: linear-gradient(135deg, var(--primary) 0%, #E65100 100%);
-            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            padding: 8px 20px 8px 16px;
+        .category-badge {
+            background: linear-gradient(135deg, #546E7A 0%, #607D8B 100%);
+            color: #FFF;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(84, 110, 122, 0.3);
         }
 
-        .hint-box {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 107, 0, 0.05) 100%);
-            border-left: 4px solid var(--accent);
+        .question-card {
+            background: #FAFAFA;
+            border: 2px solid #90A4AE;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
-        @media (max-width: 640px) {
-            .option-btn:hover {
-                transform: none;
-                box-shadow: none;
+        .option-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #B0BEC5;
+            background: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .option-card:hover {
+            transform: translateX(8px);
+            border-color: #546E7A;
+            background: #ECEFF1;
+            box-shadow: 0 4px 12px rgba(84, 110, 122, 0.2);
+        }
+
+        .option-card.selected {
+            border-color: #455A64;
+            background: #CFD8DC;
+            box-shadow: 0 0 0 3px rgba(69, 90, 100, 0.2);
+        }
+
+        .option-card.correct {
+            border-color: #66BB6A;
+            background: #E8F5E9;
+            animation: pulse-correct 0.6s ease-in-out;
+        }
+
+        .option-card.incorrect {
+            border-color: #EF5350;
+            background: #FFEBEE;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes pulse-correct {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .option-letter {
+            background: linear-gradient(135deg, #607D8B 0%, #78909C 100%);
+            color: #FFF;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .option-card.correct .option-letter {
+            background: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+        }
+
+        .option-card.incorrect .option-letter {
+            background: linear-gradient(135deg, #EF5350 0%, #E57373 100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6F00 0%, #FFA726 100%);
+            color: #FFF;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 111, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: linear-gradient(135deg, #B0BEC5 0%, #CFD8DC 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #546E7A 0%, #607D8B 100%);
+            color: #FFF;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(84, 110, 122, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(84, 110, 122, 0.4);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #ECEFF1 0%, #CFD8DC 100%);
+            border: 2px solid #90A4AE;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #37474F;
+            margin-bottom: 8px;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            color: #546E7A;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .final-score {
+            background: linear-gradient(135deg, #FF6F00 0%, #FFA726 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 4rem;
+            font-weight: 700;
+        }
+
+        .category-result {
+            background: #FFFFFF;
+            border: 2px solid #B0BEC5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .category-progress {
+            background: #E0E0E0;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .category-progress-fill {
+            background: linear-gradient(90deg, #66BB6A 0%, #81C784 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container-warehouse {
+                margin: 16px;
+                padding: 16px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .stats-value {
+                font-size: 2rem;
+            }
+
+            .final-score {
+                font-size: 3rem;
             }
         }
     </style>
 </head>
-<body class="warehouse-pattern">
-    
-  <!-- WELCOME SCREEN -->
-<div id="welcomeScreen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-card rounded-3xl p-8 md:p-12 max-w-4xl w-full warehouse-pattern">
+<body class="p-4">
+
+    <!-- CONTAINER PRINCIPALE -->
+    <div class="container-warehouse max-w-4xl mx-auto rounded-2xl">
         
-        <!-- HEADER CON ICONA -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl mb-6 badge-clip" 
-                 style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
-                <span class="text-5xl">📦</span>
+        <!-- HEADER -->
+        <header class="header-industrial rounded-t-2xl p-6 text-white">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold mb-2">🏭 Test Rischi Specifici Magazziniere</h1>
+                <p class="text-sm opacity-90">128 Domande - D.Lgs. 81/2008 e normativa INAIL</p>
             </div>
-            <h1 class="text-4xl md:text-5xl font-black mb-3" style="color: var(--secondary);">
-                Quiz Rischi Specifici<br>in Magazzino
-            </h1>
-            <div class="inline-block px-6 py-2 rounded-full mt-4" 
-                 style="background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);">
-                <p class="text-white font-bold text-sm">
-                    👨‍🏫 Dott. Salvatore Trono - Esperto SSL - Formatore
-                </p>
-            </div>
-        </div>
+        </header>
 
-        <!-- LINK MATERIALE TEORICO -->
-        <div class="mb-8">
-            <a href="https://trono-slv.github.io/Valutazione-dei-rischi-in-magazzino/" 
-               target="_blank"
-               class="block w-full p-6 rounded-2xl border-3 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-               style="background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); border-color: var(--accent);">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-xl flex items-center justify-center" 
-                             style="background: var(--accent);">
-                            <span class="text-3xl">📚</span>
-                        </div>
-                        <div class="text-left">
-                            <h3 class="text-white font-bold text-xl mb-1">
-                                📖 Studia la Teoria
-                            </h3>
-                            <p class="text-gray-300 text-sm">
-                                Consulta il materiale didattico prima del quiz
-                            </p>
-                        </div>
+        <!-- SCHERMATA INIZIALE -->
+        <div id="welcomeScreen" class="p-8 text-center">
+            <div class="mb-8">
+                <div class="text-6xl mb-4">📦</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Benvenuto al Test Completo</h2>
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    Questo test valuta la tua conoscenza sui rischi specifici per magazzinieri secondo il D.Lgs. 81/2008.
+                    Comprende 128 domande suddivise in 6 categorie principali.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+                    <div class="stats-card">
+                        <div class="stats-value">128</div>
+                        <div class="stats-label">Domande Totali</div>
                     </div>
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                    </svg>
+                    <div class="stats-card">
+                        <div class="stats-value">64</div>
+                        <div class="stats-label">Minuti Disponibili</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-value">6</div>
+                        <div class="stats-label">Categorie Rischio</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-value">80%</div>
+                        <div class="stats-label">Soglia Superamento</div>
+                    </div>
                 </div>
-            </a>
-        </div>
 
-        <!-- ISTRUZIONI -->
-        <div class="space-y-6 mb-8">
-            <div class="bg-white/50 rounded-2xl p-6 backdrop-blur">
-                <h2 class="font-bold text-xl mb-4 flex items-center gap-2" style="color: var(--primary);">
-                    <span class="text-2xl">📋</span> ISTRUZIONI
-                </h2>
-                <ul class="space-y-3 text-gray-700">
-                    <li class="flex items-start gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" 
-                              style="background: var(--primary);">1</span>
-                        <span><strong>15 domande casuali</strong> estratte da un paniere di 96 quesiti suddivisi per categoria di rischio</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" 
-                              style="background: var(--primary);">2</span>
-                        <span><strong>30 minuti massimi</strong> per completare il test (timer visibile in alto)</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" 
-                              style="background: var(--primary);">3</span>
-                        <span>Ogni risposta ti farà <strong>avanzare automaticamente</strong> alla domanda successiva</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" 
-                              style="background: var(--primary);">4</span>
-                        <span>Al termine visualizzerai un <strong>riepilogo dettagliato</strong> con risposte corrette ed errate</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" 
-                              style="background: var(--primary);">5</span>
-                        <span>Potrai <strong>ripetere lo stesso quiz</strong> o generarne uno nuovo con domande diverse</span>
-                    </li>
-                </ul>
-            </div>
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+                    <h3 class="font-bold text-blue-900 mb-3">📋 Categorie del Test:</h3>
+                    <ul class="text-left text-blue-800 space-y-2">
+                        <li><strong>• Rischi Biomeccanici:</strong> 32 domande (Distorsioni, dolori, ernie, lombalgie, gonartrosi, patologie arti, infiammazioni, sintesi DMS)</li>
+                        <li><strong>• Rischi Movimenti Ripetitivi:</strong> 12 domande (Ripetitività, posture asimmetriche, sforzi eccessivi)</li>
+                        <li><strong>• Rischi da Infortuni:</strong> 36 domande (Cadute materiali/altezza/scivolamenti, urti, collisioni, intrappolamento, investimenti, schiacciamenti, tagli)</li>
+                        <li><strong>• Rischi Chimici/Biologici:</strong> 24 domande (Esposizione, dermatiti, inalazioni, contatto mucose, ingestione, patologie gastrointestinali)</li>
+                        <li><strong>• Rischi Ambientali:</strong> 8 domande (Incendio, stress termico)</li>
+                        <li><strong>• Rischi Psicosociali:</strong> 16 domande (Disturbi sonno, problemi metabolici, sonnolenza, stress)</li>
+                    </ul>
+                </div>
 
-            <!-- DISCLAIMER LEGALE -->
-            <div class="bg-amber-50 border-2 border-amber-400 rounded-2xl p-6">
-                <h3 class="font-bold text-lg mb-3 flex items-center gap-2 text-amber-800">
-                    <span class="text-2xl">⚠️</span> DISCLAIMER LEGALE
-                </h3>
-                <p class="text-sm text-amber-900 leading-relaxed">
-                    Questo quiz è uno <strong>strumento didattico autoformativo</strong> per la verifica delle conoscenze sui rischi specifici in ambiente magazzino. 
-                    <strong>Non sostituisce</strong> la formazione obbligatoria ai sensi del D.Lgs. 81/2008 e degli Accordi Stato-Regioni. 
-                    I contenuti sono basati su normativa vigente, linee guida INAIL e standard tecnici UNI EN, aggiornati al 2025.
-                </p>
-            </div>
-
-            <!-- CREDITI -->
-            <div class="bg-gray-100 rounded-2xl p-6">
-                <h3 class="font-bold text-lg mb-3 flex items-center gap-2" style="color: var(--secondary);">
-                    <span class="text-2xl">ℹ️</span> CREDITI
-                </h3>
-                <p class="text-sm text-gray-700 leading-relaxed mb-3">
-                    <strong>Autore contenuti:</strong> Dott. Salvatore Trono - Esperto in Sicurezza sul Lavoro, Formatore qualificato<br>
-                    <strong>Riferimenti normativi:</strong> D.Lgs. 81/2008, Accordi Stato-Regioni 2011/2025, ISO 45001, Linee Guida INAIL<br>
-                    <strong>Standard tecnici:</strong> UNI EN ISO 20345, UNI EN 374, UNI EN 388, UNI EN 13893, UNI EN ISO 10819
-                </p>
-                <p class="text-xs text-gray-500 italic">
-                    Versione 1.0 - Gennaio 2025
-                </p>
+                <button onclick="startTest()" class="btn-primary text-lg px-12 py-4">
+                    🚀 Inizia il Test
+                </button>
             </div>
         </div>
 
-        <!-- MESSAGGIO MOTIVAZIONALE -->
-        <div class="text-center mb-8">
-            <p class="text-3xl font-black mb-2" style="color: var(--primary);">
-                🎯 Buon Divertimento!
-            </p>
-            <p class="text-gray-600 font-medium">
-                Metti alla prova le tue conoscenze sulla sicurezza in magazzino
-            </p>
-        </div>
-
-        <!-- PULSANTE AVVIO -->
-        <button onclick="startQuiz()" 
-                class="w-full py-6 rounded-2xl font-black text-2xl text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
-            🚀 INIZIA IL QUIZ
-        </button>
-
-    </div>
-</div>
-
-
-    <!-- SCHERMATA QUIZ -->
-    <div id="quizScreen" class="hidden min-h-screen p-4 py-8">
-        <div class="max-w-4xl mx-auto">
+        <!-- SCHERMATA QUIZ -->
+        <div id="quizScreen" class="hidden p-8">
             
-            <!-- Header Quiz -->
-            <div class="glass-card rounded-2xl p-6 mb-6">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl" style="background: var(--primary);">
-                            📦
-                        </div>
-                        <div>
-                            <h1 class="text-xl md:text-2xl font-bold" style="color: var(--secondary);">Quiz Rischi Magazzino</h1>
-                            <p class="text-sm font-medium text-gray-500">Dott. Salvatore Trono - Esperto SSL</p>
-                        </div>
+            <!-- BARRA PROGRESSO E TIMER -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <span class="category-badge" id="categoryBadge">Categoria</span>
+                        <span class="text-sm text-gray-600 ml-3" id="questionCounter">Domanda 1/128</span>
                     </div>
-                    <div class="flex items-center gap-6 flex-wrap">
-                        <div class="flex items-center gap-2 text-sm font-medium">
-                            <span style="color: var(--secondary);">Domanda</span>
-                            <span class="px-3 py-1 rounded-lg font-bold text-white" style="background: var(--primary);" id="questionNumber">1/15</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm font-medium">
-                            <span>⏱️</span>
-                            <span id="timer" class="px-3 py-1 rounded-lg font-bold" style="background: var(--accent); color: var(--secondary);">30:00</span>
-                        </div>
+                    <div class="timer-display" id="timerDisplay">
+                        ⏱️ <span id="timeLeft">64:00</span>
                     </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
                 </div>
             </div>
 
-            <!-- Domanda -->
-            <div class="glass-card rounded-2xl p-8 mb-6">
-                <div class="mb-8">
-                    <div class="inline-block px-4 py-2 rounded-lg mb-4 text-sm font-bold" style="background: rgba(255, 107, 0, 0.1); color: var(--primary);" id="categoryBadge">
-                        CATEGORIA
-                    </div>
-                    <h2 class="text-xl md:text-2xl font-bold leading-relaxed" style="color: var(--secondary);" id="questionText"></h2>
-                </div>
+            <!-- DOMANDA -->
+            <div class="question-card">
+                <h3 class="text-xl font-bold text-gray-800 mb-6" id="questionText">
+                    Domanda caricamento...
+                </h3>
 
-                <!-- Opzioni -->
-                <div class="space-y-4 mb-6" id="optionsContainer"></div>
-
-                <!-- Suggerimento -->
-                <div class="hint-box rounded-xl p-5">
-                    <div class="flex items-start gap-3">
-                        <span class="text-2xl">💡</span>
-                        <div>
-                            <p class="font-bold mb-2" style="color: var(--secondary);">SUGGERIMENTO:</p>
-                            <p class="text-sm leading-relaxed text-gray-700" id="hintText"></p>
-                        </div>
-                    </div>
+                <!-- OPZIONI -->
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Le opzioni verranno generate dinamicamente -->
                 </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="glass-card rounded-xl p-4">
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-semibold text-gray-600">Progresso</span>
-                    <div class="flex-1 h-3 rounded-full overflow-hidden" style="background: rgba(74, 85, 104, 0.1);">
-                        <div id="progressBar" class="h-full rounded-full transition-all duration-500" style="background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); width: 6.67%;"></div>
-                    </div>
-                    <span class="text-sm font-bold" style="color: var(--primary);" id="progressPercent">7%</span>
-                </div>
+            <!-- PULSANTI NAVIGAZIONE -->
+            <div class="flex justify-between items-center">
+                <button onclick="previousQuestion()" id="btnPrev" class="btn-secondary" disabled>
+                    ← Precedente
+                </button>
+                <button onclick="nextQuestion()" id="btnNext" class="btn-primary">
+                    Successiva →
+                </button>
+                <button onclick="submitTest()" id="btnSubmit" class="btn-primary hidden">
+                    ✓ Termina Test
+                </button>
             </div>
-
         </div>
-    </div>
 
-    <!-- SCHERMATA RIEPILOGO -->
-    <div id="summaryScreen" class="hidden min-h-screen p-4 py-8">
-        <div class="max-w-4xl mx-auto">
-            
-            <!-- Header Risultati -->
-            <div class="glass-card rounded-2xl p-8 mb-6 text-center">
-                <div class="text-6xl mb-4">🏁</div>
-                <h1 class="text-3xl md:text-4xl font-extrabold mb-4" style="color: var(--secondary);">Quiz Completato!</h1>
-                <div class="flex items-center justify-center gap-8 flex-wrap mb-6">
-                    <div class="text-center">
-                        <div class="text-4xl font-extrabold mb-1" style="color: var(--success);" id="correctCount">0</div>
-                        <div class="text-sm font-semibold text-gray-600">Risposte Corrette</div>
-                    </div>
-                    <div class="w-px h-16" style="background: var(--secondary);"></div>
-                    <div class="text-center">
-                        <div class="text-4xl font-extrabold mb-1" style="color: var(--danger);" id="incorrectCount">0</div>
-                        <div class="text-sm font-semibold text-gray-600">Risposte Errate</div>
-                    </div>
-                    <div class="w-px h-16" style="background: var(--secondary);"></div>
-                    <div class="text-center">
-                        <div class="text-4xl font-extrabold mb-1" style="color: var(--primary);" id="scorePercent">0%</div>
-                        <div class="text-sm font-semibold text-gray-600">Punteggio</div>
-                    </div>
-                </div>
-                <div class="inline-block px-6 py-3 rounded-xl font-bold text-white" style="background: linear-gradient(135deg, var(--primary) 0%, #E65100 100%);" id="resultMessage"></div>
+        <!-- SCHERMATA RISULTATI -->
+        <div id="resultsScreen" class="hidden p-8">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4" id="resultEmoji">🎯</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Test Completato!</h2>
+                <div class="final-score" id="finalScore">0%</div>
+                <p class="text-xl text-gray-600 mt-2" id="resultMessage">Caricamento risultati...</p>
             </div>
 
-            <!-- Riepilogo Domande -->
-            <div id="summaryContainer" class="space-y-4 mb-6"></div>
-
-            <!-- Pulsanti Azione -->
-            <div class="glass-card rounded-2xl p-6">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <button onclick="repeatQuiz()" class="py-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105" style="background: var(--secondary);">
-                        🔄 RIPETI STESSO QUIZ
-                    </button>
-                    <button onclick="newQuiz()" class="py-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105" style="background: linear-gradient(135deg, var(--primary) 0%, #E65100 100%);">
-                        🎲 GENERA NUOVO QUIZ
-                    </button>
+            <!-- STATISTICHE GENERALI -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="stats-card">
+                    <div class="stats-value text-green-600" id="correctAnswers">0</div>
+                    <div class="stats-label">Corrette</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-value text-red-600" id="wrongAnswers">0</div>
+                    <div class="stats-label">Errate</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-value text-gray-600" id="unansweredCount">0</div>
+                    <div class="stats-label">Non Risposto</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-value text-blue-600" id="timeTaken">0:00</div>
+                    <div class="stats-label">Tempo Impiegato</div>
                 </div>
             </div>
 
+            <!-- RISULTATI PER CATEGORIA -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Risultati per Categoria</h3>
+                <div id="categoryResults">
+                    <!-- Generato dinamicamente -->
+                </div>
+            </div>
+
+            <!-- PULSANTI AZIONI -->
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button onclick="restartTest()" class="btn-primary">
+                    🔄 Rifai il Test
+                </button>
+                <button onclick="reviewAnswers()" class="btn-secondary">
+                    📝 Rivedi Risposte
+                </button>
+            </div>
         </div>
+
     </div>
 
     <script>
-        // ==================== DATABASE DOMANDE ====================
-        const questionDatabase = [
-            // RISCHI FISICI - Punto 1: Distorsioni articolari
+        // ===== SETUP INIZIALE =====
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let startTime = null;
+        let timerInterval = null;
+        let timeRemaining = 64 * 60; // 64 minuti in secondi
+        let questionsData = []; // Verrà popolato nel BLOCCO 2
+        // ===== ARRAY DOMANDE (128 TOTALI) =====
+        questionsData = [
+            
+            // ==========================================
+            // RISCHI BIOMECCANICI E MUSCOLOSCHELETRICI (32 domande)
+            // ==========================================
+            
+            // PUNTO 1: Distorsioni articolari (4 domande)
             {
-                category: "Rischi Fisici - Distorsioni Articolari",
-                question: "Qual è una causa specifica delle distorsioni articolari per magazzinieri?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Distorsioni articolari - Cause",
+                question: "Secondo i fattori causali specifici per magazzinieri, qual è una causa principale delle distorsioni articolari durante la movimentazione?",
                 options: [
-                    "Movimenti bruschi e torsioni del tronco in spazi ristretti durante l'uso di transpallet.",
-                    "Alimentazione irregolare durante turni notturni.",
-                    "Esposizione prolungata a vibrazioni a bassa frequenza.",
-                    "Inalazione di polveri sottili senza DPI respiratori."
+                    "Torsioni del tronco durante la retromarcia con transpallet in spazi ristretti.",
+                    "Esposizione prolungata a temperature estreme senza pause.",
+                    "Accumulo di merci infiammabili vicino alle postazioni di lavoro.",
+                    "Turni notturni con desincronizzazione del ciclo sonno-veglia."
                 ],
-                correct: 0,
-                hint: "Movimenti bruschi in spazi ristretti causano distorsioni (INAIL statistiche MMC - Art. 168 D.Lgs. 81/2008)."
+                correct: 0
             },
             {
-                category: "Rischi Fisici - Distorsioni Articolari",
-                question: "Quali danni cronici derivano dalle distorsioni articolari?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Distorsioni articolari - Danni",
+                question: "Quali sono i danni tipici delle distorsioni articolari, con conseguenze gravi per addetti MMC?",
                 options: [
-                    "Sonnolenza e riduzione della vigilanza durante i turni.",
-                    "Lesioni legamentose e instabilità articolare con possibile invalidità INAIL 5-15%.",
-                    "Gastriti e ulcere da stress psicofisico.",
-                    "Disturbi del sonno non ristoratore."
+                    "Problemi gastrointestinali come gastriti da alimentazione irregolare.",
+                    "Lesioni legamentose con edema, dolore acuto e instabilità cronica (invalidità INAIL 5-15%).",
+                    "Disturbi del sonno e sonnolenza cronica diurna.",
+                    "Infiammazioni muscolari croniche come tendiniti."
                 ],
-                correct: 1,
-                hint: "Conseguenze includono instabilità cronica riconosciuta INAIL (Art. 211 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Distorsioni Articolari",
-                question: "Qual è un metodo di prevenzione chiave per le distorsioni articolari?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Distorsioni articolari - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per le distorsioni articolari, secondo l'Allegato XXXIII D.Lgs. 81/2008?",
                 options: [
-                    "DPI per vibrazioni mano-braccio.",
-                    "Formazione su igiene del sonno per lavoro notturno.",
-                    "Valutazione NIOSH e teamlifting per carichi >25kg (ISO 11228).",
-                    "Stoccaggio segregato per merci chimiche."
+                    "Utilizzo di DPI come guanti antivibrazione solo per vibrazioni.",
+                    "Consulenza psicologica per stress da scadenze stringenti.",
+                    "Rotazione turni e teamlifting per carichi >25kg con valutazione NIOSH (LI <1).",
+                    "Impianti di ventilazione per stress termico."
                 ],
-                correct: 2,
-                hint: "Prevenzione con valutazione Lifting Index <1 e lavoro in squadra (Allegato XXXIII D.Lgs. 81/2008)."
+                correct: 2
             },
             {
-                category: "Rischi Fisici - Distorsioni Articolari",
+                category: "Rischi Biomeccanici",
+                subcategory: "Distorsioni articolari - Protezione",
                 question: "Qual è un metodo di protezione specifico contro le distorsioni articolari per magazzinieri?",
                 options: [
                     "Formazione su igiene del sonno per lavoro notturno.",
@@ -391,13 +497,13 @@
                     "Rotazione mansioni per ridurre movimenti ripetitivi.",
                     "Stoccaggio segregato per merci chimiche."
                 ],
-                correct: 1,
-                hint: "Protezione con UNI EN 13893 (pavimentazione antiscivolo) e sorveglianza sanitaria secondo Art. 41 D.Lgs. 81/2008."
+                correct: 1
             },
 
-            // RISCHI FISICI - Punto 2: Dolori articolari e ossei
+            // PUNTO 2: Dolori articolari e ossei (4 domande)
             {
-                category: "Rischi Fisici - Dolori Articolari",
+                category: "Rischi Biomeccanici",
+                subcategory: "Dolori articolari/ossei - Cause",
                 question: "Qual è una causa specifica dei dolori articolari e ossei per addetti MMC, legata a posture incongrue?",
                 options: [
                     "Turni notturni con pasti irregolari.",
@@ -405,11 +511,11 @@
                     "Isolamento sociale durante il lavoro.",
                     "Esposizione a polveri sottili senza mascherine."
                 ],
-                correct: 1,
-                hint: "Fattori aggravanti come vibrazioni e posture prolungate riducono elasticità articolare (ISO 11228)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Dolori Articolari",
+                category: "Rischi Biomeccanici",
+                subcategory: "Dolori articolari/ossei - Danni",
                 question: "Quali danni cronici derivano dai dolori articolari e ossei, con impatto su funzionalità?",
                 options: [
                     "Sonnolenza e riduzione vigilanza durante turni.",
@@ -417,337 +523,441 @@
                     "Gastriti e ulcere da stress cronico.",
                     "Disturbi del sonno non ristoratore."
                 ],
-                correct: 1,
-                hint: "Artrosi post-traumatica cronica con limitazione funzionale riconosciuta INAIL (statistiche DMS)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Dolori Articolari",
-                question: "Qual è un metodo di prevenzione per dolori articolari e ossei?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Dolori articolari/ossei - Prevenzione",
+                question: "Secondo le misure per dolori articolari e ossei, qual è un metodo di prevenzione ergonomica?",
                 options: [
-                    "Delimitazione zone per veicoli.",
-                    "Valutazione psicofisica per sonno.",
-                    "Formazione MMC (Accordo Stato-Regioni 2011) e ausili meccanici per ridurre flessioni >60°.",
-                    "Rimozione immediata ostacoli."
+                    "DPI come caschi per traumi cranici.",
+                    "Consulenza per sovraccarico psicofisico.",
+                    "Formazione obbligatoria (Accordo 2011, 8h base) e uso ausili meccanici per ridurre vibrazioni.",
+                    "Stoccaggio segregato chimico."
                 ],
-                correct: 2,
-                hint: "Riduce flessioni eccessive del tronco attraverso ausili e formazione specifica (Allegato XXXIII D.Lgs. 81/2008)."
+                correct: 2
             },
             {
-                category: "Rischi Fisici - Dolori Articolari",
-                question: "Qual è un metodo di protezione per dolori articolari e ossei?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Dolori articolari/ossei - Protezione",
+                question: "Qual è un metodo di protezione specifico per dolori articolari e ossei?",
                 options: [
-                    "Test isocinetici in sorveglianza per forza articolare (Art. 41).",
-                    "Imbracature anticaduta.",
-                    "Kit primo soccorso per tagli.",
+                    "Plantari ergonomici e sorveglianza radiografica (Art. 41).",
+                    "Rotazione per movimenti ripetitivi.",
+                    "Illuminazione circadiana per notturno.",
+                    "Segnaletica per veicoli."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 3: Ernie discali (4 domande)
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Ernie discali - Cause",
+                question: "Qual è una causa specifica delle ernie discali per magazzinieri, legata a MMC?",
+                options: [
+                    "Stress da scadenze stringenti.",
+                    "Sollevamenti ripetuti con carichi pesanti (>25kg) e posture incongrue (flessioni/torsioni lombare L4-L5).",
+                    "Turni notturni con alimentazione irregolare.",
+                    "Vibrazioni inferiori a 2m/s²."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Ernie discali - Danni",
+                question: "Quali danni cronici derivano dalle ernie discali, con riconoscimento INAIL?",
+                options: [
+                    "Gastriti e problemi metabolici.",
+                    "Protrusioni/erniazioni L4-L5 con dolore radicolare e invalidità 20-40% (Art. 211).",
+                    "Formicolio agli arti superiori.",
+                    "Cefalee tensionali croniche."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Ernie discali - Prevenzione",
+                question: "Qual è un metodo di prevenzione per ernie discali, da Allegato XXXIII?",
+                options: [
+                    "Consulenza psicologica per stress.",
+                    "Mascherine per polveri sottili.",
+                    "Valutazione biomeccanica con NIOSH e limiti massa cumulativa <500kg/giorno.",
+                    "Formazione su igiene del sonno."
+                ],
+                correct: 2
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Ernie discali - Protezione",
+                question: "Qual è un metodo di protezione specifico per ernie discali?",
+                options: [
+                    "Rotazione mansioni per stress psicosociale.",
+                    "DPI ergonomici come cinture lombari e sorveglianza con RMN (Art. 41).",
+                    "Pause per alimentazione regolare.",
+                    "Illuminazione circadiana."
+                ],
+                correct: 1
+            },
+
+            // PUNTO 4: Lombalgie e sciatalgie (4 domande)
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Lombalgie/sciatalgie - Cause",
+                question: "Qual è una causa specifica delle lombalgie e sciatalgie da MMC?",
+                options: [
+                    "Stress da scadenze stringenti.",
+                    "Posture incongrue e sforzi ripetuti in MMC (lombare L4-L5).",
+                    "Sonno frammentato da turni.",
+                    "Vibrazioni inferiori a 2m/s²."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Lombalgie/sciatalgie - Danni",
+                question: "Quali danni cronici derivano dalle lombalgie e sciatalgie?",
+                options: [
+                    "Rigidità e dolore irradiato alle gambe, con cronicizzazione >3 mesi (INAIL).",
+                    "Gastriti da alimentazione.",
+                    "Formicolio agli arti superiori.",
+                    "Cefalee tensionali."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Lombalgie/sciatalgie - Prevenzione",
+                question: "Qual è un metodo di prevenzione per lombalgie, da Allegato XXXIII?",
+                options: [
+                    "Consulenza psicologica.",
+                    "Rotazione turni e ausili meccanici per ridurre sforzi dorso-lombari.",
+                    "Mascherine per polveri.",
+                    "Luci blu per circadiani."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Biomeccanici",
+                subcategory: "Lombalgie/sciatalgie - Protezione",
+                question: "Qual è un metodo di protezione contro lombalgie e sciatalgie?",
+                options: [
+                    "Formazione specifica (12h Accordo 2011 agg.2025) e sorveglianza (Art. 41).",
+                    "Esoscheletri per arti superiori.",
+                    "Pause per stress termico.",
                     "Gilet alta visibilità."
                 ],
-                correct: 0,
-                hint: "Sorveglianza sanitaria con test di forza articolare secondo Art. 41 D.Lgs. 81/2008."
+                correct: 0
             },
 
-            // RISCHI TRAUMATICI - Punto 1: Caduta materiali
+            // PUNTO 5: Gonartrosi (4 domande)
             {
-                category: "Rischi Traumatici - Caduta Materiali",
-                question: "Qual è una causa principale della caduta di materiali/oggetti per magazzinieri?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Gonartrosi - Cause",
+                question: "Qual è una causa principale della gonartrosi per magazzinieri?",
                 options: [
-                    "Esposizione a vibrazioni da muletti senza pause.",
-                    "Impilaggio scorretto in altezza o stoccaggio instabile di merci, con rischio schiacciamento sottostanti.",
-                    "Turni notturni con desincronizzazione del sonno.",
-                    "Movimenti ripetitivi ad alta frequenza."
+                    "Turni notturni con desincronizzazione.",
+                    "Stance prolungata >6h e carico ripetuto su ginocchia (MMC, picking).",
+                    "Vibrazioni da muletti <2m/s².",
+                    "Stress psicosociale da scadenze."
                 ],
-                correct: 1,
-                hint: "Stoccaggio scorretto è causa primaria (INAIL 20-30% infortuni magazzino - Allegato IV D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Caduta Materiali",
-                question: "Quali danni tipici derivano dalla caduta di materiali/oggetti?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Gonartrosi - Danni",
+                question: "Quali danni cronici derivano dalla gonartrosi?",
                 options: [
-                    "Disturbi del sonno e sonnolenza cronica.",
-                    "Schiacciamenti, fratture multiple e traumi gravi (INAIL: 20-30% infortuni magazzino).",
-                    "Lombalgie croniche da posture.",
-                    "Gastriti da alimentazione irregolare."
-                ],
-                correct: 1,
-                hint: "Traumi da schiacciamento con fratture rappresentano 20-30% degli infortuni in magazzino (statistiche INAIL)."
-            },
-            {
-                category: "Rischi Traumatici - Caduta Materiali",
-                question: "Qual è un metodo di prevenzione chiave per la caduta di materiali/oggetti?",
-                options: [
-                    "Rotazione turni per stress psicosociale.",
-                    "Valutazione stoccaggio (altezza max sicura, fissaggi) e layout magazzino (Allegato IV).",
-                    "Formazione su igiene del sonno.",
-                    "DPI ergonomici per arti superiori."
-                ],
-                correct: 1,
-                hint: "Valutazione dello stoccaggio e layout sicuro del magazzino (Allegato IV D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Traumatici - Caduta Materiali",
-                question: "Qual è un metodo di protezione specifico contro la caduta di materiali/oggetti?",
-                options: [
-                    "Caschi antinfortunio (UNI EN 397) e sorveglianza sanitaria per traumi (Art. 41).",
-                    "Micro-pause per movimenti ripetitivi.",
-                    "Consulenza psicologica per isolamento.",
-                    "Guanti antivibrazione per muletti."
-                ],
-                correct: 0,
-                hint: "DPI specifici (caschi UNI EN 397) con sorveglianza sanitaria per prevenzione traumi cranici (Art. 41)."
-            },
-
-            // RISCHI TRAUMATICI - Punto 3: Cadute e scivolamenti
-            {
-                category: "Rischi Traumatici - Cadute e Scivolamenti",
-                question: "Qual è una causa principale delle cadute e scivolamenti in magazzino?",
-                options: [
-                    "Movimenti bruschi con transpallet.",
-                    "Presenza di liquidi sul pavimento, oggetti non conservati o superfici scivolose.",
-                    "Posture incongrue prolungate.",
-                    "Esposizione a rumori elevati."
-                ],
-                correct: 1,
-                hint: "Liquidi e superfici scivolose sono causa primaria di cadute (Allegato IV D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Traumatici - Cadute e Scivolamenti",
-                question: "Quali sono i danni tipici dalle cadute e scivolamenti?",
-                options: [
-                    "Problemi gastrointestinali cronici.",
-                    "Distorsioni, contusioni e lesioni articolari (INAIL: 25% infortuni magazzino).",
-                    "Sonnolenza diurna da turni.",
-                    "Infiammazioni muscolari diffuse."
-                ],
-                correct: 1,
-                hint: "Rappresentano il 25% degli infortuni in magazzino con distorsioni e contusioni (statistiche INAIL)."
-            },
-            {
-                category: "Rischi Traumatici - Cadute e Scivolamenti",
-                question: "Qual è un metodo di prevenzione per cadute e scivolamenti?",
-                options: [
-                    "Consulenza per stress.",
-                    "Manutenzione pavimenti e rimozione immediata ostacoli/liquidi.",
-                    "DPI per vibrazioni.",
-                    "Valutazione OCRA per ripetitivi."
-                ],
-                correct: 1,
-                hint: "Manutenzione e pulizia immediata (Allegato IV D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Traumatici - Cadute e Scivolamenti",
-                question: "Qual è un metodo di protezione specifico per cadute e scivolamenti?",
-                options: [
-                    "Scarpe antiscivolo S3 (UNI EN ISO 20345) e segnaletica (Art. 162).",
-                    "Esoscheletri per lombari.",
-                    "Micro-pause per sonno.",
-                    "Guanti per chimici."
-                ],
-                correct: 0,
-                hint: "DPI calzature antiscivolo certificate UNI EN ISO 20345 con segnaletica adeguata (Art. 162 D.Lgs. 81/2008)."
-            },
-
-            // RISCHI TRAUMATICI - Punto 5: Collisioni carrelli
-            {
-                category: "Rischi Traumatici - Collisioni Carrelli",
-                question: "Qual è una causa principale delle collisioni e ribaltamenti di carrelli elevatori?",
-                options: [
-                    "Sovraccarico psicofisico.",
-                    "Operazioni di carico/scarico con muletti in spazi ristretti o instabili.",
-                    "Vibrazioni basse frequenze.",
-                    "Illuminazione insufficiente."
-                ],
-                correct: 1,
-                hint: "Operazioni in spazi ristretti e instabili causano ribaltamenti (Art. 71 D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Traumatici - Collisioni Carrelli",
-                question: "Quali danni tipici dai ribaltamenti di carrelli elevatori?",
-                options: [
-                    "Problemi metabolici.",
-                    "Traumi per operatore e altri, inclusi schiacciamenti fatali (INAIL 10-15% gravi).",
-                    "Tendiniti superiori.",
+                    "Problemi gastrointestinali.",
+                    "Degenerazione articolare con dolore, rigidità e limitazione funzionale >30% (INAIL).",
+                    "Formicolio arti superiori.",
                     "Insonnia cronica."
                 ],
-                correct: 1,
-                hint: "Schiacciamenti fatali rappresentano 10-15% degli infortuni gravi (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Collisioni Carrelli",
-                question: "Qual è un metodo di prevenzione per collisioni e ribaltamenti?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Gonartrosi - Prevenzione",
+                question: "Qual è un metodo di prevenzione per gonartrosi?",
                 options: [
-                    "Manutenzione regolare muletti e formazione abilitante (12h Accordo 2011).",
-                    "Stretching quotidiano.",
-                    "Segnaletica chimica.",
-                    "Valutazione sonno."
+                    "Consulenza psicologica.",
+                    "Rotazione posture stance/dinamica e micro-pause 5min/2h (Accordo 2011 agg.2025).",
+                    "Mascherine FFP2.",
+                    "Illuminazione per notturno."
                 ],
-                correct: 0,
-                hint: "Formazione obbligatoria 12 ore secondo Accordo Stato-Regioni 2011 con manutenzione periodica (Art. 71)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Collisioni Carrelli",
-                question: "Qual è un metodo di protezione specifico per ribaltamenti carrelli?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Gonartrosi - Protezione",
+                question: "Qual è un metodo di protezione specifico per gonartrosi?",
                 options: [
-                    "Cinture di sicurezza su muletti e sorveglianza (Art. 41).",
-                    "Ginocchiere antishock.",
-                    "Rotazione turni.",
-                    "Guanti antivibrazione."
+                    "Ginocchiere ergonomiche (UNI EN 14404) e sorveglianza con RX (Art. 41).",
+                    "Cinture lombari.",
+                    "Guanti antivibrazione.",
+                    "Caschi antinfortunio."
                 ],
-                correct: 0,
-                hint: "Cinture di sicurezza obbligatorie sui carrelli elevatori con sorveglianza sanitaria (Art. 41 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI TRAUMATICI - Punto 9: Tagli e ferite
+            // PUNTO 6: Patologie degli arti superiori (4 domande)
             {
-                category: "Rischi Traumatici - Tagli e Ferite",
-                question: "Qual è una causa principale dei tagli e ferite in movimentazione?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Patologie arti superiori - Cause",
+                question: "Qual è una causa specifica delle patologie arti superiori come sindrome tunnel carpale?",
                 options: [
-                    "Contatto con oggetti taglienti durante operazioni specifiche.",
-                    "Superfici scivolose.",
-                    "Posture incongrue.",
-                    "Rumori da mezzi."
+                    "Turni con sonnolenza.",
+                    "Movimenti ripetitivi >15/min e vibrazioni mano-braccio >2m/s².",
+                    "Temperature estreme.",
+                    "Stress da targets."
                 ],
-                correct: 0,
-                hint: "Contatto diretto con oggetti taglienti durante manipolazione merci (Art. 15 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Tagli e Ferite",
-                question: "Quali danni tipici dai tagli e ferite?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Patologie arti superiori - Danni",
+                question: "Quali danni da patologie arti superiori, riconosciuti INAIL?",
                 options: [
-                    "Infiammazioni tendinee.",
-                    "Lesioni cutanee, infezioni e cicatrici (INAIL 10% infortuni minori).",
-                    "Traumi cranici gravi.",
-                    "Insonnia da turni."
+                    "Gastriti metaboliche.",
+                    "Formicolio, perdita forza e cronicizzazione >3 mesi (Art. 211).",
+                    "Lombalgie irradiate.",
+                    "Insonnia cronica."
                 ],
-                correct: 1,
-                hint: "Rappresentano il 10% degli infortuni minori con rischio infezioni (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Tagli e Ferite",
-                question: "Qual è un metodo di prevenzione per tagli e ferite?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Patologie arti superiori - Prevenzione",
+                question: "Qual è un metodo di prevenzione per patologie arti superiori?",
                 options: [
-                    "Manipolazione sicura e rimozione taglienti (Art. 15 D.Lgs. 81/2008).",
-                    "Valutazione REBA.",
-                    "Pause micro.",
-                    "Consulenza stress."
+                    "Illuminazione per notturno.",
+                    "Valutazione OCRA/REBA e micro-pause 2min/45min (Allegato XXXIV).",
+                    "Teamlifting per lombari.",
+                    "Consulenza psicologica."
                 ],
-                correct: 0,
-                hint: "Procedure di manipolazione sicura e rimozione oggetti taglienti (Art. 15 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Traumatici - Tagli e Ferite",
-                question: "Qual è un metodo di protezione specifico per tagli e ferite?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Patologie arti superiori - Protezione",
+                question: "Qual è un metodo di protezione per patologie arti superiori?",
                 options: [
-                    "Guanti antitaglio (UNI EN 388) e kit primo soccorso (Accordo 2011).",
-                    "Caschi.",
-                    "Rotazione mansioni.",
-                    "Scarpe antiscivolo."
+                    "Rotazione per sonno.",
+                    "Guanti antivibrazione (UNI EN ISO 10819) e EMG in sorveglianza (Art. 41).",
+                    "Cinture lombari.",
+                    "Scarpe S3."
                 ],
-                correct: 0,
-                hint: "DPI guanti certificati antitaglio UNI EN 388 con kit primo soccorso disponibile (Accordo 2011)."
+                correct: 1
             },
 
-            // RISCHI POSTURALI - Punto 1: Movimenti ripetitivi
+            // PUNTO 7: Problemi muscolari e infiammazioni (4 domande)
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è una causa specifica dei movimenti ripetitivi in magazzino?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Problemi muscolari - Cause",
+                question: "Qual è una causa principale dei problemi muscolari e infiammazioni?",
                 options: [
-                    "Operazioni ripetute ad alta frequenza come picking veloce (>15 movimenti/min).",
-                    "Esposizione a vibrazioni da transpallet.",
-                    "Accumulo di liquidi sul pavimento.",
-                    "Turni notturni prolungati."
+                    "Desincronizzazione circadiana.",
+                    "Sovraccarico statico/dinamico con stance >6h e mancanza micro-pause.",
+                    "Polveri sottili inalabili.",
+                    "Stress da scadenze."
                 ],
-                correct: 0,
-                hint: "Stress biomeccanico da ripetitività elevata (Allegato XXXIV D.Lgs. 81/2008 - ISO 11228-3)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Quali danni cronici derivano dai movimenti ripetitivi?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Problemi muscolari - Danni",
+                question: "Quali danni cronici derivano da problemi muscolari e infiammazioni?",
                 options: [
-                    "Disturbi del sonno cronici.",
-                    "Stress biomeccanico con DMS come tendiniti (INAIL: prevalenza 40-50%).",
-                    "Gastriti da alimentazione.",
+                    "Disturbi del sonno.",
+                    "Tendiniti, miositi e dolore cronico (INAIL: 30-40% in MMC ripetuta).",
+                    "Gastriti croniche.",
                     "Traumi cranici."
                 ],
-                correct: 1,
-                hint: "DMS come tendiniti con prevalenza 40-50% nei lavoratori esposti (INAIL - Art. 211 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è un metodo di prevenzione per movimenti ripetitivi?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Problemi muscolari - Prevenzione",
+                question: "Qual è un metodo di prevenzione per problemi muscolari?",
                 options: [
-                    "Valutazione OCRA/REBA e micro-pause 2min/45min.",
-                    "Delimitazione zone veicoli.",
-                    "Formazione igiene sonno.",
-                    "Stoccaggio segregato chimici."
+                    "Consulenza psicologica.",
+                    "Stretching pre-turno e rotazione (Accordo 2011 agg.2025, 4h ergonomia).",
+                    "Mascherine per polveri.",
+                    "Segnaletica incendi."
                 ],
-                correct: 0,
-                hint: "Valutazione con metodi OCRA/REBA e pause programmate (ISO 11228-3 - Allegato XXXIV)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è un metodo di protezione per movimenti ripetitivi?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Problemi muscolari - Protezione",
+                question: "Qual è un metodo di protezione per problemi muscolari?",
                 options: [
-                    "Guanti antivibrazione (UNI EN ISO 10819) e sorveglianza con EMG (Art. 41).",
-                    "Caschi antinfortunio.",
-                    "Scarpe antiscivolo.",
-                    "Kit primo soccorso."
+                    "Esoscheletri passivi (riduzione carico 30%) e sorveglianza (Art. 41).",
+                    "Caschi per cadute.",
+                    "Gilet visibilità.",
+                    "Guanti chimici."
                 ],
-                correct: 0,
-                hint: "DPI guanti certificati con elettromiografia in sorveglianza sanitaria (Art. 41 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI POSTURALI - Punto 2: Posture incongrue
+            // PUNTO 8: Sintesi disturbi muscoloscheletrici (4 domande)
             {
-                category: "Rischi Posturali - Posture Incongrue",
-                question: "Qual è una causa specifica delle posture incongrue durante la movimentazione?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Sintesi DMS - Cause",
+                question: "Qual è una causa globale dei disturbi muscoloscheletrici (DMS) da sovraccarico biomeccanico?",
                 options: [
-                    "Vibrazioni da muletti a basse frequenze.",
-                    "Torsioni e flessioni del tronco/collo in retromarcia o stoccaggio alto con carrelli.",
-                    "Contatto con oggetti taglienti.",
-                    "Presenza di liquidi sul pavimento."
+                    "Turni notturni con pasti irregolari.",
+                    "MMC, posture incongrue e movimenti ripetitivi senza rotazione (checklist DVR ISO 11228).",
+                    "Esposizione a rumori elevati.",
+                    "Stress psicosociale isolato."
                 ],
-                correct: 1,
-                hint: "Manovre in retromarcia e stoccaggio in altezza causano torsioni eccessive (Titolo VI D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Posture Incongrue",
-                question: "Quali danni cronici derivano dalle posture incongrue, riconosciuti INAIL?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Sintesi DMS - Danni",
+                question: "Quali danni cronici complessivi derivano dai DMS?",
                 options: [
-                    "Traumi cranici da collisioni.",
-                    "Pressione su articolazioni con lombalgie e sciatalgie (statistiche DMS 50-60%).",
-                    "Infezioni da ferite.",
-                    "Sonnolenza diurna da turni."
+                    "Problemi gastrointestinali.",
+                    "DMS come lombalgie, STC e invalidità 10-30% (Art. 211).",
+                    "Traumi cranici.",
+                    "Stress cronico."
                 ],
-                correct: 1,
-                hint: "Lombalgie croniche con prevalenza 50-60% riconosciute INAIL (statistiche DMS)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Posture Incongrue",
-                question: "Qual è un metodo di prevenzione per posture incongrue?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Sintesi DMS - Prevenzione",
+                question: "Qual è un metodo di prevenzione per sovraccarico biomeccanico?",
                 options: [
-                    "Ausili meccanici (transpallet) e redesign layout per ridurre torsioni (ISO 11228).",
-                    "Delimitazione zone per veicoli.",
-                    "Valutazione psicofisica per sonno.",
-                    "Rimozione immediata ostacoli."
+                    "Valutazione DVR con ISO 11228 e rotazione mansioni (Accordo 2011 agg.2025).",
+                    "DPI per rumore.",
+                    "Pause per riposo.",
+                    "Segnaletica incendi."
                 ],
-                correct: 0,
-                hint: "Redesign layout magazzino per ridurre asimmetrie posturali (ISO 11228-1 - Allegato XXXIII)."
+                correct: 0
             },
             {
-                category: "Rischi Posturali - Posture Incongrue",
-                question: "Qual è un metodo di protezione contro posture incongrue?",
+                category: "Rischi Biomeccanici",
+                subcategory: "Sintesi DMS - Protezione",
+                question: "Qual è un metodo di protezione nella sintesi DMS?",
                 options: [
-                    "Cinture lombari e formazione ergonomica (Accordo 2011 agg.2025, 8h base).",
+                    "Formazione 12-16h su MMC e sorveglianza annuale (Art. 41).",
+                    "Impianti ventilazione.",
+                    "Consulenza psicologica.",
+                    "Guanti chimici."
+                ],
+                correct: 0
+            },
+
+            // ==========================================
+            // RISCHI POSTURALI E DA MOVIMENTAZIONE (12 domande)
+            // ==========================================
+
+            // PUNTO 1: Movimenti ripetitivi (4 domande)
+            {
+                category: "Rischi Posturali",
+                subcategory: "Movimenti ripetitivi - Cause",
+                question: "Qual è una causa principale dei movimenti ripetitivi per magazzinieri, secondo i rischi posturali?",
+                options: [
+                    "Operazioni ripetute nel tempo, come picking veloce, causando stress biomeccanico.",
+                    "Esposizione a superfici scivolose durante il trasporto.",
+                    "Turni con illuminazione insufficiente.",
+                    "Accumulo di materiali infiammabili."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Movimenti ripetitivi - Danni",
+                question: "Quali danni tipici derivano dai movimenti ripetitivi, con impatto cronico?",
+                options: [
+                    "Fratture ossee immediate da cadute.",
+                    "Stress biomeccanico con patologie come tendiniti e DMS (INAIL: prevalenza 40-50% in picking).",
+                    "Disturbi del sonno da desincronizzazione.",
+                    "Lesioni cutanee da taglienti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Movimenti ripetitivi - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per movimenti ripetitivi, da Allegato XXXIV D.Lgs. 81/2008?",
+                options: [
+                    "Valutazione OCRA/REBA e micro-pause (max >2000 cicli/giorno).",
+                    "Manutenzione pavimenti per scivolamenti.",
+                    "Formazione su igiene del sonno.",
+                    "Segnaletica per veicoli."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Movimenti ripetitivi - Protezione",
+                question: "Qual è un metodo di protezione specifico contro movimenti ripetitivi?",
+                options: [
+                    "Guanti antivibrazione (UNI EN ISO 10819) e sorveglianza sanitaria (Art. 41).",
+                    "Caschi antinfortunio per cadute.",
+                    "Rotazione turni per stress.",
+                    "Mascherine per polveri."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 2: Posture asimmetriche (4 domande)
+            {
+                category: "Rischi Posturali",
+                subcategory: "Posture asimmetriche - Cause",
+                question: "Qual è una causa specifica delle posture asimmetriche per addetti MMC?",
+                options: [
+                    "Esposizione a rumori da mezzi in movimento.",
+                    "Torsioni/flessioni del tronco con carrelli in spazi ristretti, causando pressione articolare.",
+                    "Turni con alimentazione irregolare.",
+                    "Accumulo di polveri chimiche."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Posture asimmetriche - Danni",
+                question: "Quali danni cronici derivano dalle posture asimmetriche?",
+                options: [
+                    "Gastriti e problemi metabolici.",
+                    "Dolore lombare e degenerazione discale (INAIL: 25-35% casi posture incongrue).",
+                    "Formicolio agli arti da vibrazioni.",
+                    "Disturbi del sonno."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Posture asimmetriche - Prevenzione",
+                question: "Qual è un metodo di prevenzione per posture asimmetriche?",
+                options: [
+                    "Valutazione rischi con ISO 11228 e formazione ergonomica (Accordo 2011 agg.2025, 8h base).",
                     "Imbracature anticaduta.",
                     "Kit primo soccorso per tagli.",
                     "Gilet alta visibilità."
                 ],
-                correct: 0,
-                hint: "DPI cinture lombari con formazione ergonomica obbligatoria 8 ore (Accordo Stato-Regioni 2011 agg. 2025)."
+                correct: 0
+            },
+            {
+                category: "Rischi Posturali",
+                subcategory: "Posture asimmetriche - Protezione",
+                question: "Qual è un metodo di protezione per posture asimmetriche?",
+                options: [
+                    "Esoscheletri per ridurre flessioni e sorveglianza (Art. 41).",
+                    "Scarpe antiscivolo S3.",
+                    "Guanti antitaglio.",
+                    "Caschi per impatti."
+                ],
+                correct: 0
             },
 
-            // RISCHI POSTURALI - Punto 3: Sforzi eccessivi
+            // PUNTO 3: Sforzi eccessivi (4 domande)
             {
-                category: "Rischi Posturali - Sforzi Eccessivi",
+                category: "Rischi Posturali",
+                subcategory: "Sforzi eccessivi - Cause",
                 question: "Qual è una causa principale degli sforzi eccessivi per addetti MMC?",
                 options: [
                     "Esposizione a rumori da mezzi.",
@@ -755,35 +965,35 @@
                     "Movimenti in spazi con scarsa illuminazione.",
                     "Accumulo di polveri inalabili."
                 ],
-                correct: 1,
-                hint: "Sollevamento senza ausili causa pressione su muscoli e articolazioni (Allegato XXXIII D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Sforzi Eccessivi",
-                question: "Quali sono i danni tipici dagli sforzi eccessivi?",
+                category: "Rischi Posturali",
+                subcategory: "Sforzi eccessivi - Danni",
+                question: "Quali sono i danni tipici dagli sforzi eccessivi, con conseguenze?",
                 options: [
                     "Disturbi gastrointestinali da pasti.",
                     "Lesioni muscolari e articolari come ernie (INAIL: 30-40% infortuni MMC).",
                     "Asfissia da intrappolamento.",
                     "Cefalee da stress psicosociale."
                 ],
-                correct: 1,
-                hint: "Ernie e lesioni rappresentano 30-40% degli infortuni da MMC (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Sforzi Eccessivi",
-                question: "Qual è un metodo di prevenzione per sforzi eccessivi?",
+                category: "Rischi Posturali",
+                subcategory: "Sforzi eccessivi - Prevenzione",
+                question: "Qual è un metodo di prevenzione per sforzi eccessivi, da Allegato XXXIII D.Lgs. 81/2008?",
                 options: [
                     "Uso attrezzature (muletti) e teamlifting per carichi >25kg (NIOSH LI <1).",
                     "Manutenzione per vibrazioni.",
                     "Formazione su isolamento.",
                     "Segnaletica per cadute."
                 ],
-                correct: 0,
-                hint: "Teamlifting obbligatorio per carichi >25kg con valutazione NIOSH Lifting Index <1 (Allegato XXXIII)."
+                correct: 0
             },
             {
-                category: "Rischi Posturali - Sforzi Eccessivi",
+                category: "Rischi Posturali",
+                subcategory: "Sforzi eccessivi - Protezione",
                 question: "Qual è un metodo di protezione specifico per sforzi eccessivi?",
                 options: [
                     "Esoscheletri passivi e visite periodiche (Art. 41 D.Lgs. 81/2008).",
@@ -791,463 +1001,117 @@
                     "Pause per sonno.",
                     "Caschi per impatti."
                 ],
-                correct: 0,
-                hint: "Esoscheletri passivi con sorveglianza sanitaria periodica (Art. 41 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI CHIMICI - Punto 2: Dermatiti
+            // ==========================================
+            // RISCHI TRAUMATICI E DA INCIDENTI (36 domande)
+            // ==========================================
+
+            // PUNTO 1: Caduta di materiali/oggetti (4 domande)
             {
-                category: "Rischi Chimici - Dermatiti",
-                question: "Qual è una causa specifica delle dermatiti da contatto in magazzino?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta materiali - Cause",
+                question: "Qual è una causa principale della caduta di materiali/oggetti per magazzinieri?",
                 options: [
-                    "Vibrazioni da transpallet.",
-                    "Contatto con sostanze chimiche irritanti durante manipolazione merci.",
-                    "Cadute da altezze.",
-                    "Rumore elevato da mezzi."
+                    "Esposizione a vibrazioni da muletti senza pause.",
+                    "Impilaggio scorretto in altezza o stoccaggio instabile di merci, con rischio schiacciamento sottostanti.",
+                    "Turni notturni con desincronizzazione del sonno.",
+                    "Movimenti ripetitivi ad alta frequenza."
                 ],
-                correct: 1,
-                hint: "Contatto con sostanze irritanti durante manipolazione (Art. 221 D.Lgs. 81/2008 Titolo IX)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Dermatiti",
-                question: "Quali danni cronici derivano dalle dermatiti da contatto?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta materiali - Danni",
+                question: "Quali danni tipici derivano dalla caduta di materiali/oggetti?",
                 options: [
-                    "Fratture da schiacciamenti.",
-                    "Eczemi, sensibilizzazione e cronicizzazione (INAIL: 15-25% esposizione chimica).",
-                    "Lombalgie da posture.",
-                    "Insonnia da turni."
+                    "Disturbi del sonno e sonnolenza cronica.",
+                    "Schiacciamenti, fratture multiple e traumi gravi (INAIL: 20-30% infortuni magazzino).",
+                    "Lombalgie croniche da posture.",
+                    "Gastriti da alimentazione irregolare."
                 ],
-                correct: 1,
-                hint: "Eczemi cronici con sensibilizzazione cutanea in 15-25% esposti (statistiche INAIL esposizione chimica)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Dermatiti",
-                question: "Qual è un metodo di prevenzione per dermatiti?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta materiali - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per la caduta di materiali/oggetti?",
                 options: [
-                    "Sostituzione sostanze pericolose e procedure di manipolazione sicura (Art. 223).",
-                    "Delimitazione zone per veicoli.",
+                    "Rotazione turni per stress psicosociale.",
+                    "Valutazione stoccaggio (altezza max sicura, fissaggi) e layout magazzino (Allegato IV).",
                     "Formazione su igiene del sonno.",
-                    "Uso ausili per sforzi."
+                    "DPI ergonomici per arti superiori."
                 ],
-                correct: 0,
-                hint: "Sostituzione con sostanze meno pericolose e procedure sicure (Art. 223 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Dermatiti",
-                question: "Qual è un metodo di protezione contro dermatiti?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta materiali - Protezione",
+                question: "Qual è un metodo di protezione specifico contro la caduta di materiali/oggetti?",
                 options: [
-                    "Tute protettive (UNI EN 14605) e formazione specifica (Accordo 2011 agg.2025, 4h rischi chimici).",
-                    "Imbracature anticaduta.",
-                    "Kit primo soccorso per tagli.",
-                    "Cinture lombari ergonomiche."
+                    "Caschi antinfortunio (UNI EN 397) e sorveglianza sanitaria per traumi (Art. 41).",
+                    "Micro-pause per movimenti ripetitivi.",
+                    "Consulenza psicologica per isolamento.",
+                    "Guanti antivibrazione per muletti."
                 ],
-                correct: 0,
-                hint: "DPI tute certificate UNI EN 14605 con formazione 4 ore su rischi chimici (Accordo 2011 agg. 2025)."
-            },
-
-            // RISCHI CHIMICI - Punto 3: Batteri e muffe
-            {
-                category: "Rischi Biologici - Batteri e Muffe",
-                question: "Qual è una causa principale dell'esposizione a batteri, muffe e agenti patogeni?",
-                options: [
-                    "Sollevamento pesi senza ausili.",
-                    "Rischio biologico durante pulizia e movimentazione di merci contaminate.",
-                    "Torsioni del tronco in retromarcia.",
-                    "Accumulo di merci infiammabili."
-                ],
-                correct: 1,
-                hint: "Pulizia e manipolazione merci contaminate (Titolo X D.Lgs. 81/2008 - Art. 266)."
-            },
-            {
-                category: "Rischi Biologici - Batteri e Muffe",
-                question: "Quali sono i danni tipici dall'esposizione a batteri e agenti patogeni?",
-                options: [
-                    "Lesioni muscolari da sforzi.",
-                    "Infezioni e malattie infettive (INAIL: 10-20% rischi biologici in magazzini).",
-                    "Fratture da schiacchiamenti.",
-                    "Disturbi gastrointestinali da pasti."
-                ],
-                correct: 1,
-                hint: "Infezioni rappresentano 10-20% dei rischi biologici in ambiente magazzino (statistiche INAIL)."
-            },
-            {
-                category: "Rischi Biologici - Batteri e Muffe",
-                question: "Qual è un metodo di prevenzione per esposizione a batteri e muffe?",
-                options: [
-                    "Procedure di pulizia e DPI (Art. 268 D.Lgs. 81/2008).",
-                    "Valutazione NIOSH per carichi.",
-                    "Teamlifting per pesi.",
-                    "Formazione su posture."
-                ],
-                correct: 0,
-                hint: "Procedure igieniche e DPI biologici (Art. 268 D.Lgs. 81/2008 Titolo X)."
-            },
-            {
-                category: "Rischi Biologici - Batteri e Muffe",
-                question: "Qual è un metodo di protezione contro batteri e agenti patogeni?",
-                options: [
-                    "Maschere FFP2/FFP3 (UNI EN 149) e formazione (Accordo 2011 agg.2025).",
-                    "Scarpe antiscivolo.",
-                    "Cinture lombari.",
-                    "Guanti antitaglio."
-                ],
-                correct: 0,
-                hint: "DPI respiratori certificati FFP2/FFP3 con formazione specifica (UNI EN 149 - Accordo 2011 agg. 2025)."
+                correct: 0
             },
 
-            // RISCHI CHIMICI - Punto 4: Inalazione
+            // PUNTO 2: Caduta dall'alto (4 domande)
             {
-                category: "Rischi Chimici - Inalazione",
-                question: "Qual è una causa principale dell'inalazione di prodotti chimici?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta dall'alto - Cause",
+                question: "Qual è una causa principale delle cadute dall'alto in magazzino?",
                 options: [
-                    "Esposizione a vapori o polveri da stoccaggio/trasporto chimici.",
                     "Movimenti ripetitivi durante picking.",
-                    "Cadute da altezze.",
-                    "Collisioni con carrelli."
+                    "Lavoro su scale, elevatori o soppalchi instabili durante operazioni di stoccaggio.",
+                    "Posture incongrue con transpallet.",
+                    "Esposizione a vapori chimici."
                 ],
-                correct: 0,
-                hint: "Esposizione a vapori e polveri chimiche durante stoccaggio (Art. 222 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Inalazione",
-                question: "Quali sono i danni tipici dall'inalazione di prodotti chimici?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta dall'alto - Danni",
+                question: "Quali danni tipici derivano dalle cadute dall'alto?",
                 options: [
-                    "Distorsioni articolari.",
-                    "Malattie respiratorie e intossicazioni (INAIL: 15-20% esposizione chimica).",
-                    "Fratture multiple.",
-                    "Tendiniti superiori."
+                    "Tendiniti croniche arti superiori.",
+                    "Fratture, traumi cranici e lesioni spinali gravi (INAIL: 15-20% infortuni da altezza).",
+                    "Dermatiti da contatto.",
+                    "Stress psicofisico."
                 ],
-                correct: 1,
-                hint: "Malattie respiratorie in 15-20% degli esposti (statistiche INAIL esposizione chimica)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Inalazione",
-                question: "Qual è un metodo di prevenzione per inalazione?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta dall'alto - Prevenzione",
+                question: "Qual è un metodo di prevenzione per cadute dall'alto?",
                 options: [
-                    "Aspirazione localizzata e monitoraggio esposizione (Art. 225 Titolo IX).",
-                    "Formazione su teamlifting.",
-                    "Delimitazione per collisioni.",
-                    "Pause per sonno."
-                ],
-                correct: 0,
-                hint: "Sistemi di aspirazione e monitoraggio ambientale (Art. 225 D.Lgs. 81/2008 Titolo IX)."
-            },
-            {
-                category: "Rischi Chimici - Inalazione",
-                question: "Qual è un metodo di protezione contro inalazione di prodotti chimici?",
-                options: [
-                    "Respiratori con filtri (UNI EN 14387) e sorveglianza spirometrica (Art. 41).",
-                    "Scarpe antinfortunistiche.",
-                    "Gilet per visibilità.",
-                    "Cinture per sforzi."
-                ],
-                correct: 0,
-                hint: "DPI respiratori con filtri certificati e spirometria in sorveglianza (UNI EN 14387 - Art. 41)."
-            },
-
-            // RISCHI AMBIENTALI - Punto 1: Incendio
-            {
-                category: "Rischi Ambientali - Incendio",
-                question: "Qual è una causa principale del rischio di incendio in magazzino?",
-                options: [
-                    "Accumulo di merci infiammabili e uso di macchinari.",
-                    "Posture incongrue prolungate.",
-                    "Movimenti ripetitivi.",
-                    "Turni notturni."
-                ],
-                correct: 0,
-                hint: "Cause ambientali con accumulo merci infiammabili (Art. 46 D.Lgs. 81/2008 - D.M. 10/03/1998)."
-            },
-            {
-                category: "Rischi Ambientali - Incendio",
-                question: "Quali danni tipici dal rischio di incendio?",
-                options: [
-                    "Lombalgie croniche.",
-                    "Ustioni e intossicazioni (INAIL: 5-10% rischi ambientali).",
-                    "Tendiniti arti superiori.",
-                    "Disturbi del sonno."
-                ],
-                correct: 1,
-                hint: "Ustioni e intossicazioni in 5-10% dei rischi ambientali (statistiche INAIL - D.M. 10/03/1998)."
-            },
-            {
-                category: "Rischi Ambientali - Incendio",
-                question: "Qual è un metodo di prevenzione chiave per il rischio di incendio?",
-                options: [
-                    "Valutazione piano antincendio e stoccaggio sicuro (Art. 46, Allegato IV).",
-                    "Rotazione turni per stress termico.",
-                    "Aspirazione per polveri chimiche.",
-                    "Valutazione OCRA per movimenti ripetitivi."
-                ],
-                correct: 0,
-                hint: "Valutazione e piano antincendio con stoccaggio sicuro (Art. 46 D.Lgs. 81/2008 - Allegato IV)."
-            },
-            {
-                category: "Rischi Ambientali - Incendio",
-                question: "Qual è un metodo di protezione specifico contro il rischio di incendio?",
-                options: [
-                    "DPI ignifughi (UNI EN 11612) e formazione evacuazione (Accordo 2011 agg.2025, 4h rischi specifici).",
-                    "Esoscheletri per sforzi eccessivi.",
-                    "Maschere FFP2 per patogeni.",
-                    "Guanti antitaglio per ferite."
-                ],
-                correct: 0,
-                hint: "DPI ignifughi certificati con formazione evacuazione 4 ore (UNI EN 11612 - Accordo 2011 agg. 2025)."
-            },
-
-            // RISCHI AMBIENTALI - Punto 2: Stress termico
-            {
-                category: "Rischi Ambientali - Stress Termico",
-                question: "Qual è una causa specifica dello stress termico e sbalzi di temperatura?",
-                options: [
-                    "Movimenti ripetitivi ad alta frequenza.",
-                    "Variazioni di temperatura tra esterno e interno, causando disturbi.",
-                    "Inalazione di vapori chimici in magazzino.",
-                    "Cadute di materiali da altezza."
-                ],
-                correct: 1,
-                hint: "Variazioni termiche tra ambienti esterni e interni (Allegato IV D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Ambientali - Stress Termico",
-                question: "Quali danni cronici derivano dallo stress termico?",
-                options: [
-                    "Fratture da traumi.",
-                    "Disidratazione, affaticamento e impatto su salute psicofisica (INAIL: 20-30%).",
-                    "Tendiniti da ripetitivi.",
-                    "Infezioni biologiche."
-                ],
-                correct: 1,
-                hint: "Disidratazione e affaticamento in 20-30% esposti (INAIL guida Stress Termico 2023)."
-            },
-            {
-                category: "Rischi Ambientali - Stress Termico",
-                question: "Qual è un metodo di prevenzione per stress termico?",
-                options: [
-                    "Valutazione WBGT e climatizzazione (Art. 181 Titolo VIII).",
-                    "Teamlifting per carichi.",
-                    "Formazione su chimici.",
-                    "Delimitazione zone."
-                ],
-                correct: 0,
-                hint: "Valutazione microclima WBGT con climatizzazione (Art. 181 D.Lgs. 81/2008 Titolo VIII)."
-            },
-            {
-                category: "Rischi Ambientali - Stress Termico",
-                question: "Qual è un metodo di protezione contro stress termico?",
-                options: [
-                    "Abbigliamento termoregolante e sorveglianza (Art. 41, UNI EN ISO 7243).",
-                    "Caschi per cadute.",
-                    "Guanti per tagli.",
-                    "Scarpe per scivolamenti."
-                ],
-                correct: 0,
-                hint: "Abbigliamento tecnico termoregolante con sorveglianza sanitaria (Art. 41 - UNI EN ISO 7243)."
-            },
-
-            // RISCHI PSICOSOCIALI - Punto 1: Disturbi del sonno
-            {
-                category: "Rischi Psicosociali - Disturbi del Sonno",
-                question: "Qual è una causa specifica dei disturbi del sonno in contesto notturno?",
-                options: [
-                    "Esposizione a vibrazioni.",
-                    "Desincronizzazione ritmi circadiani per turnazione notturna.",
-                    "Sollevamento pesi eccessivi.",
-                    "Inalazione vapori chimici."
-                ],
-                correct: 1,
-                hint: "Desincronizzazione circadiana da turni notturni (Art. 11 D.Lgs. 81/2008 - Linee Guida INAIL)."
-            },
-            {
-                category: "Rischi Psicosociali - Disturbi del Sonno",
-                question: "Quali danni cronici derivano dai disturbi del sonno?",
-                options: [
-                    "Fratture multiple.",
-                    "Insonnia cronica e impatto su salute con aumento infortuni +40% (INAIL).",
-                    "Dermatiti da chimici.",
-                    "Lesioni articolari."
-                ],
-                correct: 1,
-                hint: "Insonnia cronica aumenta infortuni del 40% (statistiche INAIL lavoratori notturni)."
-            },
-            {
-                category: "Rischi Psicosociali - Disturbi del Sonno",
-                question: "Qual è un metodo di prevenzione chiave per disturbi del sonno?",
-                options: [
-                    "Rotazione turni e formazione su igiene del sonno (Art. 41 D.Lgs. 81/2008).",
-                    "Aspirazione polveri.",
-                    "Teamlifting carichi.",
-                    "Segnaletica chimica."
-                ],
-                correct: 0,
-                hint: "Rotazione programmata turni con formazione igiene sonno (Art. 41 D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Psicosociali - Disturbi del Sonno",
-                question: "Qual è un metodo di protezione per disturbi del sonno?",
-                options: [
-                    "Caschi antinfortunio.",
-                    "Sorveglianza sanitaria specifica per lavoratori notturni (Art. 41, Linee Guida INAIL).",
-                    "Guanti antivibrazione.",
-                    "Scarpe S3."
-                ],
-                correct: 1,
-                hint: "Sorveglianza sanitaria obbligatoria per turnisti notturni (Art. 41 - Linee Guida INAIL)."
-            },
-
-            // RISCHI PSICOSOCIALI - Punto 2: Problemi gastrointestinali
-            {
-                category: "Rischi Psicosociali - Problemi Gastrointestinali",
-                question: "Qual è una causa specifica dei problemi gastrointestinali e metabolici in contesto notturno?",
-                options: [
-                    "Alimentazione in orari non convenzionali e stress cronico.",
-                    "Accumulo di merci infiammabili.",
-                    "Movimenti ripetitivi durante picking.",
-                    "Esposizione a batteri da merci contaminate."
-                ],
-                correct: 0,
-                hint: "Alimentazione irregolare e stress cronico da turni (Art. 28 D.Lgs. 81/2008 - ISO 45001)."
-            },
-            {
-                category: "Rischi Psicosociali - Problemi Gastrointestinali",
-                question: "Quali danni cronici derivano dai problemi gastrointestinali e metabolici?",
-                options: [
-                    "Sonnolenza ridotta durante turni.",
-                    "Gastriti, ulcere e sindrome metabolica (INAIL: prevalenza 15-25% in lavoratori notturni).",
-                    "Ustioni da incendi.",
-                    "Infezioni da agenti patogeni."
-                ],
-                correct: 1,
-                hint: "Gastriti e sindrome metabolica in 15-25% turnisti notturni (statistiche INAIL)."
-            },
-            {
-                category: "Rischi Psicosociali - Problemi Gastrointestinali",
-                question: "Qual è un metodo di prevenzione chiave per problemi gastrointestinali?",
-                options: [
-                    "Pause pasti regolari e gestione stress (Art. 28 valutazione rischi psicosociali, ISO 45001).",
-                    "Climatizzazione per sbalzi termici.",
-                    "Piano antincendio per accumuli.",
-                    "Etichettatura CLP per chimici."
-                ],
-                correct: 0,
-                hint: "Pause programmate e valutazione stress psicosociale (Art. 28 D.Lgs. 81/2008 - ISO 45001)."
-            },
-            {
-                category: "Rischi Psicosociali - Problemi Gastrointestinali",
-                question: "Qual è un metodo di protezione per problemi gastrointestinali?",
-                options: [
-                    "Sorveglianza sanitaria e formazione su igiene (Art. 41, Accordo 2025).",
-                    "Caschi per altezza.",
-                    "Guanti per tagli.",
-                    "Scarpe per scivolamenti."
-                ],
-                correct: 0,
-                hint: "Sorveglianza con formazione su alimentazione turnisti (Art. 41 - Accordo 2025)."
-            },
-
-            // RISCHI PSICOSOCIALI - Punto 3: Sonnolenza e riduzione vigilanza
-            {
-                category: "Rischi Psicosociali - Sonnolenza",
-                question: "Qual è una causa specifica della sonnolenza e ridotta vigilanza durante i turni?",
-                options: [
-                    "Esposizione a rumore.",
-                    "Affaticamento da turni notturni e privazione di sonno.",
-                    "Vibrazioni da carrelli.",
-                    "Contatto con chimici."
-                ],
-                correct: 1,
-                hint: "Privazione sonno da turni notturni (Art. 41 D.Lgs. 81/2008 - Linee Guida INAIL)."
-            },
-            {
-                category: "Rischi Psicosociali - Sonnolenza",
-                question: "Quali danni derivano dalla sonnolenza e ridotta vigilanza?",
-                options: [
-                    "Dermatiti croniche.",
-                    "Errori operativi, incidenti con carrelli/materiali (INAIL: +50% rischio).",
-                    "Fratture da altezza.",
-                    "Tendiniti superiori."
-                ],
-                correct: 1,
-                hint: "Errori e incidenti aumentano del 50% per sonnolenza (statistiche INAIL lavoratori notturni)."
-            },
-            {
-                category: "Rischi Psicosociali - Sonnolenza",
-                question: "Qual è un metodo di prevenzione per sonnolenza e ridotta vigilanza?",
-                options: [
-                    "Micro-pause programmate e rotazione turni (Art. 41 D.Lgs. 81/2008).",
-                    "Aspirazione polveri.",
-                    "DPI ignifughi.",
-                    "Etichettatura merci."
-                ],
-                correct: 0,
-                hint: "Pause obbligatorie ogni 2 ore e rotazione turni (Art. 41 D.Lgs. 81/2008)."
-            },
-            {
-                category: "Rischi Psicosociali - Sonnolenza",
-                question: "Qual è un metodo di protezione contro sonnolenza?",
-                options: [
-                    "DPI per vibrazioni (guanti antivibrazione).",
-                    "Formazione su gestione fatica e test vigilanza (Accordo 2011 agg.2025, INAIL linee guida).",
-                    "Kit assorbenti per ingestione.",
-                    "Tute per dermatiti."
-                ],
-                correct: 1,
-                hint: "Formazione specifica su gestione fatica con test vigilanza (Accordo 2011 agg. 2025 - Linee Guida INAIL)."
-            },
-
-            // RISCHI PSICOSOCIALI - Punto 4: Stress e sovraccarico psicofisico
-            {
-                category: "Rischi Psicosociali - Stress Psicofisico",
-                question: "Qual è una causa specifica dello stress e sovraccarico psicofisico in contesto notturno?",
-                options: [
-                    "Ritmi intensi, scadenze stringenti e fattori psicosociali legati al lavoro notturno.",
-                    "Inalazione di vapori chimici.",
-                    "Posture incongrue con carrelli.",
-                    "Incendi da macchinari."
-                ],
-                correct: 0,
-                hint: "Ritmi intensi e fattori psicosociali aggravati da turni notturni (Art. 28 D.Lgs. 81/2008 - ISO 45001)."
-            },
-            {
-                category: "Rischi Psicosociali - Stress Psicofisico",
-                question: "Quali danni cronici derivano dallo stress e sovraccarico psicofisico?",
-                options: [
-                    "Tagli da oggetti taglienti.",
-                    "Affaticamento psicofisico e aumento infortuni (INAIL: 20-30% casi stress-correlati, Cass. 2025).",
-                    "Malattie respiratorie da polveri.",
-                    "Ernie da sollevamenti."
-                ],
-                correct: 1,
-                hint: "Affaticamento aumenta infortuni in 20-30% casi stress-correlati (INAIL - Cassazione 2025)."
-            },
-            {
-                category: "Rischi Psicosociali - Stress Psicofisico",
-                question: "Qual è un metodo di prevenzione chiave per stress psicofisico?",
-                options: [
-                    "Valutazione rischi psicosociali (Art. 28) e ottimizzazione ritmi (ISO 45001).",
-                    "Protocolli per rischi biologici.",
+                    "Parapetti (h min 1m, Allegato IV) e piattaforme certificate (UNI EN 131).",
+                    "Rotazione per movimenti ripetitivi.",
                     "Aspirazione per polveri.",
-                    "Rotazione per posture."
+                    "Formazione stress termico."
                 ],
-                correct: 0,
-                hint: "Valutazione obbligatoria rischi psicosociali con ottimizzazione ritmi (Art. 28 D.Lgs. 81/2008 - ISO 45001)."
+                correct: 0
             },
             {
-                category: "Rischi Psicosociali - Stress Psicofisico",
-                question: "Qual è un metodo di protezione per stress e sovraccarico psicofisico?",
+                category: "Rischi da Infortuni",
+                subcategory: "Caduta dall'alto - Protezione",
+                question: "Qual è un metodo di protezione specifico per cadute dall'alto?",
                 options: [
-                    "Supporto psicologico e counseling organizzativo (Art. 28 D.Lgs. 81/2008).",
-                    "Esoscheletri per MMC.",
-                    "Maschere per chimici.",
-                    "Cinture lombari."
+                    "Imbracature anticaduta (UNI EN 361) e formazione uso DPI (Art. 77, Accordo 2011).",
+                    "Ginocchiere per stance.",
+                    "Pause per alimentazione.",
+                    "Illuminazione circadiana."
                 ],
-                correct: 0,
-                hint: "Supporto psicologico aziendale obbligatorio per stress lavorativo (Art. 28 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI FISICI - Punto 3: Cadute e scivolamenti
+            // PUNTO 3: Cadute e scivolamenti (4 domande)
             {
-                category: "Rischi Fisici - Cadute e Scivolamenti",
+                category: "Rischi da Infortuni",
+                subcategory: "Cadute/scivolamenti - Cause",
                 question: "Qual è una causa principale delle cadute e scivolamenti in magazzino?",
                 options: [
                     "Movimenti bruschi con transpallet.",
@@ -1255,11 +1119,11 @@
                     "Posture incongrue prolungate.",
                     "Esposizione a rumori elevati."
                 ],
-                correct: 1,
-                hint: "Liquidi, ostacoli e superfici scivolose (Allegato IV D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Cadute e Scivolamenti",
+                category: "Rischi da Infortuni",
+                subcategory: "Cadute/scivolamenti - Danni",
                 question: "Quali sono i danni tipici dalle cadute e scivolamenti?",
                 options: [
                     "Problemi gastrointestinali cronici.",
@@ -1267,11 +1131,11 @@
                     "Sonnolenza diurna da turni.",
                     "Infiammazioni muscolari diffuse."
                 ],
-                correct: 1,
-                hint: "Cadute rappresentano 25% degli infortuni in magazzino (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Cadute e Scivolamenti",
+                category: "Rischi da Infortuni",
+                subcategory: "Cadute/scivolamenti - Prevenzione",
                 question: "Qual è un metodo di prevenzione per cadute e scivolamenti?",
                 options: [
                     "Consulenza per stress.",
@@ -1279,11 +1143,11 @@
                     "DPI per vibrazioni.",
                     "Valutazione OCRA per ripetitivi."
                 ],
-                correct: 1,
-                hint: "Manutenzione continua e pulizia immediata (Allegato IV D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Cadute e Scivolamenti",
+                category: "Rischi da Infortuni",
+                subcategory: "Cadute/scivolamenti - Protezione",
                 question: "Qual è un metodo di protezione specifico per cadute e scivolamenti?",
                 options: [
                     "Scarpe antiscivolo S3 (UNI EN ISO 20345) e segnaletica (Art. 162).",
@@ -1291,13 +1155,63 @@
                     "Micro-pause per sonno.",
                     "Guanti per chimici."
                 ],
-                correct: 0,
-                hint: "Scarpe certificate S3 con segnaletica pavimenti bagnati (UNI EN ISO 20345 - Art. 162)."
+                correct: 0
             },
 
-            // RISCHI FISICI - Punto 5: Collisioni e ribaltamenti carrelli
+            // PUNTO 4: Urti contro ostacoli (4 domande)
             {
-                category: "Rischi Fisici - Collisioni Carrelli",
+                category: "Rischi da Infortuni",
+                subcategory: "Urti ostacoli - Cause",
+                question: "Qual è una causa principale degli urti contro ostacoli?",
+                options: [
+                    "Ostacoli fissi o mobili in corridoi ristretti durante movimentazione merci.",
+                    "Stance prolungata >6h.",
+                    "Turni con pasti irregolari.",
+                    "Vibrazioni da muletti."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Urti ostacoli - Danni",
+                question: "Quali danni tipici derivano dagli urti contro ostacoli?",
+                options: [
+                    "Disturbi metabolici.",
+                    "Contusioni, traumi cranici e lesioni arti (INAIL: 15-20% casi urti).",
+                    "Tendiniti croniche.",
+                    "Gastriti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Urti ostacoli - Prevenzione",
+                question: "Qual è un metodo di prevenzione per urti contro ostacoli?",
+                options: [
+                    "Delimitazione percorsi (larghezza min 120cm, Allegato IV) e illuminazione adeguata (>200 lux).",
+                    "Valutazione NIOSH per MMC.",
+                    "Formazione su sonno.",
+                    "Aspirazione per chimici."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Urti ostacoli - Protezione",
+                question: "Qual è un metodo di protezione specifico per urti?",
+                options: [
+                    "Caschi e protezioni antiurto (UNI EN 397), con formazione su layout (Accordo 2011 agg.2025).",
+                    "Cinture lombari.",
+                    "Pause per stress.",
+                    "Guanti antivibrazione."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 5: Collisioni e ribaltamenti carrelli (4 domande)
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Collisioni carrelli - Cause",
                 question: "Qual è una causa principale delle collisioni e ribaltamenti di carrelli elevatori?",
                 options: [
                     "Sovraccarico psicofisico.",
@@ -1305,11 +1219,11 @@
                     "Vibrazioni basse frequenze.",
                     "Illuminazione insufficiente."
                 ],
-                correct: 1,
-                hint: "Manovre in spazi ristretti e terreni instabili (Art. 71 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Collisioni Carrelli",
+                category: "Rischi da Infortuni",
+                subcategory: "Collisioni carrelli - Danni",
                 question: "Quali danni tipici dai ribaltamenti di carrelli elevatori?",
                 options: [
                     "Problemi metabolici.",
@@ -1317,11 +1231,11 @@
                     "Tendiniti superiori.",
                     "Insonnia cronica."
                 ],
-                correct: 1,
-                hint: "Schiacciamenti fatali in 10-15% incidenti gravi con carrelli (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Collisioni Carrelli",
+                category: "Rischi da Infortuni",
+                subcategory: "Collisioni carrelli - Prevenzione",
                 question: "Qual è un metodo di prevenzione per collisioni e ribaltamenti?",
                 options: [
                     "Manutenzione regolare muletti e formazione abilitante (12h Accordo 2011).",
@@ -1329,75 +1243,175 @@
                     "Segnaletica chimica.",
                     "Valutazione sonno."
                 ],
-                correct: 0,
-                hint: "Formazione obbligatoria 12 ore e manutenzione programmata (Art. 71 - Accordo Stato-Regioni 2011)."
+                correct: 0
             },
             {
-                category: "Rischi Fisici - Collisioni Carrelli",
-                question: "Qual è un metodo di protezione specifico?",
+                category: "Rischi da Infortuni",
+                subcategory: "Collisioni carrelli - Protezione",
+                question: "Qual è un metodo di protezione specifico per collisioni carrelli?",
                 options: [
                     "Cinture di sicurezza su muletti e sorveglianza (Art. 41).",
                     "Ginocchiere antishock.",
                     "Rotazione turni.",
                     "Guanti antivibrazione."
                 ],
-                correct: 0,
-                hint: "Cinture obbligatorie su carrelli con sorveglianza sanitaria (Art. 41 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI FISICI - Punto 7: Problemi muscolari e infiammazioni
+            // PUNTO 6: Intrappolamento (4 domande)
             {
-                category: "Rischi Fisici - Problemi Muscolari",
-                question: "Qual è una causa principale dei problemi muscolari e infiammazioni?",
+                category: "Rischi da Infortuni",
+                subcategory: "Intrappolamento - Cause",
+                question: "Qual è una causa specifica dell'intrappolamento in magazzino?",
                 options: [
-                    "Desincronizzazione circadiana.",
-                    "Sovraccarico statico/dinamico con stance >6h e mancanza micro-pause.",
-                    "Polveri biologiche.",
-                    "Scadenze stringenti."
+                    "Rimanere intrappolati da caduta di carrelli elevatori o materiali a terra.",
+                    "Posture asimmetriche.",
+                    "Esposizione biologica.",
+                    "Stress da targets."
                 ],
-                correct: 1,
-                hint: "Sovraccarico prolungato senza pause adeguate (Allegato XXXIII D.Lgs. 81/2008)."
+                correct: 0
             },
             {
-                category: "Rischi Fisici - Problemi Muscolari",
-                question: "Quali danni tipici dai problemi muscolari, con prevalenza 40-60%?",
+                category: "Rischi da Infortuni",
+                subcategory: "Intrappolamento - Danni",
+                question: "Quali danni derivano dall'intrappolamento?",
                 options: [
-                    "Sindrome metabolica.",
-                    "Mialgie diffuse, rigidità >30min e fibrosi cronica (INAIL).",
-                    "Ernie discali.",
+                    "Disturbi gastrointestinali.",
+                    "Asfissia, schiacciamenti e lesioni multiple (INAIL infortuni intrappolamento).",
+                    "Lombalgie irradiate.",
                     "Sonnolenza diurna."
                 ],
-                correct: 1,
-                hint: "Mialgie e fibrosi in 40-60% addetti MMC (statistiche INAIL DMS)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Problemi Muscolari",
-                question: "Qual è un metodo di prevenzione per problemi muscolari?",
+                category: "Rischi da Infortuni",
+                subcategory: "Intrappolamento - Prevenzione",
+                question: "Qual è un metodo di prevenzione per intrappolamento?",
                 options: [
-                    "Formazione sonno.",
-                    "Ausili meccanici e stretching quotidiano 5min (Allegato XXXIII).",
-                    "DPI chimici.",
-                    "Focus group psicosociali."
+                    "DPI per rumore.",
+                    "Fissaggi sicuri materiali e procedure di emergenza (Allegato IV).",
+                    "Micro-pause per ripetitivi.",
+                    "Consulenza psicologica."
                 ],
-                correct: 1,
-                hint: "Ausili obbligatori con stretching programmato 5 minuti (Allegato XXXIII D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Problemi Muscolari",
-                question: "Qual è un metodo di protezione specifico?",
+                category: "Rischi da Infortuni",
+                subcategory: "Intrappolamento - Protezione",
+                question: "Qual è un metodo di protezione contro intrappolamento?",
                 options: [
-                    "Visite periodiche con EMG e esoscheletri passivi (Art. 41).",
-                    "Barriere per incidenti.",
-                    "Rotazione notturna.",
-                    "Ginocchiere."
+                    "Formazione su rescue e DPI protettivi (Accordo 2025).",
+                    "Esoscheletri passivi.",
+                    "Pause per sonno.",
+                    "Scarpe S3."
                 ],
-                correct: 0,
-                hint: "Elettromiografia (EMG) periodica con esoscheletri (Art. 41 D.Lgs. 81/2008)."
+                correct: 0
             },
 
-            // RISCHI FISICI - Punto 9: Tagli e ferite
+            // PUNTO 7: Investimento da veicoli (4 domande)
             {
-                category: "Rischi Fisici - Tagli e Ferite",
+                category: "Rischi da Infortuni",
+                subcategory: "Investimento veicoli - Cause",
+                question: "Qual è una causa principale dell'investimento da veicoli?",
+                options: [
+                    "Essere investiti da carrelli, transpallet o camion in magazzino.",
+                    "Stance >4h.",
+                    "Turni notturni.",
+                    "Polveri sottili."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Investimento veicoli - Danni",
+                question: "Quali danni tipici dall'investimento da veicoli?",
+                options: [
+                    "Infiammazioni muscolari.",
+                    "Fratture, traumi interni e mortalità (INAIL 15% infortuni veicolari).",
+                    "STC cronica.",
+                    "Gastriti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Investimento veicoli - Prevenzione",
+                question: "Qual è un metodo di prevenzione per investimento da veicoli?",
+                options: [
+                    "Separazione pedoni/veicoli e sensori (Art. 63 D.Lgs. 81/2008).",
+                    "Valutazione NIOSH.",
+                    "Formazione sonno.",
+                    "DPI ergonomici."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Investimento veicoli - Protezione",
+                question: "Qual è un metodo di protezione per investimento?",
+                options: [
+                    "Gilet alta visibilità (UNI EN ISO 20471) e formazione (Accordo 2011 agg.2025).",
+                    "Cinture lombari.",
+                    "Guanti antitaglio.",
+                    "Caschi anticaduta."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 8: Schiacciamento (4 domande)
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Schiacciamento - Cause",
+                question: "Qual è una causa specifica dello schiacciamento in magazzino?",
+                options: [
+                    "Cedimento carichi durante movimentazione o merci instabili.",
+                    "Posture incongrue.",
+                    "Vibrazioni da muletti.",
+                    "Stress termico."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Schiacciamento - Danni",
+                question: "Quali danni tipici dallo schiacciamento?",
+                options: [
+                    "Tendiniti croniche.",
+                    "Fratture, lesioni organi interni e mortalità (INAIL: casi gravi 10-15%).",
+                    "Dermatiti.",
+                    "Gastriti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Schiacciamento - Prevenzione",
+                question: "Qual è un metodo di prevenzione per schiacciamento?",
+                options: [
+                    "Controllo carichi (dispositivi blocco) e formazione (Accordo 2011 agg.2025).",
+                    "Valutazione OCRA.",
+                    "Consulenza psicologica.",
+                    "Aspirazione chimici."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Schiacciamento - Protezione",
+                question: "Qual è un metodo di protezione per schiacciamento?",
+                options: [
+                    "DPI antiimpatto (guanti UNI EN 388, scarpe S3) e sorveglianza (Art. 41).",
+                    "Esoscheletri.",
+                    "Rotazione turni.",
+                    "Pedane regolabili."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 9: Tagli e ferite (4 domande)
+            {
+                category: "Rischi da Infortuni",
+                subcategory: "Tagli/ferite - Cause",
                 question: "Qual è una causa principale dei tagli e ferite in movimentazione?",
                 options: [
                     "Contatto con oggetti taglienti durante operazioni specifiche.",
@@ -1405,11 +1419,11 @@
                     "Posture incongrue.",
                     "Rumori da mezzi."
                 ],
-                correct: 0,
-                hint: "Contatto con imballaggi, lame, bordi metallici (Art. 15 D.Lgs. 81/2008)."
+                correct: 0
             },
             {
-                category: "Rischi Fisici - Tagli e Ferite",
+                category: "Rischi da Infortuni",
+                subcategory: "Tagli/ferite - Danni",
                 question: "Quali danni tipici dai tagli e ferite?",
                 options: [
                     "Infiammazioni tendinee.",
@@ -1417,11 +1431,11 @@
                     "Traumi cranici gravi.",
                     "Insonnia da turni."
                 ],
-                correct: 1,
-                hint: "Tagli rappresentano 10% infortuni minori in magazzino (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Fisici - Tagli e Ferite",
+                category: "Rischi da Infortuni",
+                subcategory: "Tagli/ferite - Prevenzione",
                 question: "Qual è un metodo di prevenzione per tagli e ferite?",
                 options: [
                     "Manipolazione sicura e rimozione taglienti (Art. 15 D.Lgs. 81/2008).",
@@ -1429,11 +1443,11 @@
                     "Pause micro.",
                     "Consulenza stress."
                 ],
-                correct: 0,
-                hint: "Procedure manipolazione sicura con protezione bordi (Art. 15 D.Lgs. 81/2008)."
+                correct: 0
             },
             {
-                category: "Rischi Fisici - Tagli e Ferite",
+                category: "Rischi da Infortuni",
+                subcategory: "Tagli/ferite - Protezione",
                 question: "Qual è un metodo di protezione specifico per tagli e ferite?",
                 options: [
                     "Guanti antitaglio (UNI EN 388) e kit primo soccorso (Accordo 2011).",
@@ -1441,199 +1455,303 @@
                     "Rotazione mansioni.",
                     "Scarpe antiscivolo."
                 ],
-                correct: 0,
-                hint: "Guanti certificati livello 5 antitaglio con kit medico disponibile (UNI EN 388 - Accordo 2011)."
+                correct: 0
             },
 
-            // RISCHI POSTURALI - Punto 1: Movimenti ripetitivi
+            // ==========================================
+            // RISCHI CHIMICI E BIOLOGICI (24 domande)
+            // ==========================================
+
+            // PUNTO 1: Contatto con sostanze nocive (4 domande)
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è una causa principale dei movimenti ripetitivi per magazzinieri?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Contatto sostanze nocive - Cause",
+                question: "Qual è una causa principale del contatto con sostanze nocive per magazzinieri?",
                 options: [
-                    "Operazioni ripetute nel tempo, come picking veloce, causando stress biomeccanico.",
-                    "Esposizione a superfici scivolose durante il trasporto.",
-                    "Turni con illuminazione insufficiente.",
-                    "Accumulo di materiali infiammabili."
+                    "Accumulo di polveri da pavimenti non puliti.",
+                    "Esposizione diretta con prodotti chimici pericolosi in magazzini specializzati.",
+                    "Vibrazioni da muletti durante turni lunghi.",
+                    "Posture incongrue in retromarcia."
                 ],
-                correct: 0,
-                hint: "Stress biomeccanico da ripetitività operazioni picking (Allegato XXXIV D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Quali danni tipici derivano dai movimenti ripetitivi?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Contatto sostanze nocive - Danni",
+                question: "Quali danni tipici derivano dal contatto con sostanze nocive?",
                 options: [
-                    "Fratture ossee immediate da cadute.",
-                    "Stress biomeccanico con patologie come tendiniti e DMS (INAIL: prevalenza 40-50% in picking).",
-                    "Disturbi del sonno da desincronizzazione.",
-                    "Lesioni cutanee da taglienti."
+                    "Fratture da cadute di materiali.",
+                    "Irritazioni cutanee e assorbimento sistemico (INAIL: 15-25% casi esposizione chimica).",
+                    "Lombalgie da sforzi eccessivi.",
+                    "Disturbi del sonno da turni."
                 ],
-                correct: 1,
-                hint: "DMS da ripetitività in 40-50% addetti picking (statistiche INAIL - Art. 211)."
+                correct: 1
             },
             {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è un metodo di prevenzione chiave per movimenti ripetitivi?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Contatto sostanze nocive - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per contatto con sostanze nocive?",
                 options: [
-                    "Valutazione OCRA/REBA e micro-pause (max >2000 cicli/giorno).",
-                    "Manutenzione pavimenti per scivolamenti.",
-                    "Formazione su igiene del sonno.",
-                    "Segnaletica per veicoli."
-                ],
-                correct: 0,
-                hint: "Valutazione OCRA con limite 2000 azioni/giorno e pause obbligatorie (ISO 11228-3 - Allegato XXXIV)."
-            },
-            {
-                category: "Rischi Posturali - Movimenti Ripetitivi",
-                question: "Qual è un metodo di protezione specifico contro movimenti ripetitivi?",
-                options: [
-                    "Guanti antivibrazione (UNI EN ISO 10819) e sorveglianza sanitaria (Art. 41).",
-                    "Caschi antinfortunio per cadute.",
+                    "Manipolazione in zone confinate con etichettatura CLP.",
                     "Rotazione turni per stress.",
-                    "Scarpe antiscivolo per liquidi."
+                    "Manutenzione pavimenti per scivolamenti.",
+                    "Valutazione OCRA per ripetitivi."
                 ],
-                correct: 0,
-                hint: "DPI antivibrazione certificati con sorveglianza (UNI EN ISO 10819 - Art. 41)."
+                correct: 0
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Contatto sostanze nocive - Protezione",
+                question: "Qual è un metodo di protezione specifico contro contatto con sostanze nocive?",
+                options: [
+                    "Guanti resistenti a chimici (UNI EN 374) e sorveglianza sanitaria (Art. 41).",
+                    "Caschi antinfortunio per impatti.",
+                    "Scarpe antiscivolo per liquidi.",
+                    "Gilet alta visibilità per veicoli."
+                ],
+                correct: 0
             },
 
-            // RISCHI CHIMICI - Punto 1: Contatto con prodotti chimici
+            // PUNTO 2: Dermatiti e patologie dermatologiche (4 domande)
             {
-                category: "Rischi Chimici - Contatto Chimici",
-                question: "Qual è una causa specifica del contatto con prodotti chimici?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Dermatiti - Cause",
+                question: "Qual è una causa specifica delle dermatiti e patologie dermatologiche?",
                 options: [
-                    "Movimenti ripetitivi durante picking.",
-                    "Esposizione diretta durante stoccaggio/trasporto in magazzini specializzati.",
-                    "Cadute da scale.",
-                    "Rumore elevato da carrelli."
+                    "Inalazione di vapori durante picking.",
+                    "Contatto con sostanze chimiche causante malattie della pelle.",
+                    "Movimenti ripetitivi ad alta frequenza.",
+                    "Cadute da altezza su scale."
                 ],
-                correct: 1,
-                hint: "Contatto diretto durante manipolazione merci chimiche (Art. 221 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Contatto Chimici",
-                question: "Quali sono i danni tipici dal contatto con prodotti chimici?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Dermatiti - Danni",
+                question: "Quali danni cronici derivano dalle dermatiti e patologie dermatologiche?",
                 options: [
-                    "Fratture da schiacciamenti.",
-                    "Irritazioni cutanee, assorbimento e danni sistemici (INAIL: 15-25% esposizione).",
-                    "Lombalgie da posture.",
-                    "Insonnia da turni."
+                    "Traumi cranici da collisioni.",
+                    "Malattie della pelle come eczemi e irritazioni croniche (INAIL: prevalenza 20-30% in esposizione chimica).",
+                    "Ernie discali da sollevamenti.",
+                    "Sonnolenza da lavoro notturno."
                 ],
-                correct: 1,
-                hint: "Irritazioni e assorbimento in 15-25% esposti (statistiche INAIL esposizione chimica)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Contatto Chimici",
-                question: "Qual è un metodo di prevenzione per contatto con chimici?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Dermatiti - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per dermatiti?",
                 options: [
-                    "Stoccaggio in zone confinate ed etichettatura CLP (Art. 222).",
-                    "Teamlifting per carichi.",
-                    "Micro-pause programmate.",
-                    "Delimitazione per veicoli."
+                    "Sostituzione sostanze pericolose e procedure di manipolazione sicura (Art. 223).",
+                    "Delimitazione zone per veicoli.",
+                    "Formazione su igiene del sonno.",
+                    "Uso ausili per sforzi."
                 ],
-                correct: 0,
-                hint: "Confinamento e etichettatura secondo regolamento CLP (Art. 222 D.Lgs. 81/2008 Titolo IX)."
+                correct: 0
             },
             {
-                category: "Rischi Chimici - Contatto Chimici",
-                question: "Qual è un metodo di protezione specifico?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Dermatiti - Protezione",
+                question: "Qual è un metodo di protezione contro dermatiti?",
                 options: [
-                    "Guanti chimici (UNI EN 374) e sorveglianza (Art. 41).",
-                    "Caschi per altezza.",
-                    "Scarpe per scivolamenti.",
-                    "Esoscheletri per sforzi."
+                    "Tute protettive (UNI EN 14605) e formazione specifica (Accordo 2011 agg.2025, 4h rischi chimici).",
+                    "Imbracature anticaduta.",
+                    "Kit primo soccorso per tagli.",
+                    "Cinture lombari ergonomiche."
                 ],
-                correct: 0,
-                hint: "Guanti certificati per penetrazione chimica con sorveglianza (UNI EN 374 - Art. 41)."
+                correct: 0
             },
 
-            // RISCHI CHIMICI - Punto 5: Ingestione
+            // PUNTO 3: Esposizione a mucose (4 domande)
             {
-                category: "Rischi Chimici - Ingestione",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Esposizione mucose - Cause",
+                question: "Qual è una causa specifica dell'esposizione a mucose (occhi, bocca)?",
+                options: [
+                    "Stance prolungata in picking.",
+                    "Contatto con aerosol o schizzi chimici durante manipolazione.",
+                    "Posture asimmetriche con transpallet.",
+                    "Turni notturni con stress."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Esposizione mucose - Danni",
+                question: "Quali danni cronici derivano dall'esposizione a mucose?",
+                options: [
+                    "Lombalgie da MMC.",
+                    "Irritazioni, congiuntiviti e ulcere (INAIL: 10-20% casi esposizione diretta).",
+                    "Fratture da cadute.",
+                    "Tendiniti arti superiori."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Esposizione mucose - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per esposizione a mucose?",
+                options: [
+                    "Uso docce di emergenza e lavaggio oculare (Art. 227 Titolo IX).",
+                    "Rotazione per movimenti ripetitivi.",
+                    "Formazione su stress termico.",
+                    "Delimitazione percorsi veicoli."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Esposizione mucose - Protezione",
+                question: "Qual è un metodo di protezione contro esposizione a mucose?",
+                options: [
+                    "Occhiali protettivi (UNI EN 166) e sorveglianza oculistica (Art. 41).",
+                    "Esoscheletri per MMC.",
+                    "Scarpe antiscivolo.",
+                    "Ginocchiere ergonomiche."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 4: Inalazione di prodotti chimici (4 domande)
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Inalazione chimici - Cause",
+                question: "Qual è una causa specifica dell'inalazione di prodotti chimici?",
+                options: [
+                    "Inalazione di vapori o polveri chimiche presenti in magazzino.",
+                    "Contatto con oggetti taglienti.",
+                    "Posture incongrue durante stoccaggio.",
+                    "Investimenti da veicoli."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Inalazione chimici - Danni",
+                question: "Quali danni cronici derivano dall'inalazione di prodotti chimici?",
+                options: [
+                    "Tagli e ferite superficiali.",
+                    "Malattie respiratorie come asma e bronchiti (INAIL: 25-35% casi inalazione).",
+                    "Lombalgie da flessioni.",
+                    "Stress psicosociale da turni."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Inalazione chimici - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per inalazione?",
+                options: [
+                    "Aspirazione localizzata e monitoraggio esposizione (Art. 225 Titolo IX).",
+                    "Formazione su teamlifting.",
+                    "Delimitazione per collisioni.",
+                    "Pause per sonno."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Inalazione chimici - Protezione",
+                question: "Qual è un metodo di protezione contro inalazione di prodotti chimici?",
+                options: [
+                    "Respiratori con filtri (UNI EN 14387) e sorveglianza spirometrica (Art. 41).",
+                    "Scarpe antinfortunistiche.",
+                    "Gilet per visibilità.",
+                    "Cinture per sforzi."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 5: Ingestione di prodotti chimici (4 domande)
+            {
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Ingestione chimici - Cause",
                 question: "Qual è una causa principale dell'ingestione di prodotti chimici?",
                 options: [
                     "Manipolazione senza guanti in altezza.",
-                    "Contaminazione accidentale per ingestione di sostanze pericolose.",
-                    "Vibrazioni da transpallet.",
-                    "Cadute da scale."
+                    "Contaminazione accidentale per ingestione di sostanze tramite mani/cibi contaminati.",
+                    "Stance statica prolungata.",
+                    "Vibrazioni da transpallet."
                 ],
-                correct: 1,
-                hint: "Contaminazione accidentale durante manipolazione (Art. 224 D.Lgs. 81/2008)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Ingestione",
-                question: "Quali sono i danni tipici dall'ingestione di prodotti chimici?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Ingestione chimici - Danni",
+                question: "Quali danni cronici derivano dall'ingestione di prodotti chimici?",
                 options: [
-                    "Intrappolamenti sotto carichi.",
-                    "Intossicazioni acute e danni sistemici (INAIL: rischi rari ma gravi, 5-10%).",
-                    "Tendiniti da ripetitivi.",
-                    "Cefalee da rumore."
+                    "Fratture da investimenti.",
+                    "Intossicazioni, danni gastro intestinali e sistemici (INAIL: casi rari ma gravi 5-10%).",
+                    "Tendiniti da ripetitività.",
+                    "Disturbi del sonno."
                 ],
-                correct: 1,
-                hint: "Intossicazioni rare ma gravissime in 5-10% casi (statistiche INAIL chimici)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Ingestione",
-                question: "Qual è un metodo di prevenzione per ingestione?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Ingestione chimici - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per ingestione?",
                 options: [
-                    "Divieto alimentazione in aree contaminate e kit emergenza (Art. 224).",
-                    "Formazione su posture.",
-                    "Rotazione turni.",
-                    "Stretching quotidiano."
+                    "Formazione igiene personale e divieto mangiare in zone esposizione (Art. 224 Titolo IX).",
+                    "Valutazione NIOSH per MMC.",
+                    "Rotazione per posture.",
+                    "Segnaletica per cadute."
                 ],
-                correct: 0,
-                hint: "Divieto mangiare/bere in zone contaminate con kit emergenza (Art. 224 D.Lgs. 81/2008)."
+                correct: 0
             },
             {
-                category: "Rischi Chimici - Ingestione",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Ingestione chimici - Protezione",
                 question: "Qual è un metodo di protezione contro ingestione?",
                 options: [
-                    "Kit assorbenti e formazione primo soccorso (Accordo 2011 agg.2025).",
-                    "Caschi industriali.",
-                    "Ginocchiere.",
-                    "Scarpe S3."
+                    "Esoscheletri per sforzi.",
+                    "Kit assorbenti e protocolli emergenza (Accordo 2011 agg.2025).",
+                    "Caschi per cadute.",
+                    "Scarpe antiscivolo."
                 ],
-                correct: 0,
-                hint: "Kit assorbenti gastrici con formazione primo soccorso chimico (Accordo 2011 agg. 2025)."
+                correct: 1
             },
 
-            // RISCHI CHIMICI - Punto 6: Patologie gastrointestinali
+            // PUNTO 6: Patologie gastrointestinali (4 domande)
             {
-                category: "Rischi Chimici - Patologie Gastrointestinali",
-                question: "Qual è una causa specifica delle patologie gastrointestinali in contesto chimico?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Patologie gastrointestinali - Cause",
+                question: "Qual è una causa principale delle patologie gastrointestinali legate a esposizione/stress?",
                 options: [
-                    "Esposizione combinata a chimici e stress organizzativo.",
-                    "Movimenti ripetitivi.",
-                    "Cadute da altezze.",
-                    "Vibrazioni muletti."
+                    "Esposizione chimica combinata con stress organizzativo da turni/ritmi.",
+                    "Movimenti ripetitivi picking.",
+                    "Cadute da altezza.",
+                    "Collisioni con veicoli."
                 ],
-                correct: 0,
-                hint: "Esposizione chimica aggravata da stress lavorativo (Art. 28 e Art. 221 D.Lgs. 81/2008 - ISO 45001)."
+                correct: 0
             },
             {
-                category: "Rischi Chimici - Patologie Gastrointestinali",
-                question: "Quali danni tipici dalle patologie gastrointestinali da esposizione chimica?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Patologie gastrointestinali -  Danni",
+                question: "Quali danni cronici derivano dalle patologie gastrointestinali?",
                 options: [
-                    "Fratture multiple.",
-                    "Gastriti, ulcere e disturbi metabolici (INAIL: 10-15% casi).",
-                    "Tendiniti arti superiori.",
-                    "Insonnia."
+                    "Fratture da cadute.",
+                    "Disturbi dell'apparato digerente come gastriti (INAIL: legati a stress/esposizione, 15-25%).",
+                    "Dermatiti cutanee.",
+                    "Problemi muscolari."
                 ],
-                correct: 1,
-                hint: "Gastriti chimiche in 10-15% esposti prolungati (statistiche INAIL)."
+                correct: 1
             },
             {
-                category: "Rischi Chimici - Patologie Gastrointestinali",
-                question: "Qual è un metodo di prevenzione per patologie gastrointestinali?",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Patologie gastrointestinali - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per patologie gastrointestinali?",
                 options: [
-                    "Controllo esposizione e valutazione stress (Art. 28, ISO 45001).",
-                    "Teamlifting carichi.",
-                    "Segnaletica cadute.",
-                    "Pause sonno."
+                    "Gestione stress (ISO 45001) e minimizzazione esposizione (Titolo IX/X).",
+                    "Segnaletica per veicoli.",
+                    "Rotazione per biomeccanici.",
+                    "Aspirazione per rumori."
                 ],
-                correct: 0,
-                hint: "Monitoraggio esposizione con valutazione stress combinato (Art. 28 D.Lgs. 81/2008 - ISO 45001)."
+                correct: 0
             },
             {
-                category: "Rischi Chimici - Patologie Gastrointestinali",
+                category: "Rischi Chimici/Biologici",
+                subcategory: "Patologie gastrointestinali - Protezione",
                 question: "Qual è un metodo di protezione contro patologie gastrointestinali?",
                 options: [
                     "Sorveglianza sanitaria e formazione su igiene (Art. 41, Accordo 2025).",
@@ -1641,247 +1759,708 @@
                     "Guanti per tagli.",
                     "Scarpe per scivolamenti."
                 ],
-                correct: 0,
-                hint: "Sorveglianza gastroenterologica con formazione igiene (Art. 41 - Accordo 2025)."
+                correct: 0
+            },
+
+            // ==========================================
+            // RISCHI AMBIENTALI E MICROCLIMATICI (8 domande)
+            // ==========================================
+
+            // PUNTO 1: Incendio (4 domande)
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Incendio - Cause",
+                question: "Qual è una causa principale del rischio di incendio per magazzinieri?",
+                options: [
+                    "Accumulo di merci infiammabili e uso di macchinari.",
+                    "Posture incongrue durante picking veloce.",
+                    "Esposizione a batteri da merci contaminate.",
+                    "Collisioni con transpallet in movimento."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Incendio - Danni",
+                question: "Quali danni tipici derivano dal rischio di incendio?",
+                options: [
+                    "Lombalgie croniche da sforzi.",
+                    "Ustioni, intossicazioni da fumo e mortalità (INAIL: 5-10% infortuni in magazzini con accumuli).",
+                    "Dermatiti da contatto chimico.",
+                    "Disturbi gastrointestinali da stress."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Incendio - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per il rischio di incendio?",
+                options: [
+                    "Valutazione piano antincendio e stoccaggio sicuro (Art. 46, Allegato IV).",
+                    "Rotazione turni per stress termico.",
+                    "Aspirazione per polveri chimiche.",
+                    "Valutazione OCRA per movimenti ripetitivi."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Incendio - Protezione",
+                question: "Qual è un metodo di protezione specifico contro il rischio di incendio?",
+                options: [
+                    "DPI ignifughi (UNI EN 11612) e formazione evacuazione (Accordo 2011 agg.2025, 4h rischi specifici).",
+                    "Esoscheletri per sforzi eccessivi.",
+                    "Maschere FFP2 per patogeni.",
+                    "Guanti antitaglio per ferite."
+                ],
+                correct: 0
+            },
+
+            // PUNTO 2: Stress termico e sbalzi di temperatura (4 domande)
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Stress termico - Cause",
+                question: "Qual è una causa specifica dello stress termico e sbalzi di temperatura?",
+                options: [
+                    "Movimenti ripetitivi ad alta frequenza.",
+                    "Variazioni di temperatura tra esterno e interno, causando disturbi.",
+                    "Inalazione di vapori chimici in magazzino.",
+                    "Cadute di materiali da altezza."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Stress termico - Danni",
+                question: "Quali danni cronici derivano dallo stress termico e sbalzi di temperatura?",
+                options: [
+                    "Fratture da collisioni con veicoli.",
+                    "Effetti sulla salute psicofisica come disidratazione e affaticamento (INAIL: prevalenza 20-30% in ambienti variabili).",
+                    "Infezioni da agenti patogeni.",
+                    "Tagli da oggetti taglienti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Stress termico - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per stress termico?",
+                options: [
+                    "Valutazione microclima (WBGT, Allegato IV) e sistemi di climatizzazione (Art. 181 Titolo VIII).",
+                    "Protocolli per rischi biologici.",
+                    "Manutenzione muletti per vibrazioni.",
+                    "Etichettatura CLP per chimici."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Ambientali",
+                subcategory: "Stress termico - Protezione",
+                question: "Qual è un metodo di protezione contro stress termico e sbalzi?",
+                options: [
+                    "Abbigliamento termoregolante (UNI EN ISO 7243) e sorveglianza sanitaria (Art. 41).",
+                    "Imbracature anticaduta per altezza.",
+                    "Respiratori per inalazioni.",
+                    "Cinture lombari per posture."
+                ],
+                correct: 0
+            },
+
+            // ==========================================
+            // RISCHI PSICOSOCIALI E ORGANIZZATIVI (16 domande)
+            // ==========================================
+
+            // PUNTO 1: Lavoro notturno (4 domande)
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Lavoro notturno - Cause",
+                question: "Qual è una causa principale del rischio da lavoro notturno per magazzinieri?",
+                options: [
+                    "Cadute da scale durante picking.",
+                    "Turni notturni con desincronizzazione circadiana e ridotto riposo.",
+                    "Esposizione a chimici volatili.",
+                    "Posture incongrue con transpallet."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Lavoro notturno - Danni",
+                question: "Quali danni cronici derivano dal lavoro notturno?",
+                options: [
+                    "Fratture da collisioni.",
+                    "Disturbi del sonno, metabolici e aumentato rischio cardiovascolare (INAIL: prevalenza 30-40% in turnisti).",
+                    "Dermatiti da contatto.",
+                    "Tendiniti arti superiori."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Lavoro notturno - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per lavoro notturno?",
+                options: [
+                    "Rotazione turni oraria e sorveglianza sanitaria specifica (Art. 41 per lavoro notturno).",
+                    "Etichettatura CLP per chimici.",
+                    "Manutenzione muletti.",
+                    "Valutazione OCRA per ripetitivi."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Lavoro notturno - Protezione",
+                question: "Qual è un metodo di protezione contro rischi da lavoro notturno?",
+                options: [
+                    "Guanti antivibrazione per muletti.",
+                    "Formazione su igiene del sonno e pause adeguate (Accordo 2011 agg.2025, INAIL linee guida).",
+                    "Scarpe antiscivolo.",
+                    "Cinture lombari."
+                ],
+                correct: 1
+            },
+
+            // PUNTO 2: Isolamento sociale (4 domande)
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Isolamento sociale - Cause",
+                question: "Qual è una causa specifica dell'isolamento sociale per magazzinieri notturni?",
+                options: [
+                    "Lavoro solitario in turni notturni con ridotto contatto sociale.",
+                    "Vibrazioni da transpallet.",
+                    "Inalazione di polveri chimiche.",
+                    "Cadute da materiali instabili."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Isolamento sociale - Danni",
+                question: "Quali danni cronici derivano dall'isolamento sociale?",
+                options: [
+                    "Fratture da investimenti.",
+                    "Stress psicologico, ansia e depressione (INAIL: 15-25% in lavoro solitario).",
+                    "Ernie discali da MMC.",
+                    "Irritazioni cutanee."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Isolamento sociale - Prevenzione",
+                question: "Secondo D.Lgs. 81/2008, qual è un metodo di prevenzione per isolamento?",
+                options: [
+                    "Valutazione rischi psicosociali (Art. 28) e comunicazione team (ISO 45001).",
+                    "Aspirazione per chimici.",
+                    "Manutenzione pavimenti.",
+                    "Rotazione per MMC."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Isolamento sociale - Protezione",
+                question: "Qual è un metodo di protezione contro isolamento sociale?",
+                options: [
+                    "Esoscheletri per sforzi.",
+                    "Supporto psicologico e momenti socializzazione (Accordo 2011 agg.2025).",
+                    "DPI ignifughi.",
+                    "Kit primo soccorso."
+                ],
+                correct: 1
+            },
+
+            // PUNTO 3: Sonnolenza e ridotta vigilanza (4 domande)
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Sonnolenza - Cause",
+                question: "Qual è una causa principale della sonnolenza e ridotta vigilanza?",
+                options: [
+                    "Posture incongrue durante stoccaggio.",
+                    "Turni notturni prolungati con ritmi circadiani alterati.",
+                    "Esposizione a superfici scivolose.",
+                    "Contatto con sostanze chimiche."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Sonnolenza - Danni",
+                question: "Quali danni cronici derivano dalla sonnolenza e ridotta vigilanza?",
+                options: [
+                    "Dermatiti croniche.",
+                    "Aumento infortuni (errori con carrelli/cadute) e affaticamento cronico (INAIL: 25-35% casi turni notturni).",
+                    "Lombalgie da MMC.",
+                    "Intossicazioni chimiche."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Sonnolenza - Prevenzione",
+                question: "Qual è un metodo di prevenzione per sonnolenza e ridotta vigilanza?",
+                options: [
+                    "Pause programmate e rotazione turni (Art. 41 D.Lgs. 81/2008 per lavoro notturno).",
+                    "Decontaminazione per rischi biologici.",
+                    "Manutenzione per vibrazioni.",
+                    "Valutazione WBGT per microclima."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Sonnolenza - Protezione",
+                question: "Qual è un metodo di protezione specifico contro sonnolenza?",
+                options: [
+                    "DPI per vibrazioni (guanti antivibrazione).",
+                    "Formazione su gestione fatica e test vigilanza (Accordo 2011 agg.2025, INAIL linee guida).",
+                    "Kit assorbenti per ingestione.",
+                    "Tute per dermatiti."
+                ],
+                correct: 1
+            },
+
+            // PUNTO 4: Stress e sovraccarico psicofisico (4 domande)
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Stress psicofisico - Cause",
+                question: "Qual è una causa specifica dello stress e sovraccarico psicofisico in contesto notturno?",
+                options: [
+                    "Ritmi intensi, scadenze stringenti e fattori psicosociali legati al lavoro notturno.",
+                    "Inalazione di vapori chimici.",
+                    "Posture incongrue con carrelli.",
+                    "Incendi da macchinari."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Stress psicofisico - Danni",
+                question: "Quali danni cronici derivano dallo stress e sovraccarico psicofisico?",
+                options: [
+                    "Tagli da oggetti taglienti.",
+                    "Affaticamento psicofisico e aumento infortuni (INAIL: 20-30% casi stress-correlati, Cass. 2025).",
+                    "Malattie respiratorie da polveri.",
+                    "Ernie da sollevamenti."
+                ],
+                correct: 1
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Stress psicofisico - Prevenzione",
+                question: "Qual è un metodo di prevenzione chiave per stress psicofisico?",
+                options: [
+                    "Valutazione rischi psicosociali (Art. 28) e ottimizzazione ritmi (ISO 45001).",
+                    "Protocolli per rischi biologici.",
+                    "Aspirazione per polveri.",
+                    "Rotazione per posture."
+                ],
+                correct: 0
+            },
+            {
+                category: "Rischi Psicosociali",
+                subcategory: "Stress psicofisico - Protezione",
+                question: "Qual è un metodo di protezione contro stress e sovraccarico?",
+                options: [
+                    "Esoscheletri per MMC.",
+                    "Supporto psicologico e formazione (Accordo 2011 agg.2025, 8h preposti su psicosociali).",
+                    "DPI ignifughi per incendi.",
+                    "Vaccinazioni per patogeni."
+                ],
+                correct: 1
             }
         ];
 
-        // ==================== VARIABILI GLOBALI ====================
-        let selectedQuestions = [];
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        let timerInterval;
-        let timeRemaining = 1800; // 30 minuti in secondi
+        // ===== FINE ARRAY DOMANDE =====
+        // ===== FUNZIONI PRINCIPALI =====
 
-        // ==================== FUNZIONI PRINCIPALI ====================
-        
-        function startQuiz() {
-            // Seleziona 15 domande casuali
-            selectedQuestions = shuffleArray([...questionDatabase]).slice(0, 15);
-            userAnswers = new Array(15).fill(null);
+        // Inizializza test
+        function startTest() {
+            // Reset variabili
             currentQuestionIndex = 0;
-            timeRemaining = 1800;
+            userAnswers = new Array(questionsData.length).fill(null);
+            startTime = Date.now();
+            timeRemaining = 64 * 60; // 64 minuti in secondi
             
-            // Mostra schermata quiz
+            // Nascondi welcome, mostra quiz
             document.getElementById('welcomeScreen').classList.add('hidden');
             document.getElementById('quizScreen').classList.remove('hidden');
             
             // Avvia timer
             startTimer();
             
-            // Carica prima domanda
-            loadQuestion();
+            // Mostra prima domanda
+            displayQuestion();
+            updateProgress();
         }
 
-        function loadQuestion() {
-            const question = selectedQuestions[currentQuestionIndex];
-            
-            // Aggiorna numero domanda
-            document.getElementById('questionNumber').textContent = `${currentQuestionIndex + 1}/15`;
-            
-            // Aggiorna categoria
-            document.getElementById('categoryBadge').textContent = question.category;
-            
-            // Aggiorna testo domanda
-            document.getElementById('questionText').textContent = question.question;
-            
-            // Aggiorna suggerimento
-            document.getElementById('hintText').textContent = question.hint;
-            
-            // Genera opzioni
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn w-full text-left p-5 rounded-xl font-medium transition-all';
-                btn.innerHTML = `
-                    <div class="flex items-start gap-4">
-                        <span class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white" 
-                              style="background: var(--secondary);">
-                            ${String.fromCharCode(65 + index)}
-                        </span>
-                        <span class="flex-1">${option}</span>
-                    </div>
-                `;
-                
-                // Evidenzia se già risposto
-                if (userAnswers[currentQuestionIndex] === index) {
-                    btn.classList.add('selected');
-                }
-                
-                btn.onclick = () => selectAnswer(index);
-                container.appendChild(btn);
-            });
-            
-            // Aggiorna progress bar
-            updateProgressBar();
-        }
-
-        function selectAnswer(answerIndex) {
-            // Salva risposta
-            userAnswers[currentQuestionIndex] = answerIndex;
-            
-            // Passa alla prossima domanda o termina
-            if (currentQuestionIndex < 14) {
-                currentQuestionIndex++;
-                loadQuestion();
-            } else {
-                endQuiz();
-            }
-        }
-
+        // Timer conto alla rovescia
         function startTimer() {
             timerInterval = setInterval(() => {
                 timeRemaining--;
-                updateTimerDisplay();
                 
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                const timerDisplay = document.getElementById('timer');
+                timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Allarme ultimi 5 minuti
+                if (timeRemaining <= 300 && timeRemaining > 0) {
+                    timerDisplay.classList.add('timer-warning');
+                }
+                
+                // Timeout automatico
                 if (timeRemaining <= 0) {
-                    endQuiz();
+                    clearInterval(timerInterval);
+                    submitTest();
                 }
             }, 1000);
         }
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        // Mostra domanda corrente
+        function displayQuestion() {
+            const question = questionsData[currentQuestionIndex];
             
-            const timerEl = document.getElementById('timer');
-            timerEl.textContent = display;
+            // Aggiorna header domanda
+            document.getElementById('questionNumber').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionCategory').textContent = question.category;
+            document.getElementById('questionSubcategory').textContent = question.subcategory;
+            document.getElementById('questionText').textContent = question.question;
             
-            // Warning quando mancano 5 minuti
-            if (timeRemaining <= 300 && timeRemaining > 0) {
-                timerEl.classList.add('timer-warning');
-                timerEl.style.background = 'var(--danger)';
-                timerEl.style.color = 'white';
+            // Aggiorna opzioni
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option-card';
+                optionDiv.onclick = () => selectAnswer(index);
+                
+                // Pre-seleziona se già risposto
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Aggiorna stato pulsanti navigazione
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').textContent = 
+                currentQuestionIndex === questionsData.length - 1 ? '✅ Termina Test' : 'Prossima →';
+        }
+
+        // Seleziona risposta
+        function selectAnswer(answerIndex) {
+            userAnswers[currentQuestionIndex] = answerIndex;
+            
+            // Aggiorna visuale opzioni
+            const options = document.querySelectorAll('.option-card');
+            options.forEach((opt, idx) => {
+                if (idx === answerIndex) {
+                    opt.classList.add('selected');
+                } else {
+                    opt.classList.remove('selected');
+                }
+            });
+            
+            updateProgress();
+        }
+
+        // Navigazione precedente
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+                updateProgress();
             }
         }
 
-        function updateProgressBar() {
-            const progress = ((currentQuestionIndex + 1) / 15) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+        // Navigazione successiva
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+                updateProgress();
+            } else {
+                // Ultima domanda: mostra conferma
+                if (confirm('Vuoi terminare il test? Verranno conteggiate solo le risposte fornite.')) {
+                    submitTest();
+                }
+            }
         }
 
-        function endQuiz() {
+        // Aggiorna barra progresso
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const progressPercent = (answeredCount / questionsData.length) * 100;
+            
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+            document.getElementById('progressText').textContent = 
+                `${answeredCount}/${questionsData.length} risposte`;
+        }
+
+        // Salta a domanda specifica
+        function goToQuestion(index) {
+            if (index >= 0 && index < questionsData.length) {
+                currentQuestionIndex = index;
+                displayQuestion();
+                updateProgress();
+                
+                // Scrolla in alto
+                document.getElementById('quizScreen').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Genera minimap domande
+        function generateQuestionMap() {
+            const mapContainer = document.getElementById('questionMap');
+            mapContainer.innerHTML = '';
+            
+            questionsData.forEach((q, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'map-item';
+                btn.textContent = index + 1;
+                btn.onclick = () => goToQuestion(index);
+                
+                // Stato risposta
+                if (userAnswers[index] !== null) {
+                    btn.classList.add('answered');
+                }
+                if (index === currentQuestionIndex) {
+                    btn.classList.add('current');
+                }
+                
+                mapContainer.appendChild(btn);
+            });
+        }
+
+        // Sottometti test
+        function submitTest() {
             clearInterval(timerInterval);
             
-            // Calcola punteggio
-            let correct = 0;
-            selectedQuestions.forEach((q, i) => {
-                if (userAnswers[i] === q.correct) correct++;
-            });
+            // Calcola risultati
+            const results = calculateResults();
             
-            const percentage = Math.round((correct / 15) * 100);
-            
-            // Mostra schermata riepilogo
+            // Nascondi quiz, mostra risultati
             document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('summaryScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
             
-            // Aggiorna statistiche
-            document.getElementById('correctCount').textContent = correct;
-            document.getElementById('incorrectCount').textContent = 15 - correct;
-            document.getElementById('scorePercent').textContent = `${percentage}%`;
-            
-            // Messaggio risultato
-            let message = '';
-            if (percentage >= 90) message = '🏆 Eccellente!';
-            else if (percentage >= 70) message = '✅ Buon Lavoro!';
-            else if (percentage >= 60) message = '👍 Sufficiente';
-            else message = '📚 Da Rivedere';
-            
-            document.getElementById('resultMessage').textContent = message;
-            
-            // Genera riepilogo domande
-            generateSummary();
+            // Mostra risultati
+            displayResults(results);
         }
 
-        function generateSummary() {
-            const container = document.getElementById('summaryContainer');
-            container.innerHTML = '';
+        // Calcola punteggi
+        function calculateResults() {
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unansweredCount = 0;
             
-            selectedQuestions.forEach((q, index) => {
+            const categoryStats = {};
+            
+            questionsData.forEach((q, index) => {
                 const userAnswer = userAnswers[index];
                 const isCorrect = userAnswer === q.correct;
                 
-                const card = document.createElement('div');
-                card.className = 'glass-card rounded-2xl p-6';
+                // Conteggi globali
+                if (userAnswer === null) {
+                    unansweredCount++;
+                } else if (isCorrect) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
                 
-                card.innerHTML = `
-                    <div class="flex items-start gap-4 mb-4">
-                        <span class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-lg" 
-                              style="background: ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
-                            ${isCorrect ? '✓' : '✗'}
+                // Statistiche per categoria
+                if (!categoryStats[q.category]) {
+                    categoryStats[q.category] = {
+                        total: 0,
+                        correct: 0,
+                        wrong: 0,
+                        unanswered: 0
+                    };
+                }
+                
+                categoryStats[q.category].total++;
+                if (userAnswer === null) {
+                    categoryStats[q.category].unanswered++;
+                } else if (isCorrect) {
+                    categoryStats[q.category].correct++;
+                } else {
+                    categoryStats[q.category].wrong++;
+                }
+            });
+            
+            // Calcola tempo impiegato
+            const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            
+            // Calcola percentuale
+            const answeredCount = correctCount + wrongCount;
+            const scorePercent = answeredCount > 0 ? (correctCount / answeredCount * 100).toFixed(1) : 0;
+            
+            // Determina esito
+            const passed = scorePercent >= 80;
+            
+            return {
+                correctCount,
+                wrongCount,
+                unansweredCount,
+                answeredCount,
+                scorePercent,
+                passed,
+                timeElapsed: `${minutes}:${seconds.toString().padStart(2, '0')}`,
+                categoryStats
+            };
+        }
+
+        // Mostra risultati
+        function displayResults(results) {
+            // Badge superamento
+            const badge = document.getElementById('resultBadge');
+            const message = document.getElementById('resultMessage');
+            
+            if (results.passed) {
+                badge.innerHTML = '✅ SUPERATO';
+                badge.className = 'result-badge passed';
+                message.innerHTML = `
+                    <p class="text-xl font-bold text-green-600">Congratulazioni! Hai superato il test.</p>
+                    <p class="text-gray-600 mt-2">Hai dimostrato una buona conoscenza dei rischi specifici per magazzinieri.</p>
+                `;
+            } else {
+                badge.innerHTML = '❌ NON SUPERATO';
+                badge.className = 'result-badge failed';
+                message.innerHTML = `
+                    <p class="text-xl font-bold text-red-600">Non hai raggiunto il punteggio minimo dell'80%.</p>
+                    <p class="text-gray-600 mt-2">Ti consigliamo di rivedere il materiale e ripetere il test.</p>
+                `;
+            }
+            
+            // Statistiche globali
+            document.getElementById('scorePercent').textContent = `${results.scorePercent}%`;
+            document.getElementById('correctCount').textContent = results.correctCount;
+            document.getElementById('wrongCount').textContent = results.wrongCount;
+            document.getElementById('unansweredCount').textContent = results.unansweredCount;
+            document.getElementById('timeTaken').textContent = results.timeElapsed;
+            
+            // Risultati per categoria
+            const categoryContainer = document.getElementById('categoryResults');
+            categoryContainer.innerHTML = '';
+            
+            Object.entries(results.categoryStats).forEach(([category, stats]) => {
+                const percent = stats.total > 0 ? 
+                    ((stats.correct / (stats.correct + stats.wrong)) * 100).toFixed(1) : 0;
+                
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'category-result-card';
+                categoryCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-gray-800">${category}</h4>
+                        <span class="text-2xl font-bold ${percent >= 80 ? 'text-green-600' : 'text-red-600'}">
+                            ${percent}%
                         </span>
-                        <div class="flex-1">
-                            <div class="text-xs font-bold mb-2" style="color: var(--primary);">${q.category}</div>
-                            <h3 class="font-bold mb-3" style="color: var(--secondary);">${index + 1}. ${q.question}</h3>
-                        </div>
                     </div>
-                    
-                    <div class="space-y-2 mb-4">
-                        ${q.options.map((opt, i) => `
-                            <div class="p-4 rounded-lg border-2 ${
-                                i === q.correct ? 'border-green-500 bg-green-50' :
-                                i === userAnswer && !isCorrect ? 'border-red-500 bg-red-50' :
-                                'border-gray-200'
-                            }">
-                                <div class="flex items-start gap-3">
-                                    <span class="font-bold ${i === q.correct ? 'text-green-600' : i === userAnswer ? 'text-red-600' : 'text-gray-600'}">
-                                        ${String.fromCharCode(65 + i)})
-                                    </span>
-                                    <span class="${i === q.correct ? 'text-green-900 font-semibold' : i === userAnswer ? 'text-red-900' : 'text-gray-700'}">
-                                        ${opt}
-                                        ${i === q.correct ? ' ✓ <span class="text-xs font-bold text-green-600">[RISPOSTA CORRETTA]</span>' : ''}
-                                        ${i === userAnswer && !isCorrect ? ' ✗ <span class="text-xs font-bold text-red-600">[TUA RISPOSTA]</span>' : ''}
-                                    </span>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="flex gap-4 text-sm text-gray-600">
+                        <span>✅ ${stats.correct} corrette</span>
+                        <span>❌ ${stats.wrong} sbagliate</span>
+                        <span>⚪ ${stats.unanswered} non risposto</span>
                     </div>
-                    
-                    <div class="hint-box rounded-xl p-4">
-                        <div class="flex items-start gap-2">
-                            <span class="text-xl">💡</span>
-                            <div>
-                                <p class="font-bold text-sm mb-1" style="color: var(--secondary);">SPIEGAZIONE:</p>
-                                <p class="text-sm text-gray-700">${q.hint}</p>
-                            </div>
-                        </div>
+                    <div class="mt-2 bg-gray-200 h-2 rounded-full overflow-hidden">
+                        <div class="bg-green-500 h-full transition-all duration-500" 
+                             style="width: ${percent}%"></div>
                     </div>
                 `;
                 
-                container.appendChild(card);
+                categoryContainer.appendChild(categoryCard);
             });
         }
 
-        function repeatQuiz() {
-            // Azzera risposte mantenendo stesse domande
-            userAnswers = new Array(15).fill(null);
-            currentQuestionIndex = 0;
-            timeRemaining = 1800;
-            
-            document.getElementById('summaryScreen').classList.add('hidden');
+        // Rivedi risposte
+        function reviewAnswers() {
+            document.getElementById('resultsScreen').classList.add('hidden');
             document.getElementById('quizScreen').classList.remove('hidden');
             
-            startTimer();
-            loadQuestion();
+            currentQuestionIndex = 0;
+            displayQuestion();
+            
+            // Disabilita timer
+            clearInterval(timerInterval);
+            document.getElementById('timer').textContent = 'REVISIONE';
+            
+            // Mostra risposte corrette
+            highlightCorrectAnswers();
         }
 
-        function newQuiz() {
-            location.reload();
+        // Evidenzia risposte corrette
+        function highlightCorrectAnswers() {
+            const question = questionsData[currentQuestionIndex];
+            const options = document.querySelectorAll('.option-card');
+            
+            options.forEach((opt, index) => {
+                // Reset classi
+                opt.classList.remove('selected', 'correct-answer', 'wrong-answer');
+                
+                // Evidenzia risposta corretta
+                if (index === question.correct) {
+                    opt.classList.add('correct-answer');
+                }
+                
+                // Evidenzia risposta utente sbagliata
+                if (userAnswers[currentQuestionIndex] === index && index !== question.correct) {
+                    opt.classList.add('wrong-answer');
+                }
+                
+                // Disabilita click
+                opt.onclick = null;
+                opt.style.cursor = 'default';
+            });
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+        // Ricomincia test
+        function restartTest() {
+            // Reset completo
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            startTime = null;
+            clearInterval(timerInterval);
+            timeRemaining = 64 * 60;
+            
+            // Torna a welcome screen
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
         }
+
+        // ===== EVENT LISTENERS E INIZIALIZZAZIONE =====
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Genera minimap iniziale
+            generateQuestionMap();
+            
+            // Aggiorna minimap ogni secondo
+            setInterval(() => {
+                if (!document.getElementById('quizScreen').classList.contains('hidden')) {
+                    generateQuestionMap();
+                }
+            }, 1000);
+            
+            // Previeni chiusura accidentale durante test
+            window.addEventListener('beforeunload', function(e) {
+                if (!document.getElementById('quizScreen').classList.contains('hidden')) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+        });
+
+        // ===== FINE SCRIPT =====
     </script>
-
 </body>
 </html>
 
