@@ -322,622 +322,153 @@
             </div>
         </div>
     </div>
+
     <script>
-        // Global Variables
+        // ========================================
+        // CONFIGURAZIONE
+        // ========================================
         const TEST_QUESTIONS = 15;
-        let currentTest = [];
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        let timeLeft = 1200; // 20 minuti = 1200 secondi
-        let timer = null;
+        const TEST_DURATION = 1200; // 20 minuti in secondi
+        const PASS_THRESHOLD = 0.70; // 70%
 
-        // DOM Elements
-        const startScreen = document.getElementById('startScreen');
-        const testContainer = document.getElementById('testContainer');
-        const summaryContainer = document.getElementById('summaryContainer');
-        const questionContainer = document.getElementById('questionContainer');
-        const timerElement = document.getElementById('timer');
-        const questionNumberElement = document.getElementById('questionNumber');
-        const progressBar = document.getElementById('progressBar');
-
-        // Database Domande (128 quiz ufficiali)
-        const allQuestions = [
+        // ========================================
+        // DATABASE DOMANDE (128 quesiti)
+        // ========================================
+        const questionBank = [
             {
-                question: "Cosa si intende per 'valutazione dei rischi' secondo il D.Lgs. 81/2008?",
+                question: "Qual è la normativa principale che regola la sicurezza sul lavoro in Italia?",
                 options: [
-                    "La valutazione globale e documentata di tutti i rischi per la salute e sicurezza dei lavoratori",
-                    "Solo la valutazione dei rischi chimici",
-                    "La valutazione effettuata dal medico competente",
-                    "Un documento facoltativo"
+                    "D.Lgs. 626/1994",
+                    "D.Lgs. 81/2008",
+                    "Legge 300/1970",
+                    "D.P.R. 547/1955"
                 ],
-                correct: 0,
-                explanation: "La valutazione dei rischi è obbligatoria e deve essere globale, documentata e riguardare tutti i rischi presenti in azienda (art. 17, 28 e 29 D.Lgs. 81/2008)."
+                correct: 1,
+                explanation: "Il D.Lgs. 81/2008 (Testo Unico sulla Sicurezza) è la normativa attualmente in vigore che ha abrogato il D.Lgs. 626/1994."
             },
             {
-                question: "Chi è il datore di lavoro secondo il D.Lgs. 81/2008?",
+                question: "Chi è il Responsabile del Servizio di Prevenzione e Protezione (RSPP)?",
                 options: [
-                    "Il responsabile della produzione",
-                    "Il soggetto titolare del rapporto di lavoro con il lavoratore o chi ha la responsabilità dell'organizzazione",
-                    "Il preposto alla sicurezza",
+                    "Una persona interna o esterna designata dal datore di lavoro",
+                    "Sempre il datore di lavoro",
+                    "Solo un consulente esterno certificato",
                     "Il rappresentante dei lavoratori"
                 ],
-                correct: 1,
-                explanation: "Il datore di lavoro è definito come il soggetto titolare del rapporto di lavoro o chi ha responsabilità dell'organizzazione (art. 2 D.Lgs. 81/2008)."
+                correct: 0,
+                explanation: "L'RSPP può essere interno o esterno all'azienda, ma deve essere designato dal datore di lavoro (art. 31-33 D.Lgs. 81/2008)."
             },
             {
-                question: "Qual è uno degli obblighi non delegabili del datore di lavoro?",
+                question: "Qual è l'obbligo principale del datore di lavoro secondo il D.Lgs. 81/2008?",
                 options: [
-                    "La formazione dei lavoratori",
-                    "La valutazione dei rischi e l'elaborazione del DVR",
-                    "La sorveglianza sanitaria",
-                    "La manutenzione degli impianti"
+                    "Fornire solo i DPI",
+                    "Valutare tutti i rischi e redigere il DVR",
+                    "Assumere un RSPP esterno",
+                    "Pagare l'INAIL"
                 ],
                 correct: 1,
-                explanation: "La valutazione dei rischi e la designazione del RSPP sono obblighi non delegabili del datore di lavoro (art. 17 D.Lgs. 81/2008)."
+                explanation: "L'art. 17 del D.Lgs. 81/2008 impone al datore di lavoro la valutazione di tutti i rischi e la redazione del Documento di Valutazione dei Rischi (DVR)."
             },
             {
                 question: "Cosa significa l'acronimo DVR?",
                 options: [
-                    "Documento di Valutazione dei Rischi",
-                    "Dispositivo di Verifica Rischi",
-                    "Decreto Valutazione Rischi",
-                    "Documento Verificato Rischi"
+                    "Documento Valutazione Rischi",
+                    "Dispositivo Vigilanza Rapida",
+                    "Dichiarazione Verifica Reti",
+                    "Dispositivo Valvola Riduzione"
                 ],
                 correct: 0,
-                explanation: "DVR sta per Documento di Valutazione dei Rischi, documento obbligatorio che deve essere elaborato dal datore di lavoro (art. 28 D.Lgs. 81/2008)."
+                explanation: "DVR sta per Documento di Valutazione dei Rischi, obbligatorio per tutte le aziende con almeno un lavoratore (art. 28 D.Lgs. 81/2008)."
             },
             {
-                question: "Entro quanto tempo dalla costituzione di una nuova impresa deve essere elaborato il DVR?",
+                question: "Entro quanto tempo va redatto il DVR dopo l'inizio dell'attività?",
                 options: [
-                    "Immediatamente",
                     "30 giorni",
                     "90 giorni",
-                    "6 mesi"
+                    "6 mesi",
+                    "Immediatamente"
+                ],
+                correct: 1,
+                explanation: "Il DVR deve essere elaborato entro 90 giorni dall'inizio dell'attività (art. 28, comma 3-bis D.Lgs. 81/2008)."
+            },
+            {
+                question: "Chi è il RLS (Rappresentante dei Lavoratori per la Sicurezza)?",
+                options: [
+                    "Una figura nominata dal datore di lavoro",
+                    "Un consulente esterno",
+                    "Una persona eletta o designata dai lavoratori",
+                    "Il medico competente"
                 ],
                 correct: 2,
-                explanation: "Nelle nuove imprese, il DVR deve essere elaborato entro 90 giorni dalla data di inizio attività (art. 28 comma 3-bis D.Lgs. 81/2008)."
-            },
-            {
-                question: "Chi è il RSPP?",
-                options: [
-                    "Rappresentante Sicurezza Protezione Prevenzione",
-                    "Responsabile del Servizio di Prevenzione e Protezione",
-                    "Responsabile Sicurezza Produzione Protetta",
-                    "Rappresentante Servizio Prevenzione Personale"
-                ],
-                correct: 1,
-                explanation: "RSPP significa Responsabile del Servizio di Prevenzione e Protezione, figura obbligatoria designata dal datore di lavoro (art. 2 e 31 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quale formazione minima deve avere il RSPP?",
-                options: [
-                    "Attestato di frequenza a corso specifico secondo Accordo Stato-Regioni",
-                    "Laurea in ingegneria",
-                    "Nessuna formazione specifica",
-                    "Solo esperienza lavorativa"
-                ],
-                correct: 0,
-                explanation: "Il RSPP deve possedere capacità e requisiti professionali acquisiti tramite corsi specifici secondo l'Accordo Stato-Regioni (art. 32 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Chi è il RLS?",
-                options: [
-                    "Responsabile Lavoro Sicuro",
-                    "Rappresentante dei Lavoratori per la Sicurezza",
-                    "Responsabile Logistica Sicurezza",
-                    "Rappresentante Legale Sicurezza"
-                ],
-                correct: 1,
-                explanation: "RLS è il Rappresentante dei Lavoratori per la Sicurezza, eletto o designato dai lavoratori (art. 2 e 47 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Come viene eletto il RLS?",
-                options: [
-                    "Nominato dal datore di lavoro",
-                    "Eletto o designato dai lavoratori",
-                    "Nominato dal medico competente",
-                    "Designato dall'INAIL"
-                ],
-                correct: 1,
-                explanation: "Il RLS è eletto o designato dai lavoratori nell'ambito delle rappresentanze sindacali o tra i lavoratori stessi (art. 47 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quante ore di formazione minima deve ricevere il RLS?",
-                options: [
-                    "8 ore",
-                    "16 ore",
-                    "32 ore",
-                    "40 ore"
-                ],
-                correct: 2,
-                explanation: "Il RLS deve ricevere una formazione minima di 32 ore iniziali, con aggiornamenti periodici (art. 37 comma 11 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Chi è il preposto secondo il D.Lgs. 81/2008?",
-                options: [
-                    "Il datore di lavoro",
-                    "La persona che sovrintende l'attività lavorativa e garantisce l'attuazione delle direttive ricevute",
-                    "Il medico competente",
-                    "Il responsabile amministrativo"
-                ],
-                correct: 1,
-                explanation: "Il preposto è chi, in ragione delle competenze professionali, sovrintende l'attività lavorativa e garantisce l'attuazione delle direttive ricevute (art. 2 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quale tra questi è un obbligo del lavoratore?",
-                options: [
-                    "Elaborare il DVR",
-                    "Prendersi cura della propria salute e sicurezza e di quella delle altre persone",
-                    "Nominare il RSPP",
-                    "Effettuare la sorveglianza sanitaria"
-                ],
-                correct: 1,
-                explanation: "Ogni lavoratore deve prendersi cura della propria salute e sicurezza e di quella delle altre persone presenti sul luogo di lavoro (art. 20 D.Lgs. 81/2008)."
+                explanation: "Il RLS è eletto o designato dai lavoratori per rappresentarli nelle questioni di salute e sicurezza (art. 47 D.Lgs. 81/2008)."
             },
             {
                 question: "Cosa sono i DPI?",
                 options: [
                     "Dispositivi di Protezione Individuale",
-                    "Documenti Protezione Infortuni",
-                    "Dispositivi Prevenzione Incendi",
-                    "Decreti Protezione Infortuni"
+                    "Documenti Prevenzione Infortuni",
+                    "Dispositivi Protezione Incendi",
+                    "Dispositivi Processi Industriali"
                 ],
                 correct: 0,
-                explanation: "DPI significa Dispositivi di Protezione Individuale, attrezzature destinate ad essere indossate dal lavoratore per proteggerlo dai rischi (Titolo III D.Lgs. 81/2008)."
+                explanation: "I DPI (Dispositivi di Protezione Individuale) sono attrezzature destinate a proteggere il lavoratore dai rischi (art. 74 D.Lgs. 81/2008)."
             },
             {
-                question: "Chi deve fornire i DPI ai lavoratori?",
+                question: "Qual è la gerarchia delle misure di prevenzione secondo il D.Lgs. 81/2008?",
                 options: [
-                    "I lavoratori devono acquistarli autonomamente",
-                    "Il datore di lavoro",
-                    "Il medico competente",
-                    "L'INAIL"
+                    "Prima i DPI, poi le misure tecniche",
+                    "Prima eliminare/ridurre i rischi, poi protezione collettiva, infine DPI",
+                    "Solo misure organizzative",
+                    "Solo formazione e informazione"
                 ],
                 correct: 1,
-                explanation: "Il datore di lavoro deve fornire gratuitamente i DPI ai lavoratori e assicurarsi che siano utilizzati correttamente (art. 18 e 77 D.Lgs. 81/2008)."
+                explanation: "L'art. 15 stabilisce la gerarchia: 1) Eliminazione/riduzione rischi, 2) Protezione collettiva, 3) DPI come ultima ratio."
             },
             {
-                question: "Quando devono essere utilizzati i DPI?",
+                question: "Qual è la periodicità minima della sorveglianza sanitaria per i lavoratori esposti a rischi specifici?",
                 options: [
-                    "Sempre, in qualsiasi situazione",
-                    "Solo durante le ispezioni",
-                    "Quando i rischi non possono essere evitati o ridotti da misure di prevenzione collettiva",
-                    "Mai, sono facoltativi"
-                ],
-                correct: 2,
-                explanation: "I DPI devono essere impiegati quando i rischi non possono essere evitati o sufficientemente ridotti da misure tecniche di prevenzione (art. 75 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quali sono le categorie di DPI?",
-                options: [
-                    "I, II, III in base al livello di rischio",
-                    "A, B, C in base al costo",
-                    "Solo DPI obbligatori e facoltativi",
-                    "Non esistono categorie"
-                ],
-                correct: 0,
-                explanation: "I DPI sono classificati in tre categorie (I, II, III) in base al livello di rischio da cui proteggono, secondo il Regolamento UE 2016/425."
-            },
-            {
-                question: "Chi è il medico competente?",
-                options: [
-                    "Qualsiasi medico del territorio",
-                    "Un medico in possesso di specifici titoli e requisiti formativi in medicina del lavoro",
-                    "Il medico di base del lavoratore",
-                    "Un medico del pronto soccorso"
-                ],
-                correct: 1,
-                explanation: "Il medico competente deve possedere specifici titoli e requisiti in medicina del lavoro (art. 38 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa comprende la sorveglianza sanitaria?",
-                options: [
-                    "Solo le visite mediche preventive",
-                    "Visite mediche preventive, periodiche, su richiesta del lavoratore, in occasione del cambio mansione, alla cessazione del rapporto",
-                    "Solo le visite annuali",
-                    "Solo le visite in caso di infortunio"
-                ],
-                correct: 1,
-                explanation: "La sorveglianza sanitaria comprende diverse tipologie di visite mediche (preventive, periodiche, su richiesta, ecc.) come previsto dall'art. 41 D.Lgs. 81/2008."
-            },
-            {
-                question: "Quando è obbligatoria la sorveglianza sanitaria?",
-                options: [
-                    "Sempre per tutti i lavoratori",
-                    "Mai, è facoltativa",
-                    "Quando prevista dal D.Lgs. 81/2008 per specifici rischi (es. rumore, vibrazioni, movimentazione manuale carichi, videoterminali)",
-                    "Solo per lavoratori over 50"
-                ],
-                correct: 2,
-                explanation: "La sorveglianza sanitaria è obbligatoria quando espressamente prevista per specifici rischi dal D.Lgs. 81/2008 (artt. 41, 176, 185, 196, 204)."
-            },
-            {
-                question: "Qual è la periodicità minima dell'aggiornamento della formazione del RLS?",
-                options: [
-                    "Ogni 6 mesi",
+                    "Mensile",
                     "Annuale",
-                    "Ogni 2 anni",
-                    "Ogni 5 anni"
-                ],
-                correct: 1,
-                explanation: "L'aggiornamento della formazione del RLS deve essere annuale (art. 37 comma 11 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la durata minima della formazione generale per i lavoratori?",
-                options: [
-                    "2 ore",
-                    "4 ore",
-                    "8 ore",
-                    "16 ore"
-                ],
-                correct: 1,
-                explanation: "La formazione generale per i lavoratori ha durata minima di 4 ore secondo l'Accordo Stato-Regioni del 21/12/2011."
-            },
-            {
-                question: "Ogni quanto tempo deve essere aggiornata la formazione dei lavoratori?",
-                options: [
-                    "Ogni anno",
-                    "Ogni 3 anni",
-                    "Ogni 5 anni",
-                    "Mai, è sufficiente la formazione iniziale"
-                ],
-                correct: 2,
-                explanation: "L'aggiornamento della formazione dei lavoratori deve avvenire ogni 5 anni, con durata minima di 6 ore (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Cosa deve contenere il DVR?",
-                options: [
-                    "Solo l'elenco dei lavoratori",
-                    "Una relazione sulla valutazione di tutti i rischi, indicazione delle misure di prevenzione/protezione, programma di attuazione",
-                    "Solo le nomine delle figure della sicurezza",
-                    "Solo l'organigramma aziendale"
-                ],
-                correct: 1,
-                explanation: "Il DVR deve contenere: relazione valutazione rischi, misure di prevenzione/protezione, programma di attuazione, procedure di sicurezza (art. 28 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Il DVR deve essere custodito presso l'unità produttiva?",
-                options: [
-                    "Sì, deve essere presente e consultabile",
-                    "No, può essere tenuto ovunque",
-                    "Solo nelle grandi aziende",
-                    "È sufficiente una copia digitale non accessibile"
-                ],
-                correct: 0,
-                explanation: "Il DVR deve essere custodito presso l'unità produttiva ed essere disponibile per consultazioni da parte di RLS, autorità competenti, ecc. (art. 29 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quando deve essere rielaborato il DVR?",
-                options: [
-                    "Solo alla creazione dell'azienda",
-                    "In occasione di modifiche significative del processo produttivo, infortuni gravi, risultati sorveglianza sanitaria",
-                    "Mai, è un documento statico",
-                    "Solo ogni 10 anni"
-                ],
-                correct: 1,
-                explanation: "Il DVR deve essere rielaborato in occasione di modifiche significative, infortuni gravi, risultati della sorveglianza sanitaria (art. 29 comma 3 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cos'è il DUVRI?",
-                options: [
-                    "Documento Unico di Valutazione dei Rischi da Interferenze",
-                    "Decreto Urgente Valutazione Rischi Imprese",
-                    "Dispositivo Urgente Verifiche Rischi Infortuni",
-                    "Documento Unificato Valori Riferimento Infortuni"
-                ],
-                correct: 0,
-                explanation: "DUVRI è il Documento Unico di Valutazione dei Rischi da Interferenze, obbligatorio in caso di appalti (art. 26 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Chi redige il DUVRI?",
-                options: [
-                    "L'appaltatore",
-                    "Il committente",
-                    "Entrambi congiuntamente",
-                    "Il coordinatore per la sicurezza"
-                ],
-                correct: 1,
-                explanation: "Il DUVRI è redatto dal datore di lavoro committente, in collaborazione con le imprese appaltatrici/lavoratori autonomi (art. 26 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la sanzione per il datore di lavoro che non elabora il DVR?",
-                options: [
-                    "Solo sanzione amministrativa",
-                    "Arresto da 3 a 6 mesi o ammenda da 2.500 a 6.400 euro",
-                    "Nessuna sanzione",
-                    "Solo richiamo verbale"
-                ],
-                correct: 1,
-                explanation: "La mancata elaborazione del DVR è punita con arresto da 3 a 6 mesi o ammenda da 2.500€ a 6.400€ (art. 55 comma 1 lett. a D.Lgs. 81/2008)."
-            },
-            {
-                question: "Gli addetti antincendio devono ricevere formazione specifica?",
-                options: [
-                    "No, è sufficiente la formazione generale",
-                    "Sì, secondo il D.M. 10/03/1998 e s.m.i.",
-                    "Solo nelle aziende ad alto rischio",
-                    "Solo su base volontaria"
-                ],
-                correct: 1,
-                explanation: "Gli addetti antincendio devono ricevere formazione specifica in funzione del livello di rischio incendio (D.M. 10/03/1998, aggiornato da D.M. 02/09/2021)."
-            },
-            {
-                question: "Gli addetti al primo soccorso devono essere formati?",
-                options: [
-                    "No, basta il buon senso",
-                    "Sì, secondo il D.M. 388/2003",
-                    "Solo se sono medici o infermieri",
-                    "Solo nelle grandi aziende"
-                ],
-                correct: 1,
-                explanation: "Gli addetti al primo soccorso devono essere formati secondo il D.M. 388/2003, con aggiornamenti triennali."
-            },
-            {
-                question: "Qual è la periodicità dell'aggiornamento della formazione degli addetti antincendio?",
-                options: [
-                    "Annuale",
-                    "Ogni 2 anni",
-                    "Ogni 3 anni",
-                    "Ogni 5 anni"
+                    "Biennale",
+                    "A discrezione del medico competente"
                 ],
                 correct: 3,
-                explanation: "L'aggiornamento della formazione degli addetti antincendio è quinquennale secondo il D.M. 02/09/2021."
+                explanation: "La periodicità è stabilita dal medico competente in base al tipo di rischio, ma generalmente almeno annuale (art. 41 D.Lgs. 81/2008)."
             },
             {
-                question: "Ogni quanto deve essere aggiornata la formazione degli addetti al primo soccorso?",
+                question: "Cosa prevede l'art. 20 del D.Lgs. 81/2008?",
                 options: [
-                    "Ogni anno",
-                    "Ogni 2 anni",
-                    "Ogni 3 anni",
-                    "Ogni 5 anni"
-                ],
-                correct: 2,
-                explanation: "La formazione degli addetti al primo soccorso deve essere aggiornata ogni 3 anni (D.M. 388/2003)."
-            },
-            {
-                question: "L'uso di attrezzature di lavoro richiede specifica abilitazione?",
-                options: [
-                    "No, mai",
-                    "Sì, per alcune attrezzature (es. carrelli elevatori, PLE, gru)",
-                    "Solo per macchinari industriali",
-                    "Solo su richiesta del lavoratore"
+                    "Gli obblighi del datore di lavoro",
+                    "Gli obblighi dei lavoratori",
+                    "Le sanzioni per le violazioni",
+                    "La nomina dell'RSPP"
                 ],
                 correct: 1,
-                explanation: "Alcune attrezzature richiedono specifica abilitazione (Accordo Stato-Regioni 22/02/2012): carrelli elevatori, PLE, gru, ecc."
+                explanation: "L'art. 20 elenca gli obblighi dei lavoratori: prendersi cura della propria sicurezza, utilizzare correttamente i DPI, segnalare pericoli, ecc."
             },
             {
-                question: "Qual è la durata dell'abilitazione per l'uso del carrello elevatore?",
+                question: "Qual è la differenza tra pericolo e rischio?",
                 options: [
-                    "3 anni",
-                    "5 anni",
-                    "10 anni",
-                    "Illimitata"
+                    "Sono sinonimi",
+                    "Pericolo = proprietà intrinseca; Rischio = probabilità di danno",
+                    "Rischio è più grave del pericolo",
+                    "Pericolo riguarda solo le macchine"
                 ],
                 correct: 1,
-                explanation: "L'abilitazione all'uso del carrello elevatore ha validità di 5 anni e richiede aggiornamento (Accordo Stato-Regioni 22/02/2012)."
+                explanation: "Pericolo è la proprietà/qualità intrinseca di causare danno; Rischio è la probabilità che si verifichi un danno (art. 2 D.Lgs. 81/2008)."
             },
             {
-                question: "Cos'è il POS?",
+                question: "In un magazzino, quale rischio è prioritario nella valutazione?",
                 options: [
-                    "Piano Operativo di Sicurezza",
-                    "Programma Organizzativo Sicurezza",
-                    "Protocollo Operativo Standardizzato",
-                    "Piano Operazioni Speciali"
-                ],
-                correct: 0,
-                explanation: "POS è il Piano Operativo di Sicurezza che ogni impresa esecutrice deve redigere per i cantieri (art. 89 e 96 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Chi redige il PSC (Piano di Sicurezza e Coordinamento)?",
-                options: [
-                    "Il datore di lavoro",
-                    "Il coordinatore per la sicurezza in fase di progettazione",
-                    "Il direttore dei lavori",
-                    "L'impresa appaltatrice"
+                    "Solo il rischio elettrico",
+                    "Movimentazione manuale dei carichi, caduta materiali, investimento mezzi",
+                    "Solo il rischio biologico",
+                    "Solo il rischio rumore"
                 ],
                 correct: 1,
-                explanation: "Il PSC è redatto dal coordinatore per la sicurezza in fase di progettazione (art. 100 D.Lgs. 81/2008)."
+                explanation: "In magazzino i rischi principali sono: movimentazione carichi, caduta oggetti dall'alto, investimento da carrelli/muletti, scivolamenti."
             },
             {
-                question: "Quando è obbligatoria la nomina del coordinatore per la sicurezza nei cantieri?",
-                options: [
-                    "Sempre",
-                    "Quando sono presenti più imprese (anche non contemporaneamente)",
-                    "Solo nei grandi cantieri",
-                    "Mai, è facoltativo"
-                ],
-                correct: 1,
-                explanation: "Il coordinatore per la sicurezza è obbligatorio quando sono previste più imprese, anche non contemporaneamente (art. 90 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa deve contenere il registro degli infortuni?",
-                options: [
-                    "Solo il nome del lavoratore",
-                    "Dati anagrafici infortunato, data/ora/luogo, natura e causa dell'infortunio, giorni di assenza",
-                    "Solo la data dell'infortunio",
-                    "Non è più obbligatorio"
-                ],
-                correct: 1,
-                explanation: "Il registro infortuni (ora in forma telematica INAIL) deve contenere tutti i dati relativi agli infortuni con assenza superiore a 3 giorni."
-            },
-            {
-                question: "Entro quanto tempo deve essere denunciato un infortunio mortale o con prognosi superiore a 30 giorni?",
-                options: [
-                    "24 ore",
-                    "48 ore",
-                    "Immediatamente",
-                    "7 giorni"
-                ],
-                correct: 2,
-                explanation: "Gli infortuni mortali o con prognosi superiore a 30 giorni devono essere denunciati immediatamente all'autorità di pubblica sicurezza (art. 53 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cos'è il near miss?",
-                options: [
-                    "Un infortunio lieve",
-                    "Un quasi infortunio o mancato infortunio",
-                    "Un infortunio mortale",
-                    "Una malattia professionale"
-                ],
-                correct: 1,
-                explanation: "Il near miss è un evento che avrebbe potuto causare un infortunio ma non lo ha causato; è importante analizzarlo per prevenire incidenti futuri."
-            },
-            {
-                question: "Qual è l'obiettivo principale della prevenzione?",
-                options: [
-                    "Eliminare tutti i rischi",
-                    "Ridurre i rischi al minimo possibile",
-                    "Assicurare i lavoratori",
-                    "Ridurre i costi aziendali"
-                ],
-                correct: 1,
-                explanation: "L'obiettivo della prevenzione è ridurre i rischi al minimo eliminando o riducendo le fonti di pericolo (art. 15 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la gerarchia delle misure di prevenzione?",
-                options: [
-                    "Eliminazione rischio, misure collettive, DPI",
-                    "DPI, misure collettive, eliminazione rischio",
-                    "Solo DPI",
-                    "Non esiste gerarchia"
-                ],
-                correct: 0,
-                explanation: "La gerarchia prevede: 1) eliminazione del rischio, 2) misure di protezione collettiva, 3) DPI come ultima risorsa (art. 15 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa si intende per 'pericolo'?",
-                options: [
-                    "La probabilità che si verifichi un evento",
-                    "La proprietà o qualità intrinseca di un fattore di poter causare danno",
-                    "Il danno effettivamente subito",
-                    "La misura di protezione"
-                ],
-                correct: 1,
-                explanation: "Il pericolo è la proprietà intrinseca di un fattore (sostanza, attrezzatura, metodo) di poter causare danno (art. 2 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa si intende per 'rischio'?",
-                options: [
-                    "Sinonimo di pericolo",
-                    "La probabilità di raggiungimento del livello potenziale di danno nelle condizioni di impiego",
-                    "Il danno subito",
-                    "La misura di protezione"
-                ],
-                correct: 1,
-                explanation: "Il rischio è la probabilità di raggiungimento del livello potenziale di danno nelle condizioni di impiego o esposizione (art. 2 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Come si calcola il rischio in modo semplificato?",
-                options: [
-                    "Rischio = Danno",
-                    "Rischio = Probabilità x Magnitudo del danno",
-                    "Rischio = Costo dell'intervento",
-                    "Rischio = Numero lavoratori esposti"
-                ],
-                correct: 1,
-                explanation: "Il rischio è comunemente calcolato come: R = P (probabilità) x M (magnitudo/gravità del danno)."
-            },
-            {
-                question: "Cosa sono le misure di prevenzione?",
-                options: [
-                    "Azioni per eliminare o ridurre i rischi",
-                    "Solo i DPI",
-                    "Solo la formazione",
-                    "Le sanzioni per chi non rispetta le norme"
-                ],
-                correct: 0,
-                explanation: "Le misure di prevenzione sono tutte le azioni messe in atto per eliminare o ridurre i rischi per la salute e sicurezza (art. 2 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa sono le misure di protezione?",
-                options: [
-                    "Solo i DPI",
-                    "Misure che riducono le conseguenze di un evento dannoso",
-                    "Solo le barriere fisiche",
-                    "Solo le assicurazioni"
-                ],
-                correct: 1,
-                explanation: "Le misure di protezione sono azioni che, pur non eliminando il pericolo, riducono le conseguenze di un evento dannoso (es. DPI, sistemi di allarme)."
-            },
-            {
-                question: "Qual è il limite di esposizione per il rumore (LEX,8h) oltre il quale è obbligatoria la sorveglianza sanitaria?",
-                options: [
-                    "80 dB(A)",
-                    "85 dB(A)",
-                    "87 dB(A)",
-                    "90 dB(A)"
-                ],
-                correct: 1,
-                explanation: "La sorveglianza sanitaria è obbligatoria quando l'esposizione supera il livello superiore di azione (LEX = 85 dB(A) o ppeak = 137 dB(C)) (art. 196 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è il livello di azione giornaliero per le vibrazioni al sistema mano-braccio?",
-                options: [
-                    "2,5 m/s²",
-                    "5 m/s²",
-                    "0,5 m/s²",
-                    "1 m/s²"
-                ],
-                correct: 0,
-                explanation: "Per vibrazioni mano-braccio: livello di azione A(8) = 2,5 m/s², valore limite di esposizione A(8) = 5 m/s² (art. 201 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è il valore limite di esposizione giornaliero per le vibrazioni al sistema mano-braccio?",
-                options: [
-                    "2,5 m/s²",
-                    "5 m/s²",
-                    "1,15 m/s²",
-                    "0,5 m/s²"
-                ],
-                correct: 1,
-                explanation: "Il valore limite di esposizione per vibrazioni mano-braccio è A(8) = 5 m/s²; non può essere superato (art. 201 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è il livello di azione giornaliero per le vibrazioni al corpo intero?",
-                options: [
-                    "0,5 m/s²",
-                    "1,0 m/s²",
-                    "1,15 m/s²",
-                    "2,5 m/s²"
-                ],
-                correct: 0,
-                explanation: "Per vibrazioni corpo intero: livello di azione A(8) = 0,5 m/s², valore limite di esposizione A(8) = 1,0 m/s² (art. 201 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è il valore limite di esposizione giornaliero per le vibrazioni al corpo intero?",
-                options: [
-                    "0,5 m/s²",
-                    "1,0 m/s²",
-                    "1,15 m/s²",
-                    "2,5 m/s²"
-                ],
-                correct: 1,
-                explanation: "Il valore limite di esposizione per vibrazioni corpo intero è A(8) = 1,0 m/s²; non può essere superato (art. 201 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Per i lavoratori addetti ai videoterminali, dopo quante ore continuative è obbligatoria una pausa?",
-                options: [
-                    "1 ora",
-                    "2 ore",
-                    "4 ore",
-                    "Non esistono obblighi specifici"
-                ],
-                correct: 1,
-                explanation: "I lavoratori VDT hanno diritto a una pausa di 15 minuti ogni 2 ore di applicazione continuativa al videoterminale (art. 175 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quando è obbligatoria la sorveglianza sanitaria per i lavoratori al videoterminale?",
-                options: [
-                    "Sempre",
-                    "Mai",
-                    "Se utilizzano il VDT per almeno 20 ore settimanali",
-                    "Solo su richiesta del lavoratore"
-                ],
-                correct: 2,
-                explanation: "La sorveglianza sanitaria per lavoratori VDT è obbligatoria se l'utilizzo è ≥ 20 ore settimanali (art. 176 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è il peso massimo sollevabile da un lavoratore maschio adulto in condizioni ideali?",
+                question: "Qual è il peso massimo consigliato per la movimentazione manuale occasionale (uomini)?",
                 options: [
                     "15 kg",
                     "20 kg",
@@ -945,461 +476,373 @@
                     "30 kg"
                 ],
                 correct: 2,
-                explanation: "Il peso massimo raccomandato è 25 kg in condizioni ideali (ISO 11228-1), ma la norma italiana prevede valutazione caso per caso (Allegato XXXIII D.Lgs. 81/2008)."
+                explanation: "Secondo la norma ISO 11228-1, il peso massimo consigliato per sollevamento occasionale è 25 kg per uomini adulti in condizioni ideali."
             },
             {
-                question: "Cosa stabilisce l'art. 168 del D.Lgs. 81/2008 riguardo alla movimentazione manuale dei carichi?",
+                question: "Cosa si intende per 'near miss'?",
                 options: [
-                    "È sempre vietata",
-                    "Il datore di lavoro deve adottare misure organizzative per evitarla o ridurla",
-                    "È consentita senza limiti",
-                    "Riguarda solo il personale femminile"
+                    "Un infortunio grave",
+                    "Un mancato infortunio",
+                    "Una malattia professionale",
+                    "Un rischio chimico"
                 ],
                 correct: 1,
-                explanation: "L'art. 168 obbliga il datore di lavoro ad adottare misure organizzative e mezzi appropriati per evitare o ridurre la movimentazione manuale."
+                explanation: "Near miss (quasi infortunio) è un evento che avrebbe potuto causare un infortunio ma non lo ha causato per fortuna o intervento tempestivo."
             },
             {
-                question: "Quali agenti chimici sono considerati 'pericolosi'?",
+                question: "Qual è la segnaletica di sicurezza obbligatoria in un magazzino?",
                 options: [
-                    "Solo quelli cancerogeni",
-                    "Quelli classificati come pericolosi secondo il Regolamento CLP (UE) 1272/2008",
-                    "Tutti gli agenti chimici",
-                    "Nessuno, non esiste classificazione"
+                    "Solo uscite di emergenza",
+                    "Uscite emergenza, estintori, primo soccorso, percorsi pedonali, carichi sospesi",
+                    "Solo divieto di fumare",
+                    "Solo estintori"
                 ],
                 correct: 1,
-                explanation: "Sono pericolosi gli agenti chimici classificati come tali dal Regolamento CLP (Titolo IX Capo I D.Lgs. 81/2008)."
+                explanation: "Secondo il Titolo V del D.Lgs. 81/2008, sono obbligatorie le segnalazioni di emergenza, antincendio, primo soccorso e pericoli specifici."
             },
             {
-                question: "Cosa deve contenere la scheda di sicurezza di un agente chimico?",
+                question: "Quale DPI è obbligatorio in un magazzino con movimentazione carichi?",
                 options: [
-                    "Solo il nome del prodotto",
-                    "16 sezioni con informazioni complete su pericoli, composizione, misure di primo soccorso, ecc.",
-                    "Solo le modalità di smaltimento",
-                    "Solo il fornitore"
+                    "Solo guanti",
+                    "Scarpe antinfortunistiche, guanti, casco se rischio caduta oggetti, gilet alta visibilità",
+                    "Solo occhiali",
+                    "Nessun DPI"
                 ],
                 correct: 1,
-                explanation: "La scheda di sicurezza (SDS) deve contenere 16 sezioni standardizzate secondo il Regolamento REACH (art. 31 Reg. CE 1907/2006)."
+                explanation: "La valutazione dei rischi determina i DPI necessari: tipicamente scarpe S3, guanti, casco (se rischio caduta dall'alto), gilet se circolano mezzi."
             },
             {
-                question: "Cosa indica il pittogramma con la fiamma sul cerchio?",
+                question: "Qual è la larghezza minima delle vie di circolazione nei luoghi di lavoro?",
                 options: [
-                    "Infiammabile",
-                    "Comburente",
-                    "Esplosivo",
-                    "Tossico"
+                    "50 cm",
+                    "70 cm",
+                    "80 cm",
+                    "100 cm"
+                ],
+                correct: 2,
+                explanation: "Secondo l'Allegato IV del D.Lgs. 81/2008, le vie di circolazione devono essere larghe almeno 80 cm (ideale 120 cm)."
+            },
+            {
+                question: "Cosa prevede il Piano di Emergenza aziendale?",
+                options: [
+                    "Solo procedure antincendio",
+                    "Procedure evacuazione, primo soccorso, gestione emergenze, ruoli squadre",
+                    "Solo numeri di emergenza",
+                    "Solo planimetrie"
                 ],
                 correct: 1,
-                explanation: "Il pittogramma con fiamma sul cerchio indica sostanze comburenti (che favoriscono la combustione) secondo il CLP."
+                explanation: "Il Piano di Emergenza (art. 43 D.Lgs. 81/2008) include: procedure evacuazione, gestione emergenze, squadre antincendio/primo soccorso, comunicazioni."
             },
             {
-                question: "Cosa indica il pittogramma con il teschio e le tibie incrociate?",
+                question: "Qual è la distanza massima da un estintore in un magazzino?",
                 options: [
-                    "Tossicità acuta (categorie 1-3)",
-                    "Corrosivo",
-                    "Irritante",
-                    "Pericoloso per l'ambiente"
+                    "10 metri",
+                    "20 metri",
+                    "30 metri",
+                    "50 metri"
+                ],
+                correct: 2,
+                explanation: "La norma UNI 9994-1 prevede che ogni punto del locale disti al massimo 30 metri da un estintore (per rischio incendio medio)."
+            },
+            {
+                question: "Qual è la capacità minima di un estintore portatile?",
+                options: [
+                    "1 kg",
+                    "3 kg",
+                    "6 kg",
+                    "9 kg"
+                ],
+                correct: 2,
+                explanation: "Gli estintori portatili devono avere capacità minima di 6 kg/litri (classe A-B) secondo il D.M. 10/03/1998."
+            },
+            {
+                question: "Cosa si intende per 'carico unitario'?",
+                options: [
+                    "Il peso totale del magazzino",
+                    "Il carico che può sollevare una persona",
+                    "Un singolo pacco o unità di stoccaggio",
+                    "Il carico massimo di un carrello"
+                ],
+                correct: 2,
+                explanation: "Carico unitario è l'unità di carico movimentata (pallet, collo, scatola) come singola entità durante le operazioni logistiche."
+            },
+            {
+                question: "Qual è la normativa specifica per le scaffalature industriali?",
+                options: [
+                    "UNI EN 15512",
+                                        "ISO 9001",
+                    "D.Lgs. 81/2008",
+                    "Nessuna normativa specifica"
                 ],
                 correct: 0,
-                explanation: "Il teschio indica tossicità acuta elevata (categorie 1-3) secondo il Regolamento CLP."
+                explanation: "La norma UNI EN 15512 regola la progettazione, installazione e utilizzo delle scaffalature portapallet statiche in acciaio."
             },
             {
-                question: "Quali lavoratori sono sottoposti a sorveglianza sanitaria per esposizione ad agenti cancerogeni/mutageni?",
+                question: "Ogni quanto vanno ispezionate le scaffalature metalliche?",
                 options: [
-                    "Nessuno",
-                    "Tutti i lavoratori esposti",
-                    "Solo quelli esposti per più di 10 anni",
-                    "Solo su richiesta del lavoratore"
-                ],
-                correct: 1,
-                explanation: "Tutti i lavoratori esposti ad agenti cancerogeni/mutageni sono sottoposti a sorveglianza sanitaria (art. 242 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Ogni quanto deve essere effettuata la visita medica per lavoratori esposti ad agenti cancerogeni?",
-                options: [
+                    "Mensilmente",
                     "Ogni 6 mesi",
-                    "Annuale o con periodicità stabilita dal medico competente",
-                    "Ogni 5 anni",
-                    "Solo all'assunzione"
+                    "Annualmente",
+                    "Ogni 2 anni"
                 ],
-                correct: 1,
-                explanation: "La periodicità è almeno annuale o secondo quanto stabilito dal medico competente (art. 242 D.Lgs. 81/2008)."
+                correct: 2,
+                explanation: "La UNI EN 15635 raccomanda ispezioni settimanali degli addetti e annuali da parte di esperti qualificati (PRSES)."
             },
             {
-                question: "Qual è la classificazione degli agenti biologici secondo il D.Lgs. 81/2008?",
+                question: "Cosa indica la portata massima di una scaffalatura?",
                 options: [
-                    "Gruppi 1, 2, 3, 4 in base al rischio infettivo",
-                    "Solo pericolosi e non pericolosi",
-                    "Categorie A, B, C",
-                    "Non esiste classificazione"
+                    "Il peso totale della scaffalatura",
+                    "Il peso massimo per singola campata o livello",
+                    "Solo il peso del telaio",
+                    "Il peso degli operatori"
+                ],
+                correct: 1,
+                explanation: "La portata indica il carico massimo ammissibile per campata (o livello), comprensivo del peso dei contenitori e materiali stoccati."
+            },
+            {
+                question: "Quale colore identifica le tubazioni antincendio?",
+                options: [
+                    "Giallo",
+                    "Verde",
+                    "Rosso",
+                    "Blu"
+                ],
+                correct: 2,
+                explanation: "Secondo la norma UNI 5634, il rosso RAL 3000 identifica le tubazioni antincendio e i relativi impianti."
+            },
+            {
+                question: "Qual è la funzione del 'just in time' nella sicurezza di magazzino?",
+                options: [
+                    "Riduce gli spazi di stoccaggio e i rischi di accumulo",
+                    "Aumenta i rischi",
+                    "Non ha impatti sulla sicurezza",
+                    "Solo ottimizzazione economica"
                 ],
                 correct: 0,
-                explanation: "Gli agenti biologici sono classificati in 4 gruppi di rischio crescente (art. 268 D.Lgs. 81/2008)."
+                explanation: "Il just in time riduce le scorte, liberando spazi e riducendo rischi di accumulo materiali, caduta oggetti e congestione vie di fuga."
             },
             {
-                question: "Quali lavoratori devono essere vaccinati contro gli agenti biologici?",
+                question: "Cosa prevede il metodo FIFO?",
                 options: [
-                    "Tutti",
-                    "I lavoratori esposti ad agenti per i cui è disponibile un vaccino efficace (se non già immuni)",
-                    "Nessuno, è facoltativo",
-                    "Solo il personale sanitario"
-                ],
-                correct: 1,
-                explanation: "Il datore di lavoro mette a disposizione vaccini efficaci per i lavoratori esposti che non siano già immuni (art. 279 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa si intende per 'atmosfera esplosiva'?",
-                options: [
-                    "Presenza di ossigeno",
-                    "Miscela di aria e sostanze infiammabili in cui la combustione può propagarsi",
-                    "Alta temperatura",
-                    "Presenza di gas tossici"
-                ],
-                correct: 1,
-                explanation: "Un'atmosfera esplosiva è una miscela con l'aria di sostanze infiammabili in cui la combustione può propagarsi (art. 288 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa deve fare il datore di lavoro in presenza di atmosfere esplosive?",
-                options: [
-                    "Nulla",
-                    "Classificare le aree in zone e redigere il documento sulla protezione contro le esplosioni",
-                    "Solo informare i lavoratori",
-                    "Vietare l'accesso a tutti"
-                ],
-                correct: 1,
-                explanation: "Il datore di lavoro deve classificare le aree a rischio, redigere il documento di protezione contro le esplosioni e adottare misure tecniche (Titolo XI D.Lgs. 81/2008)."
-            },
-            {
-                question: "Le zone ATEX sono classificate in:",
-                options: [
-                    "Zone 0, 1, 2 (per gas/vapori) e zone 20, 21, 22 (per polveri)",
-                    "Zone A, B, C",
-                    "Solo zone pericolose e non pericolose",
-                    "Non esiste classificazione"
+                    "First In First Out (primo entrato, primo uscito)",
+                    "First In First On (primo entrato, primo acceso)",
+                    "Fast Input Fast Output",
+                    "Final Inventory First Output"
                 ],
                 correct: 0,
-                explanation: "Le zone ATEX sono classificate in base alla frequenza e durata della presenza di atmosfera esplosiva (Allegato XLIX D.Lgs. 81/2008)."
+                explanation: "FIFO (First In First Out) garantisce che i prodotti più vecchi siano spediti per primi, riducendo obsolescenza e rischi di deterioramento."
             },
             {
-                question: "Cosa indica la marcatura CE su una macchina?",
+                question: "Qual è l'altezza massima consigliata per il prelievo manuale senza ausili?",
                 options: [
-                    "Che è economica",
-                    "Che è conforme ai requisiti essenziali di sicurezza delle direttive europee applicabili",
-                    "Che è prodotta in Europa",
-                    "Che è costosa"
-                ],
-                correct: 1,
-                explanation: "La marcatura CE indica conformità ai requisiti essenziali di sicurezza delle direttive UE (Direttiva Macchine 2006/42/CE)."
-            },
-            {
-                question: "Ogni macchina deve essere accompagnata da:",
-                options: [
-                    "Manuale d'uso in italiano e dichiarazione CE di conformità",
-                    "Solo fattura d'acquisto",
-                    "Solo marcatura CE",
-                    "Nulla"
-                ],
-                correct: 0,
-                explanation: "Ogni macchina deve avere manuale d'uso e manutenzione nella lingua del paese di utilizzo e dichiarazione CE di conformità (Direttiva Macchine)."
-            },
-            {
-                question: "Quale organo verifica il rispetto della normativa sulla sicurezza sul lavoro?",
-                options: [
-                    "Solo i Carabinieri",
-                    "ASL (SPSAL), Ispettorato Nazionale del Lavoro, Vigili del Fuoco, ARPA",
-                    "Solo l'azienda stessa",
-                    "Solo i sindacati"
-                ],
-                correct: 1,
-                explanation: "Gli organi di vigilanza sono: ASL (Servizio Prevenzione e Sicurezza Ambienti di Lavoro), INL, VVF, ARPA (art. 13 D.Lgs. 81/2008)."
-            },
-            {
-                question: "L'Ispettorato Nazionale del Lavoro può:",
-                options: [
-                    "Solo fare richiami verbali",
-                    "Disporre prescrizioni, sospendere attività, applicare sanzioni amministrative e penali",
-                    "Solo consigliare",
-                    "Solo multare"
-                ],
-                correct: 1,
-                explanation: "L'INL può disporre prescrizioni obbligatorie, sospensione delle attività, applicare sanzioni amministrative e penali (D.Lgs. 149/2015 e D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quando può essere disposta la sospensione dell'attività imprenditoriale?",
-                options: [
-                    "Mai",
-                    "In caso di lavoro irregolare > 10% o gravi violazioni in materia di sicurezza",
-                    "Solo in caso di infortunio mortale",
-                    "Su richiesta dei lavoratori"
-                ],
-                correct: 1,
-                explanation: "La sospensione è disposta per lavoro irregolare > 10% della forza lavoro o per violazioni gravi in materia di sicurezza (art. 14 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cos'è l'OT24?",
-                options: [
-                    "Un modulo INAIL",
-                    "Il modulo per la richiesta di riduzione del tasso INAIL per prevenzione",
-                    "Un documento fiscale",
-                    "Un registro obbligatorio"
-                ],
-                correct: 1,
-                explanation: "L'OT24 è il modulo INAIL per richiedere riduzione del premio assicurativo per interventi di miglioramento della sicurezza (oscillazione per prevenzione)."
-            },
-            {
-                question: "Entro quando deve essere presentato l'OT24?",
-                options: [
-                    "31 dicembre",
-                    "28/29 febbraio dell'anno successivo a quello di realizzazione degli interventi",
-                    "30 giugno",
-                    "Non ci sono scadenze"
-                ],
-                correct: 1,
-                explanation: "L'OT24 deve essere presentato telematicamente entro il 28/29 febbraio dell'anno successivo (INAIL - Bando ISI)."
-            },
-            {
-                question: "Cosa prevede il D.Lgs. 231/2001?",
-                options: [
-                    "Responsabilità amministrativa degli enti per reati, inclusi quelli su salute e sicurezza sul lavoro",
-                    "Solo sanzioni per i lavoratori",
-                    "Solo norme fiscali",
-                    "Solo norme ambientali"
-                ],
-                correct: 0,
-                explanation: "Il D.Lgs. 231/2001 prevede la responsabilità amministrativa degli enti per alcuni reati, tra cui quelli di omicidio colposo e lesioni gravi/gravissime da violazione norme SSL (art. 25-septies)."
-            },
-            {
-                question: "Il Modello Organizzativo 231 per la sicurezza prevede:",
-                options: [
-                    "Solo sanzioni",
-                    "Un sistema organizzativo con procedure, protocolli, ODV (Organismo di Vigilanza)",
-                    "Solo formazione",
-                    "Nulla di specifico"
-                ],
-                correct: 1,
-                explanation: "Il Modello 231 prevede procedure, protocolli, sistema disciplinare, Organismo di Vigilanza per prevenire i reati (art. 6 D.Lgs. 231/2001)."
-            },
-            {
-                question: "Qual è la differenza tra infortunio e malattia professionale?",
-                options: [
-                    "Nessuna",
-                    "L'infortunio è causato da evento traumatico improvviso, la malattia professionale da esposizione prolungata",
-                    "Solo la gravità",
-                    "Solo la sede del danno"
-                ],
-                correct: 1,
-                explanation: "L'infortunio è causato da un evento traumatico improvviso; la malattia professionale deriva da esposizione prolungata a fattori di rischio (art. 3 DPR 1124/1965 e tabelle INAIL)."
-            },
-            {
-                question: "Le malattie professionali sono elencate in:",
-                options: [
-                    "Un elenco libero",
-                    "Tabelle INAIL (malattie tabellate) + sistema misto per le non tabellate",
-                    "Solo nel DVR",
-                    "Non esiste elenco"
-                ],
-                correct: 1,
-                explanation: "Le malattie professionali sono elencate in tabelle INAIL; quelle non tabellate possono essere riconosciute tramite sistema misto con onere della prova (DM 9/4/2008)."
-            },
-            {
-                question: "Chi paga l'indennizzo per infortunio o malattia professionale?",
-                options: [
-                    "Il datore di lavoro direttamente",
-                    "L'INAIL",
-                    "Il lavoratore",
-                    "Nessuno"
-                ],
-                correct: 1,
-                explanation: "L'INAIL eroga l'indennizzo per infortuni e malattie professionali, finanziato dai premi assicurativi pagati dai datori di lavoro (DPR 1124/1965)."
-            },
-            {
-                question: "Qual è il principio fondamentale della responsabilità del datore di lavoro in caso di infortunio?",
-                options: [
-                    "Responsabilità oggettiva assoluta",
-                    "Posizione di garanzia: obbligo di prevenire eventi lesivi",
-                    "Nessuna responsabilità",
-                    "Responsabilità solo civile"
-                ],
-                correct: 1,
-                explanation: "Il datore di lavoro è 'garante' della salute e sicurezza dei lavoratori; ha obbligo di impedire eventi lesivi (art. 2087 c.c. e D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quale DPI protegge da cadute dall'alto?",
-                options: [
-                    "Scarpe antinfortunistiche",
-                    "Imbracatura con sistema anticaduta",
-                    "Casco",
-                    "Guanti"
-                ],
-                correct: 1,
-                explanation: "L'imbracatura (con sistema anticaduta) è DPI di III categoria contro le cadute dall'alto (art. 115 e ss. D.Lgs. 81/2008)."
-            },
-            {
-                question: "I lavori in quota richiedono misure specifiche quando l'altezza è superiore a:",
-                options: [
-                    "1 metro",
+                    "1,5 metri",
                     "2 metri",
-                    "3 metri",
-                    "5 metri"
+                    "2,5 metri",
+                    "3 metri"
                 ],
                 correct: 1,
-                explanation: "Si considera lavoro in quota quello svolto in luoghi con possibilità di caduta da altezza superiore a 2 metri (art. 107 D.Lgs. 81/2008)."
+                explanation: "Secondo l'ergonomia, il prelievo manuale ottimale è tra 0,6-1,7 m; oltre i 2 m sono necessari ausili (scale, piattaforme)."
             },
             {
-                question: "Quale dispositivo di protezione collettiva è preferibile per lavori in quota?",
+                question: "Cosa si intende per 'zona di picking'?",
                 options: [
-                    "Imbracatura anticaduta",
-                    "Parapetti o reti di sicurezza",
-                    "Solo casco",
-                    "Nessuno, basta fare attenzione"
+                    "Area di carico/scarico camion",
+                    "Area dedicata al prelievo ordini",
+                    "Zona uffici",
+                    "Area pausa"
                 ],
                 correct: 1,
-                explanation: "Le misure di protezione collettiva (parapetti, reti) hanno priorità sui DPI secondo la gerarchia delle misure di prevenzione (art. 111 D.Lgs. 81/2008)."
+                explanation: "La zona di picking è l'area del magazzino dedicata al prelievo delle merci per comporre gli ordini da spedire."
             },
             {
-                question: "Qual è la sequenza corretta di priorità delle misure per lavori in quota?",
+                question: "Qual è il rischio principale durante l'uso di transpallet manuale?",
                 options: [
-                    "DPI, ponteggi, parapetti",
-                    "Eliminare il rischio, protezione collettiva (parapetti/reti), sistemi di posizionamento, DPI anticaduta",
-                    "Solo DPI",
+                    "Rischio elettrico",
+                    "Schiacciamento piedi, sovraccarico biomeccanico, investimento",
+                    "Rischio biologico",
+                    "Solo rischio rumore"
+                ],
+                correct: 1,
+                explanation: "I transpallet manuali comportano rischi di schiacciamento piedi, sovraccarico rachide lombare (spinta carichi pesanti), investimento pedoni."
+            },
+            {
+                question: "Quale patentino è obbligatorio per condurre carrelli elevatori?",
+                options: [
+                    "Patente B",
+                    "Abilitazione ex Accordo Stato-Regioni 22/02/2012",
+                    "Nessun patentino",
+                    "Solo patente A"
+                ],
+                correct: 1,
+                explanation: "L'Accordo Stato-Regioni del 22/02/2012 (art. 73 D.Lgs. 81/2008) richiede abilitazione specifica con corso teorico-pratico e verifica."
+            },
+            {
+                question: "Ogni quanto va rinnovata l'abilitazione per carrellisti?",
+                options: [
+                    "Ogni anno",
+                    "Ogni 3 anni",
+                    "Ogni 5 anni",
+                    "Mai"
+                ],
+                correct: 2,
+                explanation: "L'abilitazione per carrelli elevatori va rinnovata ogni 5 anni con corso di aggiornamento di 4 ore (Accordo SR 22/02/2012)."
+            },
+            {
+                question: "Qual è la velocità massima consentita per i carrelli in magazzino?",
+                options: [
+                    "5 km/h",
+                    "10 km/h",
+                    "20 km/h",
+                    "Non specificata, ma prudente"
+                ],
+                correct: 3,
+                explanation: "Non esiste limite normativo specifico, ma va adottata velocità prudente in funzione di visibilità, traffico, condizioni pavimento (generalmente max 10 km/h)."
+            },
+            {
+                question: "Cosa indica il cartello con triangolo giallo e punto esclamativo?",
+                options: [
+                    "Pericolo generico",
+                    "Divieto generico",
+                    "Obbligo generico",
+                    "Informazione"
+                ],
+                correct: 0,
+                explanation: "Il triangolo giallo con punto esclamativo indica un pericolo generico o attenzione (D.Lgs. 81/2008, Titolo V)."
+            },
+            {
+                question: "Qual è la funzione delle protezioni laterali delle scaffalature?",
+                options: [
+                    "Estetica",
+                    "Impedire caduta materiali sui lati e passaggi",
+                    "Solo identificazione",
+                    "Nessuna funzione"
+                ],
+                correct: 1,
+                explanation: "Le protezioni laterali (reti, pannelli) impediscono la caduta di materiali sui corridoi di transito e verso spazi adiacenti."
+            },
+            {
+                question: "Cosa prevede il 'lock out - tag out'?",
+                options: [
+                    "Chiusura magazzino di notte",
+                    "Procedura di messa in sicurezza macchinari (blocco energia + cartellino)",
+                    "Etichettatura prodotti",
+                    "Controllo accessi"
+                ],
+                correct: 1,
+                explanation: "Lock Out Tag Out è la procedura di sicurezza per isolare energie pericolose durante manutenzione (blocco fisico + cartellino identificativo)."
+            },
+            {
+                question: "Qual è l'illuminamento minimo richiesto nei magazzini?",
+                options: [
+                    "50 lux",
+                    "100 lux",
+                    "200 lux",
+                    "500 lux"
+                ],
+                correct: 1,
+                explanation: "La norma UNI EN 12464-1 prevede almeno 100 lux per aree generali di magazzino, 200 lux per zone picking/imballaggio."
+            },
+            {
+                question: "Cosa si intende per 'ergonomia posturale'?",
+                options: [
+                    "Solo esercizi fisici",
+                    "Adattamento del lavoro alle caratteristiche psicofisiche dell'operatore",
+                    "Solo pause",
                     "Solo formazione"
                 ],
                 correct: 1,
-                explanation: "La gerarchia delle misure è: 1) Eliminare il rischio, 2) Protezione collettiva, 3) Sistemi di posizionamento, 4) DPI anticaduta (art. 111 D.Lgs. 81/2008)."
+                explanation: "Ergonomia posturale significa progettare postazioni/compiti adattandoli alle capacità umane, riducendo posture incongrue e sovraccarico biomeccanico."
             },
             {
-                question: "Cos'è il POS?",
+                question: "Qual è la temperatura ideale in un magazzino per lavoratori?",
                 options: [
-                    "Piano Operativo di Sicurezza",
-                    "Programma Operativo Semplice",
-                    "Piano Organizzativo Sanitario",
-                    "Punto Operativo Sicuro"
+                    "10-15°C",
+                    "18-24°C",
+                    "25-30°C",
+                    "Qualsiasi temperatura"
+                ],
+                correct: 1,
+                explanation: "Per lavoro sedentario/leggero la temperatura ideale è 19-24°C; per attività fisica moderata 16-21°C (norma UNI EN ISO 7730)."
+            },
+            {
+                question: "Cosa prevede la normativa ATEX?",
+                options: [
+                    "Trasporto merci pericolose",
+                    "Atmosfere esplosive (polveri, gas)",
+                    "Solo sostanze chimiche",
+                    "Solo materiali radioattivi"
+                ],
+                correct: 1,
+                explanation: "Le direttive ATEX (94/9/CE e 99/92/CE, recepite con D.Lgs. 81/2008 Titolo XI) regolano la sicurezza in ambienti con atmosfere esplosive."
+            },
+            {
+                question: "Qual è la classe di reazione al fuoco richiesta per materiali in vie di fuga?",
+                options: [
+                    "Classe 0 (incombustibile)",
+                    "Classe 1",
+                    "Classe 2",
+                    "Qualsiasi classe"
                 ],
                 correct: 0,
-                explanation: "POS è il Piano Operativo di Sicurezza che ogni impresa esecutrice deve redigere per lavori in cantiere (art. 89 e 96 D.Lgs. 81/2008)."
+                explanation: "D.M. 26/06/1984: materiali di rivestimento in vie di esodo devono essere classe 0 (incombustibili) o classe 1 (non infiammabili)."
             },
             {
-                question: "Chi redige il PSC (Piano di Sicurezza e Coordinamento)?",
+                question: "Cosa indica il pittogramma GHS07 (punto esclamativo)?",
                 options: [
-                    "Il datore di lavoro dell'impresa",
-                    "Il Coordinatore per la Sicurezza in fase di Progettazione (CSP)",
-                    "Il lavoratore autonomo",
-                    "L'RSPP"
+                    "Esplosivo",
+                    "Tossicità acuta (cat 4), irritazione, sensibilizzazione cutanea",
+                    "Corrosivo",
+                    "Infiammabile"
                 ],
                 correct: 1,
-                explanation: "Il PSC è redatto dal Coordinatore per la Sicurezza in fase di Progettazione (CSP) durante la progettazione (art. 91 e 100 D.Lgs. 81/2008)."
+                explanation: "GHS07 indica: tossicità acuta categoria 4, irritante per pelle/occhi/vie respiratorie, sensibilizzante cutaneo, tossicità specifica monoesposizione."
             },
             {
-                question: "Quando è obbligatoria la notifica preliminare in cantiere?",
+                question: "Qual è la distanza minima tra scaffalature opposte (corridoio)?",
                 options: [
-                    "Sempre",
-                    "Mai",
-                    "Se durata presunta lavori ≥ 30 giorni lavorativi e 20 lavoratori, oppure volume lavoro ≥ 500 uomini-giorno",
-                    "Solo per cantieri stradali"
+                    "50 cm",
+                    "1 metro",
+                    "Larghezza mezzo + 70 cm per lato",
+                    "Non specificata"
                 ],
                 correct: 2,
-                explanation: "La notifica preliminare è obbligatoria se durata ≥ 30 giorni e ≥ 20 lavoratori contemporanei, o ≥ 500 uomini-giorno (art. 99 D.Lgs. 81/2008)."
+                explanation: "I corridoi devono permettere il transito sicuro dei mezzi: generalmente larghezza carrello + 70 cm per lato (es. carrello 1,2m → corridoio min 2,6m)."
             },
             {
-                question: "Chi è il committente nei cantieri temporanei o mobili?",
+                question: "Cosa prevede il Registro Infortuni?",
                 options: [
-                    "L'impresa esecutrice",
-                    "Il soggetto per conto del quale viene realizzata l'opera",
-                    "Il progettista",
-                    "Il coordinatore"
+                    "Solo infortuni mortali",
+                    "Tutti gli infortuni con prognosi >3 giorni",
+                    "Solo malattie professionali",
+                    "Non è più obbligatorio"
+                ],
+                correct: 3,
+                explanation: "Dal 2016 il Registro Infortuni cartaceo è abolito; gli infortuni vanno comunicati telematicamente all'INAIL (obbligo denuncia se prognosi >3 gg)."
+            },
+            {
+                question: "Qual è la sanzione per omessa valutazione dei rischi (DVR)?",
+                options: [
+                    "Solo richiamo",
+                    "Arresto da 3 a 6 mesi o ammenda €2.500-6.400",
+                    "Solo ammenda €500",
+                    "Nessuna sanzione"
                 ],
                 correct: 1,
-                explanation: "Il committente è il soggetto per conto del quale l'intera opera è realizzata (art. 89 D.Lgs. 81/2008)."
+                explanation: "L'art. 55 del D.Lgs. 81/2008 prevede per omessa valutazione rischi: arresto da 3 a 6 mesi o ammenda da €2.500 a €6.400."
             },
             {
-                question: "Quali sono i compiti del CSE (Coordinatore Sicurezza Esecuzione)?",
+                question: "Chi può effettuare la formazione sulla sicurezza?",
                 options: [
-                    "Solo redigere il PSC",
-                    "Verificare l'applicazione del PSC, adeguarlo, organizzare cooperazione, verificare idoneità POS",
-                    "Solo fare sopralluoghi",
-                    "Sostituire il datore di lavoro"
+                    "Chiunque",
+                    "Solo l'RSPP",
+                    "Soggetti formatori accreditati secondo criteri Accordo SR 07/07/2016",
+                    "Solo ispettori ASL"
                 ],
-                correct: 1,
-                explanation: "Il CSE verifica l'applicazione del PSC, lo adegua, organizza la cooperazione, verifica l'idoneità del POS (art. 92 D.Lgs. 81/2008)."
+                correct: 2,
+                explanation: "L'Accordo Stato-Regioni del 07/07/2016 definisce i requisiti dei formatori: esperienza, titoli di studio e competenze specifiche certificate."
             },
             {
-                question: "Il ponteggio metallico fisso deve essere montato:",
-                options: [
-                    "Da chiunque",
-                    "Da lavoratori qualificati con formazione specifica (PIMUS)",
-                    "Solo dal produttore",
-                    "Non ha requisiti specifici"
-                ],
-                correct: 1,
-                explanation: "Il montaggio/smontaggio ponteggi richiede lavoratori formati secondo PIMUS (Piano di Montaggio, Uso, Smontaggio) e autorizzazione scritta (art. 136 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cos'è il PIMUS?",
-                options: [
-                    "Piano di Manutenzione Urgente Sicuro",
-                    "Piano di Montaggio, Uso e Smontaggio dei ponteggi",
-                    "Piano Intervento Manutenzione Urgente Sistema",
-                    "Piano Ispezione Manuale Urgente Strutture"
-                ],
-                correct: 1,
-                explanation: "PIMUS è il Piano di Montaggio, Uso e Smontaggio dei ponteggi, obbligatorio per tutti i ponteggi (art. 136 comma 6 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Le scale portatili devono:",
-                options: [
-                    "Essere di qualsiasi materiale",
-                    "Essere costruite conformemente alla norma UNI EN 131, con dispositivi antisdrucciolevoli, agganci superiori",
-                    "Essere usate senza limiti",
-                    "Non hanno requisiti"
-                ],
-                correct: 1,
-                explanation: "Le scale portatili devono essere conformi alla norma UNI EN 131, con pioli antisdrucciolevoli, ganci di trattenuta, ecc. (art. 113 D.Lgs. 81/2008 e Allegato XX)."
-            },
-            {
-                question: "Cosa si intende per 'spazio confinato'?",
-                options: [
-                    "Un ambiente chiuso al pubblico",
-                    "Un ambiente a rischio specifico: limitato accesso, non progettato per permanenza prolungata, rischio asfissia/intossicazione",
-                    "Una stanza piccola",
-                    "Un magazzino"
-                ],
-                correct: 1,
-                explanation: "Gli spazi confinati sono ambienti a rischio specifico (silos, cisterne, cunicoli, ecc.) con limitato accesso e rischio asfissia/intossicazione (DPR 177/2011)."
-            },
-            {
-                question: "Prima di accedere a uno spazio confinato è obbligatorio:",
-                options: [
-                    "Solo indossare il casco",
-                    "Effettuare analisi atmosfera, ventilazione, usare DPI, presenza di personale di soccorso, permesso scritto",
-                    "Solo informare il datore di lavoro",
-                    "Nulla di specifico"
-                ],
-                correct: 1,
-                explanation: "Prima dell'accesso in spazio confinato: analisi atmosfera, ventilazione, DPI, presenza di personale addestrato al soccorso, permesso di lavoro scritto (DPR 177/2011 art. 3)."
-            },
-            {
-                question: "Qual è il contenuto minimo di ossigeno per accedere in sicurezza a uno spazio confinato?",
-                options: [
-                    "15%",
-                    "19,5%",
-                    "21%",
-                    "25%"
-                ],
-                correct: 1,
-                explanation: "Il contenuto minimo di ossigeno deve essere ≥ 19,5% (atmosfera respirabile); sotto tale valore è richiesta ventilazione forzata o respiratore (standard OSHA/NIOSH)."
-            },
-            {
-                question: "Cosa prevede l'Accordo Stato-Regioni del 21/12/2011?",
-                options: [
-                    "Solo sanzioni",
-                    "Disciplina durata, contenuti e modalità della formazione obbligatoria per datori di lavoro, dirigenti, preposti, lavoratori",
-                    "Solo norme edilizie",
-                    "Solo aggiornamenti RSPP"
-                ],
-                correct: 1,
-                explanation: "L'Accordo Stato-Regioni 21/12/2011 definisce durata, contenuti minimi e modalità della formazione obbligatoria per sicurezza sul lavoro (art. 37 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la durata minima della formazione generale per i lavoratori?",
+                question: "Qual è la durata minima della formazione generale per lavoratori?",
                 options: [
                     "2 ore",
                     "4 ore",
@@ -1407,870 +850,1228 @@
                     "16 ore"
                 ],
                 correct: 1,
-                explanation: "La formazione generale per tutti i lavoratori ha durata minima di 4 ore (Accordo Stato-Regioni 21/12/2011)."
+                explanation: "L'Accordo SR 21/12/2011 prevede 4 ore di formazione generale uguale per tutti i settori, più formazione specifica (4/8/12 h) in base al rischio."
             },
             {
-                question: "La formazione specifica per lavoratori di aziende a rischio basso ha durata di:",
+                question: "Ogni quanto va aggiornata la formazione dei lavoratori?",
                 options: [
-                    "4 ore",
-                    "8 ore",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 0,
-                explanation: "Formazione specifica: 4 ore per rischio basso, 8 ore per rischio medio, 12 ore per rischio alto (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "La formazione specifica per lavoratori di aziende a rischio medio ha durata di:",
-                options: [
-                    "4 ore",
-                    "8 ore",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 1,
-                explanation: "Formazione specifica: 8 ore per rischio medio (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "La formazione specifica per lavoratori di aziende a rischio alto ha durata di:",
-                options: [
-                    "4 ore",
-                    "8 ore",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 2,
-                explanation: "Formazione specifica: 12 ore per rischio alto (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "L'aggiornamento della formazione per i lavoratori deve essere effettuato ogni:",
-                options: [
-                    "1 anno",
-                    "3 anni",
-                    "5 anni",
-                    "10 anni"
-                ],
-                correct: 2,
-                explanation: "L'aggiornamento della formazione lavoratori è obbligatorio ogni 5 anni (durata minima 6 ore) (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata minima della formazione per preposti?",
-                options: [
-                    "4 ore",
-                    "8 ore aggiuntive alla formazione per lavoratori",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 1,
-                explanation: "I preposti devono ricevere formazione particolare aggiuntiva di minimo 8 ore oltre alla formazione per lavoratori (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "L'aggiornamento della formazione per preposti deve essere effettuato ogni:",
-                options: [
-                    "1 anno",
-                    "3 anni",
-                    "5 anni",
-                    "10 anni"
-                ],
-                correct: 2,
-                explanation: "L'aggiornamento preposti è obbligatorio ogni 5 anni (durata minima 6 ore) (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata della formazione per dirigenti?",
-                options: [
-                    "8 ore",
-                    "12 ore",
-                    "16 ore",
-                    "32 ore"
-                ],
-                correct: 2,
-                explanation: "La formazione dirigenti ha durata minima di 16 ore (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "L'aggiornamento della formazione per dirigenti deve essere effettuato ogni:",
-                options: [
-                    "1 anno",
-                    "3 anni",
-                    "5 anni",
-                    "10 anni"
-                ],
-                correct: 2,
-                explanation: "L'aggiornamento dirigenti è obbligatorio ogni 5 anni (durata minima 6 ore) (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata minima del corso RSPP per datore di lavoro in azienda a rischio basso?",
-                options: [
-                    "8 ore",
-                    "16 ore",
-                    "32 ore",
-                    "48 ore"
-                ],
-                correct: 1,
-                explanation: "Corso RSPP datore di lavoro: 16 ore rischio basso, 32 ore rischio medio, 48 ore rischio alto (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata minima del corso RSPP per datore di lavoro in azienda a rischio medio?",
-                options: [
-                    "16 ore",
-                    "32 ore",
-                    "48 ore",
-                    "64 ore"
-                ],
-                correct: 1,
-                explanation: "Corso RSPP datore di lavoro: 32 ore per rischio medio (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata minima del corso RSPP per datore di lavoro in azienda a rischio alto?",
-                options: [
-                    "16 ore",
-                    "32 ore",
-                    "48 ore",
-                    "64 ore"
-                ],
-                correct: 2,
-                explanation: "Corso RSPP datore di lavoro: 48 ore per rischio alto (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "L'aggiornamento RSPP datore di lavoro deve essere effettuato ogni:",
-                options: [
-                    "1 anno",
-                    "3 anni",
-                    "5 anni",
-                    "10 anni"
-                ],
-                correct: 2,
-                explanation: "Aggiornamento RSPP datore di lavoro ogni 5 anni: 6 ore rischio basso, 10 ore medio, 14 ore alto (Accordo Stato-Regioni 21/12/2011)."
-            },
-            {
-                question: "Qual è la durata minima del corso per addetti antincendio in attività a rischio basso?",
-                options: [
-                    "4 ore",
-                    "8 ore",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 0,
-                explanation: "Corso antincendio: 4 ore rischio basso, 8 ore rischio medio, 16 ore rischio alto (DM 10/03/1998 e nuovo DM 02/09/2021)."
-            },
-            {
-                question: "Qual è la durata minima del corso per addetti antincendio in attività a rischio medio?",
-                options: [
-                    "4 ore",
-                    "8 ore",
-                    "12 ore",
-                    "16 ore"
-                ],
-                correct: 1,
-                explanation: "Corso antincendio: 8 ore per rischio medio (DM 10/03/1998 e DM 02/09/2021)."
-            },
-            {
-                question: "Qual è la durata minima del corso per addetti primo soccorso per aziende gruppo A?",
-                options: [
-                    "12 ore",
-                    "16 ore",
-                    "24 ore",
-                    "32 ore"
-                ],
-                correct: 1,
-                explanation: "Corso primo soccorso: 16 ore per aziende gruppo A, 12 ore per gruppi B e C (DM 388/2003)."
-            },
-            {
-                question: "Qual è la durata minima del corso per addetti primo soccorso per aziende gruppo B e C?",
-                options: [
-                    "8 ore",
-                    "12 ore",
-                    "16 ore",
-                    "24 ore"
-                ],
-                correct: 1,
-                explanation: "Corso primo soccorso: 12 ore per aziende gruppi B e C (DM 388/2003)."
-            },
-            {
-                question: "L'aggiornamento primo soccorso deve essere effettuato ogni:",
-                options: [
-                    "1 anno",
-                    "2 anni",
-                    "3 anni",
-                    "5 anni"
-                ],
-                correct: 2,
-                explanation: "Aggiornamento primo soccorso ogni 3 anni: 6 ore gruppo A, 4 ore gruppi B e C (DM 388/2003)."
-            },
-            {
-                question: "Cosa si intende per 'near miss' (quasi infortunio)?",
-                options: [
-                    "Un infortunio grave",
-                    "Un evento che avrebbe potuto causare un infortunio ma non lo ha causato",
-                    "Una malattia professionale",
-                    "Un'assenza per malattia"
-                ],
-                correct: 1,
-                explanation: "Il near miss è un evento anomalo che avrebbe potuto causare un infortunio ma non lo ha causato (mancato infortunio); è utile per l'analisi preventiva."
-            },
-            {
-                question: "Qual è lo scopo dell'analisi dei near miss?",
-                options: [
-                    "Punire i lavoratori",
-                    "Identificare situazioni pericolose e prevenire infortuni futuri",
-                    "Solo compilare statistiche",
-                    "Nessuno scopo pratico"
-                ],
-                correct: 1,
-                explanation: "L'analisi dei near miss serve a identificare situazioni pericolose, comprendere le cause e adottare misure preventive per evitare infortuni futuri."
-            },
-            {
-                question: "Cosa si intende per 'fattore umano' negli infortuni?",
-                options: [
-                    "Solo l'errore del lavoratore",
-                    "L'insieme di fattori psicologici, fisiologici, organizzativi che influenzano il comportamento umano",
-                    "La colpa è sempre del lavoratore",
-                    "Non ha rilevanza"
-                ],
-                correct: 1,
-                explanation: "Il fattore umano comprende aspetti psicologici, fisiologici, organizzativi, culturali che influenzano il comportamento e la sicurezza (ergonomia cognitiva)."
-            },
-            {
-                question: "Qual è la 'teoria del domino' di Heinrich sugli infortuni?",
-                options: [
-                    "Gli infortuni sono casuali",
-                    "Gli infortuni derivano da una sequenza causale: ambiente sociale → errore umano → atto/condizione insicura → incidente → infortunio",
-                    "Gli infortuni sono inevitabili",
-                    "Solo la tecnologia causa infortuni"
-                ],
-                correct: 1,
-                explanation: "La teoria del domino (Heinrich 1931) descrive gli infortuni come sequenza causale; rimuovendo un 'domino' (es. atto insicuro) si previene l'infortunio."
-            },
-            {
-                question: "Cosa sono gli 'indicatori proattivi' di sicurezza?",
-                options: [
-                    "Solo il numero di infortuni",
-                    "Indicatori che misurano azioni preventive: near miss, audit, formazione, verifiche DPI",
-                    "Solo dati storici",
-                    "Non esistono"
-                ],
-                correct: 1,
-                explanation: "Gli indicatori proattivi misurano le azioni preventive (es. near miss segnalati, audit completati, DPI verificati) prima che accadano infortuni."
-            },
-            {
-                question: "Cosa sono gli 'indicatori reattivi' di sicurezza?",
-                options: [
-                    "Indicatori che misurano eventi già accaduti: infortuni, malattie professionali, giorni di assenza",
-                    "Solo azioni future",
-                    "Indicatori di clima aziendale",
-                    "Non esistono"
-                ],
-                correct: 0,
-                explanation: "Gli indicatori reattivi misurano eventi già accaduti (infortuni, malattie professionali, giornate perse) e sono utili per analisi statistiche retrospettive."
-            },
-            {
-                question: "Qual è l'indice di frequenza degli infortuni?",
-                options: [
-                    "Numero totale infortuni",
-                    "(Numero infortuni / ore lavorate) × 1.000.000",
-                    "Giorni di assenza totali",
-                    "Costo degli infortuni"
-                ],
-                correct: 1,
-                explanation: "Indice di frequenza = (n° infortuni / ore lavorate) × 1.000.000; misura il numero di infortuni per milione di ore lavorate."
-            },
-            {
-                question: "Qual è l'indice di gravità degli infortuni?",
-                options: [
-                    "Numero infortuni gravi",
-                    "(Giorni di assenza per infortuni / ore lavorate) × 1.000",
-                    "Costo sanitario",
-                    "Numero di ricoveri"
-                ],
-                correct: 1,
-                explanation: "Indice di gravità = (giorni di assenza / ore lavorate) × 1.000; misura la gravità degli infortuni in termini di giorni persi."
-            },
-            {
-                question: "Cosa si intende per 'Safety Culture' (cultura della sicurezza)?",
-                options: [
-                    "Solo le regole scritte",
-                    "L'insieme di valori, atteggiamenti, percezioni, competenze condivise riguardo la sicurezza nell'organizzazione",
-                    "Solo la formazione obbligatoria",
-                    "Non esiste"
-                ],
-                correct: 1,
-                explanation: "La cultura della sicurezza è l'insieme di valori, credenze, atteggiamenti, percezioni e comportamenti condivisi riguardo la sicurezza (ACSNI 1993)."
-            },
-            {
-                question: "Qual è il principio del 'Safety Leadership'?",
-                options: [
-                    "Solo dare ordini",
-                    "L'impegno visibile del management che promuove attivamente la sicurezza con l'esempio",
-                    "Solo delegare la sicurezza",
-                    "Ignorare i problemi"
-                ],
-                correct: 1,
-                explanation: "Il Safety Leadership è l'impegno attivo e visibile dei leader nel promuovere la sicurezza attraverso l'esempio, la comunicazione e il coinvolgimento."
-            },
-            {
-                question: "Cosa prevede il 'Safety Behavior Based' (BBS)?",
-                options: [
-                    "Solo punizioni",
-                    "Osservazione sistematica dei comportamenti sicuri/insicuri con feedback positivo per rinforzare quelli sicuri",
-                    "Solo controlli a sorpresa",
-                    "Non esiste"
-                ],
-                correct: 1,
-                explanation: "Il BBS (Behavior Based Safety) si basa sull'osservazione dei comportamenti, feedback costruttivo e rinforzo positivo dei comportamenti sicuri."
-            },
-            {
-                question: "Cosa si intende per 'Stop Work Authority'?",
-                options: [
-                    "Solo il datore può fermare i lavori",
-                    "Il potere/dovere di qualsiasi lavoratore di fermare un'attività se nota situazioni di pericolo imminente",
-                    "Solo in caso di sciopero",
-                    "Non esiste"
-                ],
-                correct: 1,
-                explanation: "La Stop Work Authority permette a ogni lavoratore di fermare un'attività pericolosa senza timore di ritorsioni; è un principio di empowerment per la sicurezza."
-            },
-            {
-                question: "Qual è il contenuto minimo del registro infortuni?",
-                options: [
-                    "Solo nome e data",
-                    "Nome lavoratore, data/ora, luogo, dinamica, cause, giorni di prognosi, eventuali testimoni",
-                    "Solo la prognosi",
-                    "Non esiste più dal 2008"
-                ],
-                correct: 1,
-                explanation: "Il registro infortuni (ora superato dall'obbligo INAIL telematico) conteneva: dati lavoratore, circostanze dell'evento, cause, conseguenze (DM 12/09/1958, ora sostituito da comunicazione INAIL)."
-            },
-            {
-                question: "Entro quanto tempo deve essere denunciato all'INAIL un infortunio con prognosi superiore a 3 giorni?",
-                options: [
-                    "Entro 24 ore",
-                    "Entro 2 giorni da quando si è avuta notizia dell'evento",
-                    "Entro 7 giorni",
-                    "Entro 30 giorni"
-                ],
-                correct: 1,
-                explanation: "Gli infortuni con prognosi > 3 giorni devono essere denunciati all'INAIL entro 2 giorni da quando il datore ne ha notizia (art. 53 DPR 1124/1965)."
-            },
-            {
-                question: "Entro quanto tempo deve essere comunicato all'INAIL un infortunio mortale o con pericolo di morte?",
-                options: [
-                    "Immediatamente (24 ore)",
-                    "Entro 2 giorni",
-                    "Entro 7 giorni",
-                    "Non è obbligatorio"
-                ],
-                correct: 0,
-                explanation: "Gli infortuni mortali o con pericolo di morte devono essere denunciati entro 24 ore all'INAIL e all'autorità di pubblica sicurezza (art. 53 DPR 1124/1965 e art. 18 D.Lgs. 81/2008)."
-            },
-            {
-                question: "In caso di infortunio mortale o grave, chi deve essere informato oltre all'INAIL?",
-                options: [
-                    "Nessuno",
-                    "Autorità giudiziaria (Procura) e organo di vigilanza territoriale (ASL/INL)",
-                    "Solo l'assicurazione privata",
-                    "Solo i familiari"
-                ],
-                correct: 1,
-                explanation: "In caso di infortunio mortale o grave, oltre all'INAIL, devono essere informati: Procura della Repubblica e organo di vigilanza territoriale (art. 18 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Quali informazioni devono essere comunicate agli organi di vigilanza in caso di infortunio grave?",
-                options: [
-                    "Solo il nome del lavoratore",
-                    "Dati dell'infortunato, dinamica, cause, misure adottate, eventuali testimoni",
-                    "Solo la data",
-                    "Non è obbligatorio comunicare nulla"
-                ],
-                correct: 1,
-                explanation: "La comunicazione deve contenere: dati infortunato, luogo/ora, dinamica, cause presunte, conseguenze, testimoni, misure adottate (art. 18 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa si intende per 'infortunio in itinere'?",
-                options: [
-                    "Infortunio in cantiere",
-                    "Infortunio occorso durante il normale percorso casa-lavoro-casa",
-                    "Infortunio in trasferta",
-                    "Non esiste"
-                ],
-                correct: 1,
-                explanation: "L'infortunio in itinere è quello occorso durante il normale percorso casa-lavoro o viceversa, tutelato dall'INAIL con alcune condizioni (art. 12 D.Lgs. 38/2000)."
-            },
-            {
-                question: "L'infortunio in itinere è coperto dall'INAIL se:",
-                options: [
-                    "Sempre",
-                    "Solo se il percorso è necessario, diretto e senza interruzioni significative non giustificate",
-                    "Mai",
-                    "Solo se in auto aziendale"
-                ],
-                correct: 1,
-                explanation: "L'infortunio in itinere è coperto se il percorso è necessario, ragionevolmente diretto e senza deviazioni/interruzioni significative non giustificate (art. 12 D.Lgs. 38/2000)."
-            },
-            {
-                question: "Qual è la sanzione per il datore di lavoro che omette la valutazione dei rischi?",
-                options: [
-                    "Solo multa amministrativa",
-                    "Arresto da 3 a 6 mesi o ammenda da 2.500 € a 6.400 €",
-                    "Nessuna sanzione",
-                    "Solo richiamo verbale"
-                ],
-                correct: 1,
-                explanation: "L'omessa valutazione dei rischi è punita con arresto da 3 a 6 mesi o ammenda da 2.500 € a 6.400 € (art. 55 comma 1 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la sanzione per il datore di lavoro che non designa il RSPP?",
-                options: [
-                    "Solo ammenda",
-                    "Arresto da 3 a 6 mesi o ammenda da 2.500 € a 6.400 €",
-                    "Nessuna sanzione",
-                    "Solo sospensione attività"
-                ],
-                correct: 1,
-                explanation: "La mancata designazione del RSPP (obbligo non delegabile) è punita con arresto da 3 a 6 mesi o ammenda da 2.500 € a 6.400 € (art. 55 comma 1 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la sanzione per il datore di lavoro che non fornisce DPI?",
-                options: [
-                    "Arresto da 3 a 6 mesi o ammenda da 2.740 € a 7.014,40 €",
-                    "Solo richiamo",
-                    "Nessuna sanzione",
-                    "Solo ammenda minima"
-                ],
-                correct: 0,
-                explanation: "La mancata fornitura di DPI è punita con arresto da 3 a 6 mesi o ammenda da 2.740 € a 7.014,40 € (art. 55 comma 5 lett. a) D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la sanzione per il lavoratore che non utilizza i DPI?",
-                options: [
-                    "Arresto",
-                    "Ammenda da 50 € a 300 €",
-                    "Nessuna sanzione",
-                    "Solo licenziamento"
-                ],
-                correct: 1,
-                explanation: "Il lavoratore che non utilizza i DPI è punito con ammenda da 50 € a 300 € (art. 59 comma 1 lett. b) D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa si intende per 'prescrizione' da parte dell'organo di vigilanza?",
-                options: [
-                    "Una multa",
-                    "Un atto con cui l'organo di vigilanza impone l'adempimento di specifici obblighi entro un termine",
-                    "Un arresto",
-                    "Una comunicazione informale"
-                ],
-                correct: 1,
-                explanation: "La prescrizione è un atto con cui l'organo di vigilanza impone al datore di lavoro di adempiere a specifici obblighi entro un termine (art. 20-21 D.Lgs. 758/1994)."
-            },
-            {
-                question: "Cosa comporta l'ottemperanza alla prescrizione entro i termini?",
-                options: [
-                    "Nulla",
-                    "L'estinzione del reato contravvenzionale previa ammissione dell'illecito e pagamento di una somma",
-                    "Arresto immediato",
-                    "Chiusura dell'azienda"
-                ],
-                correct: 1,
-                explanation: "L'ottemperanza alla prescrizione entro i termini, con ammissione dell'illecito e pagamento della sanzione, comporta l'estinzione del reato (art. 21 D.Lgs. 758/1994)."
-            },
-            {
-                question: "Quali sono i principali obblighi del dirigente per la sicurezza?",
-                options: [
-                    "Nessuno, è tutto in capo al datore di lavoro",
-                    "Attuare le direttive del datore di lavoro, organizzare il lavoro, vigilare sull'osservanza delle misure di sicurezza",
-                    "Solo formare i lavoratori",
-                    "Solo acquistare DPI"
-                ],
-                correct: 1,
-                explanation: "Il dirigente deve attuare le direttive del datore di lavoro, organizzare l'attività lavorativa e vigilare sull'osservanza delle misure di sicurezza (art. 18 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Il dirigente può essere sanzionato penalmente per violazioni in materia di sicurezza?",
-                options: [
-                    "No, solo il datore di lavoro",
-                    "Sì, ha responsabilità penale diretta per gli obblighi a lui attribuiti",
-                    "Solo civilmente",
+                    "Ogni anno",
+                    "Ogni 3 anni",
+                    "Ogni 5 anni (6 ore)",
                     "Mai"
                 ],
-                correct: 1,
-                explanation: "Il dirigente ha responsabilità penale diretta per le violazioni degli obblighi a lui attribuiti (art. 18 e 299 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Cosa deve fare il lavoratore che individua una situazione di pericolo grave e immediato?",
-                options: [
-                    "Continuare a lavorare",
-                    "Allontanarsi dal posto di lavoro e informare immediatamente il preposto/datore di lavoro",
-                    "Ignorare il pericolo",
-                    "Chiamare i Vigili del Fuoco senza avvisare nessuno"
-                ],
-                correct: 1,
-                explanation: "Il lavoratore deve allontanarsi dal pericolo e informare immediatamente il preposto o il datore di lavoro (art. 44 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Il lavoratore può essere sanzionato per essersi allontanato da una situazione di pericolo grave e immediato?",
-                options: [
-                    "Sì, sempre",
-                    "No, se l'allontanamento è giustificato da motivi ragionevoli",
-                    "Solo se non ha avvisato",
-                    "Sì, deve rimanere sempre al suo posto"
-                ],
-                correct: 1,
-                explanation: "Il lavoratore non può subire pregiudizio per essersi allontanato da una situazione di pericolo grave e immediato se l'allontanamento è giustificato (art. 44 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Qual è la periodicità della riunione periodica di sicurezza nelle aziende con più di 15 dipendenti?",
-                options: [
-                    "Mensile",
-                    "Trimestrale",
-                    "Annuale",
-                    "Quinquennale"
-                ],
                 correct: 2,
-                explanation: "La riunione periodica deve essere indetta almeno una volta all'anno nelle aziende con più di 15 dipendenti (art. 35 D.Lgs. 81/2008)."
+                explanation: "L'aggiornamento è quinquennale con durata minima di 6 ore per tutti i settori (Accordo SR 21/12/2011, punto 9.3)."
             },
             {
-                question: "Chi partecipa alla riunione periodica di sicurezza?",
+                question: "Cosa si intende per 'near miss reporting'?",
                 options: [
-                    "Solo il datore di lavoro",
-                    "Datore di lavoro (o delegato), RSPP, medico competente (se nominato), RLS",
-                    "Solo i lavoratori",
-                    "Solo l'RSPP"
+                    "Denuncia infortuni",
+                    "Segnalazione proattiva di mancati infortuni per analisi preventiva",
+                    "Registro presenze",
+                    "Comunicazione ferie"
                 ],
                 correct: 1,
-                explanation: "Alla riunione periodica partecipano: datore di lavoro o suo delegato, RSPP, medico competente (se nominato), RLS (art. 35 D.Lgs. 81/2008)."
+                explanation: "Near miss reporting è il sistema di segnalazione volontaria di quasi-infortuni per analizzare cause e prevenire futuri incidenti (cultura della sicurezza)."
             },
             {
-                question: "Cosa deve essere discusso durante la riunione periodica?",
+                question: "Qual è la funzione del 'safety walkthrough'?",
                 options: [
-                    "Solo le ferie",
-                    "DVR, andamento infortuni/malattie professionali, DPI, formazione, programmi di prevenzione",
-                    "Solo gli stipendi",
-                    "Nulla di specifico"
+                    "Passeggiata aziendale",
+                    "Ispezione periodica degli ambienti per identificare pericoli",
+                    "Formazione mobile",
+                    "Evacuazione"
                 ],
                 correct: 1,
-                explanation: "Nella riunione si discutono: DVR, andamento infortuni, DPI, programmi di formazione e informazione, obiettivi di miglioramento (art. 35 D.Lgs. 81/2008)."
+                explanation: "Safety walkthrough (sopralluogo di sicurezza) è un'ispezione programmata degli ambienti di lavoro per identificare condizioni/comportamenti a rischio."
             },
             {
-                question: "Deve essere redatto un verbale della riunione periodica?",
+                question: "Cosa prevede la metodologia '5S' per la sicurezza?",
                 options: [
-                    "No, è facoltativo",
-                    "Sì, deve essere redatto e a disposizione dei partecipanti per consultazione",
-                    "Solo su richiesta",
-                    "Non è previsto"
+                    "Solo pulizia",
+                    "Seiri (separare), Seiton (ordinare), Seiso (pulire), Seiketsu (standardizzare), Shitsuke (sostenere)",
+                    "Solo controlli",
+                    "Nessuna relazione con sicurezza"
                 ],
                 correct: 1,
-                explanation: "Deve essere redatto un verbale della riunione, consultabile dai partecipanti (art. 35 comma 4 D.Lgs. 81/2008)."
+                explanation: "Le 5S giapponesi migliorano organizzazione e ordine del posto di lavoro, riducendo infortuni da inciampo, cadute, ricerca affannosa oggetti."
             },
             {
-                question: "Cosa si intende per 'soggetto formatore' qualificato per la formazione in materia di sicurezza?",
+                question: "Qual è il significato del cartello rotondo blu con pittogramma bianco?",
                 options: [
-                    "Chiunque",
-                    "Soggetto con requisiti definiti (es. enti bilaterali, organismi paritetici, datori di lavoro per formazione interna con requisiti)",
-                    "Solo università",
-                    "Solo l'INAIL"
+                    "Divieto",
+                    "Obbligo (es. indossare DPI)",
+                    "Pericolo",
+                    "Informazione"
                 ],
                 correct: 1,
-                explanation: "I soggetti formatori devono possedere requisiti specifici (art. 32 D.Lgs. 81/2008 e Accordi Stato-Regioni): enti bilaterali, organismi paritetici, datori di lavoro (con requisiti) per formazione interna."
+                explanation: "I cartelli circolari blu indicano prescrizioni/obblighi (es. obbligo casco, guanti, protezioni) secondo D.Lgs. 81/2008 Allegato XXV."
             },
             {
-                question: "La formazione in materia di sicurezza può essere svolta interamente in e-learning?",
+                question: "Cosa indica il rombo arancione con numero ONU sulle merci pericolose?",
                 options: [
-                    "Sì, sempre",
-                    "No, mai",
-                    "Dipende: formazione generale e aggiornamenti sì (con requisiti), formazione specifica e addestramento richiedono presenza",
-                    "Solo per i dirigenti"
-                ],
-                correct: 2,
-                explanation: "Formazione generale e aggiornamenti possono essere in e-learning (con requisiti specifici); formazione specifica rischio alto, addestramento e alcune abilitazioni richiedono presenza (Accordo Stato-Regioni 7/7/2016)."
-            },
-            {
-                question: "Qual è il numero minimo di RLS nelle aziende con 201-1000 dipendenti?",
-                options: [
-                    "1",
-                    "2",
-                    "3",
-                    "5"
-                ],
-                correct: 2,
-                explanation: "Numero minimo RLS: 1 fino a 200 dipendenti, 3 da 201 a 1000, 6 oltre 1000 (art. 47 comma 7 D.Lgs. 81/2008)."
-            },
-            {
-                question: "Nelle aziende fino a 15 dipendenti, in assenza di RLS aziendale, chi svolge questa funzione?",
-                options: [
-                    "Il datore di lavoro",
-                    "Il RLST (Rappresentante dei Lavoratori per la Sicurezza Territoriale)",
-                    "Nessuno",
-                    "L'RSPP"
+                    "Codice prodotto",
+                    "Classificazione ADR (trasporto merci pericolose)",
+                    "Prezzo",
+                    "Data scadenza"
                 ],
                 correct: 1,
-                explanation: "Nelle aziende fino a 15 dipendenti senza RLS aziendale, la funzione è svolta dal RLST (Rappresentante dei Lavoratori per la Sicurezza Territoriale) (art. 48 D.Lgs. 81/2008)."
+                explanation: "Il rombo arancione ADR/RID indica classe di pericolo (numero in alto) e numero ONU identificativo sostanza (numero in basso) per trasporti."
             },
             {
-                question: "Il RLS ha diritto a permessi retribuiti per la sua attività?",
+                question: "Qual è la procedura corretta per sollevamento manuale carichi?",
                 options: [
-                    "No",
-                    "Sì, permessi retribuiti nella misura definita dalla contrattazione collettiva (minimo 40 ore/anno per aziende oltre 15 dipendenti)",
-                    "Solo ferie",
-                    "Solo permessi non retribuiti"
+                    "Piegare la schiena",
+                    "Gambe piegate, schiena dritta, carico vicino al corpo",
+                    "Torcere il busto",
+                    "Sollevare di scatto"
                 ],
                 correct: 1,
-                explanation: "Il RLS ha diritto a permessi retribuiti per la sua attività, nella misura di almeno 40 ore/anno per aziende oltre 15 dipendenti o quanto previsto dal CCNL (art. 50 D.Lgs. 81/2008)."
+                explanation: "Tecnica corretta: gambe flesse, schiena dritta, carico vicino al corpo, presa salda, sollevamento con gambe (non schiena), no torsioni (ISO 11228)."
             },
             {
-                question: "Il RLS può accedere ai luoghi di lavoro?",
+                question: "Cosa si intende per 'reach truck'?",
                 options: [
-                    "No, mai",
-                    "Sì, ha diritto di accesso ai luoghi di lavoro",
-                    "Solo con autorizzazione scritta",
-                    "Solo in presenza del datore di lavoro"
+                    "Camion per trasporti",
+                    "Carrello elevatore retrattile per corsie strette",
+                    "Sistema informatico",
+                    "Scaffalatura"
                 ],
                 correct: 1,
-                explanation: "Il RLS ha diritto di accesso ai luoghi di lavoro per verificare le condizioni di sicurezza (art. 50 D.Lgs. 81/2008)."
+                explanation: "Reach truck è un carrello elevatore con forche retrattili che permettono di operare in corsie più strette (2,5-2,8 m) rispetto ai frontali."
             },
             {
-                question: "Il RLS può ricevere informazioni e documentazione sulla sicurezza?",
+                question: "Qual è la funzione della 'gabbia di sicurezza' sul carrello?",
                 options: [
-                    "No",
-                    "Sì, ha diritto di ricevere informazioni e documentazione aziendale inerente la valutazione dei rischi",
-                    "Solo su richiesta del datore",
-                    "Solo in caso di infortunio"
+                    "Trasporto gabbie",
+                    "Protezione operatore durante sollevamento (piattaforma lavoro aereo)",
+                    "Decorazione",
+                    "Stoccaggio"
                 ],
                 correct: 1,
-                explanation: "Il RLS ha diritto di ricevere informazioni e documentazione aziendale inerente la valutazione dei rischi e le misure di prevenzione (art. 50 D.Lgs. 81/2008)."
+                explanation: "La gabbia/piattaforma con protezioni perimetrali protegge l'operatore sollevato dal carrello per lavori in quota (es. prelievi alti, manutenzioni)."
             },
             {
-                question: "Cosa si intende per 'lavoro agile' o 'smart working' in relazione alla sicurezza?",
+                question: "Cosa prevede il sistema 'man-down'?",
                 options: [
-                    "Lavoro senza regole di sicurezza",
-                    "Modalità di esecuzione del rapporto di lavoro senza preciso vincolo di luogo/orario; il datore deve garantire sicurezza e informare sui rischi",
-                    "Solo telelavoro",
-                    "Non riguarda la sicurezza"
+                    "Riduzione personale",
+                    "Allarme automatico se lavoratore isolato cade/è immobile",
+                    "Procedura scarico",
+                    "Turni notturni"
                 ],
                 correct: 1,
-                explanation: "Il lavoro agile è disciplinato dalla Legge 81/2017; il datore deve garantire la sicurezza e fornire informativa sui rischi specifici (anche domestici) al lavoratore agile."
+                explanation: "I dispositivi man-down rilevano automaticamente cadute/immobilità del lavoratore isolato e attivano allarme per soccorso tempestivo."
             },
             {
-                question: "Per il lavoratore in smart working, quali sono gli obblighi del datore di lavoro in materia di sicurezza?",
+                question: "Qual è la normativa per gli impianti elettrici nei luoghi di lavoro?",
                 options: [
-                    "Nessuno",
-                    "Fornire informativa sui rischi generali e specifici, garantire assicurazione INAIL, fornire attrezzature conformi",
-                    "Solo assicurazione",
-                    "Solo fornitura PC"
+                    "Solo D.Lgs. 81/2008",
+                    "D.Lgs. 81/2008 + norme CEI (es. 64-8)",
+                    "Nessuna normativa",
+                    "Solo leggi regionali"
                 ],
                 correct: 1,
-                explanation: "Il datore deve: fornire informativa scritta sui rischi (generali e specifici connessi al lavoro agile), garantire assicurazione INAIL, fornire attrezzature conformi (art. 22 L. 81/2017)."
+                explanation: "Il Titolo III del D.Lgs. 81/2008 rinvia alle norme CEI (es. 64-8 per impianti BT) per la conformità e sicurezza degli impianti elettrici."
             },
             {
-                question: "Cosa prevede la direttiva cantieri (Titolo IV D.Lgs. 81/2008) riguardo ai lavori in quota?",
+                question: "Ogni quanto va verificato l'impianto di messa a terra?",
                 options: [
-                    "Nulla di specifico",
-                    "Misure di prevenzione e protezione contro le cadute dall'alto, parapetti, reti, imbracature",
-                    "Solo l'uso di scale",
-                    "Divieto assoluto"
+                    "Ogni 6 mesi",
+                    "Ogni 2 anni (luoghi ordinari) o 5 anni (ambienti speciali)",
+                    "Mai",
+                    "Solo all'installazione"
                 ],
                 correct: 1,
-                explanation: "Il Titolo IV prevede misure specifiche per lavori in quota: parapetti, reti di sicurezza, sistemi di arresto caduta, PIMUS per ponteggi (art. 111-136)."
+                explanation: "D.P.R. 462/2001: verifica biennale per luoghi ordinari; ogni 5 anni per luoghi a maggior rischio incendio (salvo deroghe ASL/ARPA)."
             },
             {
-                question: "Cosa sono i 'rischi interferenti' nei contratti d'appalto?",
+                question: "Cosa indica la sigla 'IP' seguita da due numeri (es. IP65)?",
                 options: [
-                    "Rischi di ogni singola impresa",
-                    "Rischi derivanti dall'interazione tra le attività di imprese diverse nello stesso luogo di lavoro",
-                    "Rischi naturali",
+                    "Potenza elettrica",
+                    "Grado protezione involucro (polveri/liquidi)",
+                    "Indice prestazione",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "IP (Ingress Protection) indica il grado di protezione contro corpi solidi (1ª cifra) e liquidi (2ª cifra) secondo norma CEI EN 60529."
+            },
+            {
+                question: "Qual è la differenza tra sovraccarico e cortocircuito?",
+                options: [
+                    "Sono uguali",
+                    "Sovraccarico = corrente eccessiva prolungata; Cortocircuito = contatto diretto fasi",
+                    "Solo problemi meccanici",
                     "Non esistono"
                 ],
                 correct: 1,
-                explanation: "I rischi interferenti derivano dalla sovrapposizione/interazione delle attività di imprese diverse nello stesso luogo; richiedono il DUVRI (art. 26 D.Lgs. 81/2008)."
+                explanation: "Sovraccarico: corrente superiore alla nominale ma in circuito integro (causa surriscaldamento). Cortocircuito: contatto fasi/fase-neutro (corrente elevatissima)."
             },
             {
-                question: "Cos'è il DUVRI?",
+                question: "Cosa prevede il D.M. 03/08/2015?",
                 options: [
-                    "Documento Unico di Valutazione dei Rischi Interferenti",
-                    "Documento Urgente Verifiche Rischi Immediati",
-                    "Dichiarazione Unica Validazione Rischi Infortuni",
-                    "Non esiste"
+                    "Solo antincendio",
+                    "Nuove norme tecniche prevenzione incendi (Codice Prevenzione Incendi)",
+                    "Solo primo soccorso",
+                    "Trasporti"
                 ],
-                correct: 0,
-                explanation: "Il DUVRI è il Documento Unico di Valutazione dei Rischi Interferenti, obbligatorio nei contratti d'appalto/subappalto (art. 26 D.Lgs. 81/2008)."
+                correct: 1,
+                explanation: "Il D.M. 03/08/2015 (aggiornato) è il Codice di Prevenzione Incendi che introduce approccio prestazionale alla sicurezza antincendio."
+            },
+            {
+                question: "Qual è la classificazione dei luoghi di lavoro ai fini antincendio (vecchia classificazione)?",
+                options: [
+                    "Solo basso rischio",
+                    "Basso, medio, elevato rischio",
+                    "Solo alto rischio",
+                    "Nessuna classificazione"
+                ],
+                correct: 1,
+                explanation: "Il D.M. 10/03/1998 classifica i luoghi in basso/medio/elevato rischio incendio (oggi sostituito progressivamente dal Codice Prevenzione Incendi)."
+            },
+            {
+                question: "Quanti addetti antincendio servono in un magazzino?",
+                options: [
+                    "Sempre uno",
+                    "Numero adeguato in base a valutazione rischi, dimensioni, turnazioni",
+                    "Nessuno",
+                    "Solo uno ogni 100 persone"
+                ],
+                correct: 1,
+                explanation: "Il numero di addetti antincendio va determinato in base a DVR, dimensioni, affollamento, turnazioni, per garantire copertura continua (art. 43 D.Lgs. 81/08)."
+            },
+            {
+                question: "Qual è la durata del corso antincendio rischio medio?",
+                options: [
+                    "4 ore",
+                    "8 ore",
+                    "16 ore",
+                    "2 ore"
+                ],
+                correct: 1,
+                explanation: "D.M. 10/03/1998: rischio basso 4h, medio 8h, elevato 16h. Dal D.M. 02/09/2021: livello 1=4h, livello 2=8h, livello 3=16h (con verifica)."
+            },
+            {
+                question: "Cosa contiene la cassetta di primo soccorso?",
+                options: [
+                    "Solo cerotti",
+                    "Materiale sanitario definito dal D.M. 388/2003 (guanti, garze, disinfettanti, etc.)",
+                    "Farmaci",
+                    "Solo telefono emergenze"
+                ],
+                correct: 1,
+                explanation: "D.M. 388/2003 Allegato 1: cassetta deve contenere guanti monouso, disinfettanti, garze, bende, lacci emostatici, forbici, ghiaccio, termometro, etc."
+            },
+            {
+                question: "Ogni quanto va controllata la cassetta di primo soccorso?",
+                options: [
+                    "Settimanalmente",
+                    "Mensilmente",
+                    "Ogni 6 mesi",
+                    "Solo alla scadenza"
+                ],
+                correct: 1,
+                explanation: "Buona prassi: controllo mensile per verificare integrità, completezza, scadenze. Controllo immediato dopo ogni utilizzo per reintegro."
+            },
+            {
+                question: "Qual è la sequenza corretta del BLS (rianimazione cardiopolmonare)?",
+                options: [
+                    "Solo massaggio",
+                    "Verifica coscienza → chiamata 118 → 30 compressioni + 2 ventilazioni",
+                    "Solo ventilazioni",
+                    "Aspettare ambulanza"
+                ],
+                correct: 1,
+                explanation: "BLS moderno (ILCOR 2021): Valutazione sicurezza → coscienza → 118 → 30 compressioni toraciche (5-6 cm, 100-120/min) + 2 insufflazioni → ripetere."
+            },
+            {
+                question: "Dove va posizionato il DAE (defibrillatore)?",
+                options: [
+                    "Solo in ospedale",
+                    "Luoghi accessibili, segnalati, max 1-2 min dal punto più lontano",
+                    "Solo in uffici",
+                    "Non serve"
+                ],
+                correct: 1,
+                explanation: "Il DAE va posto in posizione visibile, accessibile H24, segnalato, raggiungibile in max 1-2 minuti da qualsiasi punto (D.M. 18/03/2011)."
+            },
+            {
+                question: "Cosa prevede la Direttiva Macchine 2006/42/CE?",
+                options: [
+                    "Solo trasporti",
+                    "Requisiti di sicurezza per immissione in commercio macchine (marcatura CE)",
+                    "Solo elettrodomestici",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "La Direttiva Macchine (recepita con D.Lgs. 17/2010) stabilisce requisiti essenziali di sicurezza per la progettazione/commercializzazione di macchine."
+            },
+            {
+                question: "Cos'è la marcatura CE sulle macchine?",
+                options: [
+                    "Certificato di qualità",
+                    "Dichiarazione conformità del fabbricante ai requisiti UE di sicurezza",
+                    "Made in Europe",
+                    "Controllo Europeo"
+                ],
+                correct: 1,
+                explanation: "La marcatura CE è autodichiarazione del fabbricante di conformità della macchina ai requisiti essenziali di sicurezza delle direttive europee applicabili."
+            },
+            {
+                question: "Cosa contiene il Fascicolo Tecnico di una macchina?",
+                options: [
+                    "Solo prezzo",
+                    "Disegni, calcoli, analisi rischi, dichiarazioni conformità componenti, manuale",
+                    "Solo garanzia",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il fascicolo tecnico (all. VII Dir. Macchine) comprende: disegni tecnici, valutazione rischi, norme applicate, manuali, certificati componenti di sicurezza."
+            },
+            {
+                question: "Qual è la funzione dei ripari sulle macchine?",
+                options: [
+                    "Estetica",
+                    "Impedire accesso a zone pericolose durante funzionamento",
+                    "Solo protezione polvere",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "I ripari (fissi, mobili interbloccati, regolabili) impediscono l'accesso a organi di trasmissione e zone pericolose per contatto/intrappolamento."
+            },
+            {
+                question: "Cosa si intende per 'dispositivo di interblocco'?",
+                options: [
+                    "Chiusura a chiave",
+                    "Dispositivo che impedisce avvio macchina se riparo aperto o ferma macchina se aperto",
+                    "Solo allarme sonoro",
+                    "Blocco ruote"
+                ],
+                correct: 1,
+                explanation: "L'interblocco collega il riparo mobile al comando: macchina non parte se riparo aperto; se aperto durante funzionamento, la macchina si ferma."
+            },
+            {
+                question: "Cosa prevede il DUVRI?",
+                options: [
+                    "Valutazione rischi interni",
+                    "Documento Unico Valutazione Rischi Interferenti (committente + appaltatori)",
+                    "Solo contratti",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il DUVRI (art. 26 D.Lgs. 81/2008) valuta i rischi da interferenze tra attività del committente e dell'appaltatore/subappaltatore nei contratti d'opera."
             },
             {
                 question: "Chi redige il DUVRI?",
                 options: [
                     "L'appaltatore",
-                    "Il committente (datore di lavoro committente), in cooperazione con appaltatori/subappaltatori",
-                    "Solo l'RSPP",
-                    "L'INAIL"
+                    "Il committente (datore di lavoro che affida lavori)",
+                    "Il lavoratore",
+                    "Nessuno"
                 ],
                 correct: 1,
-                explanation: "Il DUVRI è redatto dal committente (datore di lavoro committente), in cooperazione con appaltatori e subappaltatori (art. 26 comma 3 D.Lgs. 81/2008)."
+                explanation: "Il committente (datore di lavoro committente) redige il DUVRI, indicando costi sicurezza non soggetti a ribasso (art. 26 comma 3 e 3-bis)."
+            },
+            {
+                question: "Qual è l'obbligo del committente verso gli appaltatori?",
+                options: [
+                    "Solo pagamento",
+                    "Verifica idoneità tecnico-professionale, fornitura info rischi, cooperazione",
+                    "Niente",
+                    "Solo contratto"
+                ],
+                correct: 1,
+                explanation: "Art. 26 D.Lgs. 81/08: committente deve verificare idoneità imprese (CCIAA, DURC, DVR), informare su rischi, coordinare misure, redigere DUVRI."
+            },
+            {
+                question: "Cosa si intende per 'atmosfera esplosiva'?",
+                options: [
+                    "Solo gas",
+                    "Miscela aria + sostanze infiammabili (gas/vapori/polveri) in proporzioni esplosive",
+                    "Solo polveri",
+                    "Solo temperature alte"
+                ],
+                correct: 1,
+                explanation: "Atmosfera esplosiva: miscela di aria con gas/vapori/nebbie o polveri infiammabili in concentrazione tale da poter esplodere (campo infiammabilità)."
+            },
+            {
+                question: "Cosa indica il marchio ATEX su un apparecchio?",
+                options: [
+                    "Alta tecnologia",
+                    "Certificazione per utilizzo in atmosfere potenzialmente esplosive",
+                    "Solo qualità",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il marchio ATEX (Ex in esagono) certifica che l'apparecchio è progettato per operare in sicurezza in ambienti con possibili atmosfere esplosive."
+            },
+            {
+                question: "Quali sono le zone ATEX per gas?",
+                options: [
+                    "Solo zona 0",
+                    "Zona 0 (continua), Zona 1 (probabile), Zona 2 (improbabile)",
+                    "Solo zona 1",
+                    "Nessuna classificazione"
+                ],
+                correct: 1,
+                explanation: "Classificazione gas: Zona 0 (atmosfera esplosiva continua/lunga durata), Zona 1 (probabile funzionamento normale), Zona 2 (improbabile/breve)."
+            },
+            {
+                question: "Cosa prevede il Piano Operativo di Sicurezza (POS)?",
+                options: [
+                    "Solo edilizia",
+                    "Documento dell'impresa esecutrice con analisi rischi e misure adottate (cantieri)",
+                    "Solo contratti",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il POS (Titolo IV D.Lgs. 81/2008) è redatto dall'impresa esecutrice nei cantieri temporanei/mobili, dettagliando rischi e misure specifiche."
+            },
+            {
+                question: "Chi è il Coordinatore per la Sicurezza in fase di Progettazione (CSP)?",
+                options: [
+                    "Il muratore",
+                    "Tecnico abilitato nominato dal committente per redigere PSC in cantieri complessi",
+                    "Il direttore lavori",
+                    "Nessuno"
+                ],
+                correct: 1,
+                explanation: "Il CSP (art. 89-91 D.Lgs. 81/2008) è nominato dal committente per redigere il Piano di Sicurezza e Coordinamento (PSC) in fase progettuale."
+            },
+            {
+                question: "Cosa prevede il PSC (Piano di Sicurezza e Coordinamento)?",
+                options: [
+                    "Solo tempi lavori",
+                    "Analisi rischi, coordinamento imprese, misure prevenzione, prescrizioni operative (cantieri)",
+                    "Solo costi",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il PSC (art. 100 D.Lgs. 81/2008) definisce rischi del cantiere, interferenze tra imprese, misure preventive, procedure emergenza, coordinamento."
+            },
+            {
+                question: "Quando è obbligatorio il Piano di Montaggio, Uso e Smontaggio (PIMUS) dei ponteggi?",
+                options: [
+                    "Mai",
+                    "Sempre per ponteggi >2 metri",
+                    "Solo ponteggi metallici",
+                    "Solo se richiesto"
+                ],
+                correct: 1,
+                explanation: "L'art. 136 D.Lgs. 81/2008 obbliga il PIMUS per ogni ponteggio, con procedure di montaggio/smontaggio, verifiche, schema, DPI necessari."
+            },
+            {
+                question: "Qual è l'altezza minima di una protezione laterale (parapetto)?",
+                options: [
+                    "50 cm",
+                    "1 metro (corrente superiore a 1-1,2m + intermedio + tavola fermapiede 20cm)",
+                    "2 metri",
+                    "Non specificata"
+                ],
+                correct: 1,
+                explanation: "All. IV D.Lgs. 81/2008: parapetti devono avere corrente superiore 1-1,2m, intermedio a metà, tavola fermapiede almeno 15 cm (meglio 20 cm)."
+            },
+            {
+                question: "Cosa si intende per 'Piano di Emergenza Interno (PEI)'?",
+                options: [
+                    "Solo evacuazione",
+                    "Documento con procedure emergenze (incendio, evacuazione, primo soccorso, seveso se applicabile)",
+                    "Solo numeri telefono",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Il PEI descrive: scenari emergenza, procedure, ruoli squadre, vie fuga, punti raccolta, comunicazioni, interfaccia soccorritori esterni."
+            },
+            {
+                question: "Qual è la periodicità delle prove di evacuazione?",
+                options: [
+                    "Mensile",
+                    "Almeno annuale (semestrale consigliato)",
+                    "Ogni 5 anni",
+                    "Mai"
+                ],
+                correct: 1,
+                explanation: "Buona prassi e norme: almeno 1 prova evacuazione all'anno (alcune norme consigliano ogni 6 mesi). Obbligatorio documentarle (verbali)."
+            },
+            {
+                question: "Cosa deve contenere il Piano di Emergenza?",
+                options: [
+                    "Solo planimetrie",
+                    "Planimetrie, procedure, squadre, mezzi estinzione, vie fuga, comunicazioni",
+                    "Solo telefoni",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "PEI deve contenere: planimetrie con vie fuga, procedure operative per scenario, ruoli squadre, mezzi antincendio/primo soccorso, comunicazioni interne/esterne."
+            },
+            {
+                question: "Chi sono i 'Lavoratori particolarmente sensibili al rischio'?",
+                options: [
+                    "Solo disabili",
+                    "Minori, gestanti, lavoratori con patologie, neo-assunti, lavoratori atipici",
+                    "Solo anziani",
+                    "Nessuno"
+                ],
+                correct: 1,
+                explanation: "Art. 28 D.Lgs. 81/2008: DVR deve considerare lavoratrici gestanti, minori, differenze di genere, età, provenienza, tipologia contrattuale."
+            },
+            {
+                question: "Quali tutele prevede il D.Lgs. 81/2008 per le lavoratrici gestanti?",
+                options: [
+                    "Nessuna",
+                    "Valutazione rischi specifici + adibizione mansioni compatibili o astensione anticipata",
+                    "Solo permessi",
+                    "Solo dopo parto"
+                ],
+                correct: 1,
+                explanation: "Art. 28 e Titolo VII + D.Lgs. 151/2001: divieto lavori faticosi/pericolosi, valutazione rischi (chimico, biologico, posturale), adibizione compatibile o astensione."
+            },
+            {
+                question: "Cosa prevede la sorveglianza sanitaria per esposizione a rumore >85 dB(A)?",
+                options: [
+                    "Niente",
+                    "Visita medica periodica + audiometria",
+                    "Solo audiometria",
+                    "Solo consegna DPI"
+                ],
+                correct: 1,
+                explanation: "Art. 196 D.Lgs. 81/2008: sopra 85 dB(A) LEX è obbligatoria sorveglianza sanitaria con esame audiometrico periodico (frequenza stabilita da medico competente)."
+            },
+            {
+                question: "Qual è il limite di esposizione giornaliera al rumore?",
+                options: [
+                    "80 dB(A)",
+                    "85 dB(A)",
+                    "87 dB(A) LEX (valori limite non superabili)",
+                    "90 dB(A)"
+                ],
+                correct: 2,
+                explanation: "Art. 189 D.Lgs. 81/2008: Valori limite: LEX,8h = 87 dB(A) e ppeak = 140 dB(C) NON devono essere superati (con DPI)."
+            },
+            {
+                question: "A partire da quale valore di esposizione al rumore sono obbligatori i DPI uditivi?",
+                options: [
+                    "80 dB(A) - forniti",
+                    "85 dB(A) - uso obbligatorio",
+                    "90 dB(A)",
+                    "Non obbligatori"
+                ],
+                correct: 1,
+                explanation: "Art. 193: >80 dB forniti su richiesta; >85 dB uso obbligatorio + segnaletica + delimitazione aree. Verificare efficacia DPI affinché esposizione effettiva <87 dB."
+            },
+            {
+                question: "Cosa si intende per 'vibrazioni mano-braccio'?",
+                options: [
+                    "Vibrazioni di tutto il corpo",
+                    "Vibrazioni trasmesse al sistema mano-braccio da utensili vibranti",
+                    "Solo freddo",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Vibrazioni HAV (Hand-Arm Vibration) trasmesse da utensili portatili (smerigliatrici, martelli, motoseghe) causano patologie vascolari/neurologiche (Titolo VIII Capo III)."
+            },
+            {
+                question: "Qual è il valore limite di esposizione alle vibrazioni mano-braccio?",
+                options: [
+                    "2,5 m/s² A(8)",
+                    "5 m/s² A(8)",
+                    "10 m/s²",
+                    "Non definito"
+                ],
+                correct: 1,
+                explanation: "Art. 201 D.Lgs. 81/2008: Valore limite 5 m/s² A(8); Valore d'azione 2,5 m/s² A(8) per vibrazioni mano-braccio."
+            },
+            {
+                question: "Cosa prevede il Titolo X del D.Lgs. 81/2008?",
+                options: [
+                    "Rumore",
+                    "Esposizione ad agenti biologici",
+                    "Movimentazione carichi",
+                    "Incendi"
+                ],
+                correct: 1,
+                explanation: "Il Titolo X disciplina la protezione da agenti biologici (virus, batteri, funghi, parassiti) classificati in 4 gruppi di rischio crescente."
+            },
+            {
+                question: "Quali sono i gruppi di rischio degli agenti biologici?",
+                options: [
+                    "Solo 2 gruppi",
+                    "Gruppo 1 (nessun rischio) → Gruppo 4 (rischio elevato)",
+                    "Solo gruppo 4",
+                    "Non classificati"
+                ],
+                correct: 1,
+                explanation: "All. XLVI D.Lgs. 81/08: Gruppo 1 (nessun rischio), Gruppo 2 (basso), Gruppo 3 (grave), Gruppo 4 (elevato rischio individuale/collettivo)."
+            },
+            {
+                question: "Cosa prevede il registro degli esposti per agenti cancerogeni?",
+                options: [
+                    "Non esiste",
+                    "Registro nominativo lavoratori esposti, conservato 40 anni dopo cessazione esposizione",
+                    "Solo 10 anni",
+                    "Solo per amianto"
+                ],
+                correct: 1,
+                explanation: "Art. 243 D.Lgs. 81/2008: il datore di lavoro deve istituire registro esposti a cancerogeni/mutageni, conservato per almeno 40 anni dalla cessazione."
+            },
+            {
+                question: "Qual è la normativa specifica per l'amianto?",
+                options: [
+                    "Non esiste",
+                    "Titolo IX Capo III D.Lgs. 81/2008 + Legge 257/1992 (divieto estrazione/commercio)",
+                    "Solo leggi regionali",
+                    "Solo per edilizia"
+                ],
+                correct: 1,
+                explanation: "L. 257/1992 vieta estrazione/commercio amianto; D.Lgs. 81/08 (artt. 246-265) regolamenta bonifica/smaltimento con misure rigide e iscrizione Albo Gestori."
+            },
+            {
+                question: "Chi può effettuare bonifiche di amianto?",
+                options: [
+                    "Chiunque",
+                    "Solo imprese iscritte categoria 10 Albo Gestori Ambientali con formazione specifica",
+                    "Solo geometri",
+                    "Solo vigili del fuoco"
+                ],
+                correct: 1,
+                explanation: "Art. 212 D.Lgs. 152/2006: bonifiche amianto solo da imprese iscritte Albo categoria 10A/10B, con personale formato ex art. 259 D.Lgs. 81/08."
+            },
+            {
+                question: "Cosa prevede il D.Lgs. 105/2015 (ex Seveso III)?",
+                options: [
+                    "Solo incendi",
+                    "Controllo pericoli incidenti rilevanti connessi a sostanze pericolose",
+                    "Solo trasporti",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "D.Lgs. 105/2015 (Direttiva Seveso III) regolamenta stabilimenti con sostanze pericolose oltre soglie: obbligo Rapporto Sicurezza, Piano Emergenza Esterno, info popolazione."
+            },
+            {
+                question: "Cosa si intende per 'incidente rilevante'?",
+                options: [
+                    "Qualsiasi infortunio",
+                    "Evento (emissione, incendio, esplosione) con gravi conseguenze immediate/differite per salute/ambiente",
+                    "Solo esplosioni",
+                    "Solo in industrie"
+                ],
+                correct: 1,
+                explanation: "Art. 3 D.Lgs. 105/2015: incidente rilevante è un evento (emissione, incendio, esplosione) derivante da sviluppi incontrollati con gravi conseguenze per uomo/ambiente."
+            },
+            {
+                question: "Qual è la differenza tra sostanza pericolosa e preparato pericoloso?",
+                options: [
+                    "Nessuna",
+                    "Sostanza = elemento chimico puro; Preparato/Miscela = combinazione di sostanze",
+                    "Solo il nome",
+                    "Solo la concentrazione"
+                ],
+                correct: 1,
+                explanation: "Sostanza: elemento chimico o composto puro. Preparato/Miscela (Reg. CLP 1272/2008): miscela di 2+ sostanze (es. vernici, detergenti)."
+            },
+            {
+                question: "Cosa prevede il Regolamento REACH?",
+                options: [
+                    "Solo etichettatura",
+                    "Registrazione, Valutazione, Autorizzazione, Restrizione sostanze Chimiche (UE 1907/2006)",
+                    "Solo trasporti",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "REACH (Reg. CE 1907/2006): obbliga fabbricanti/importatori a registrare sostanze chimiche presso ECHA, valutarne rischi, comunicarli nella catena di approvvigionamento."
+            },
+            {
+                question: "Cosa contiene la Scheda di Dati di Sicurezza (SDS)?",
+                options: [
+                    "Solo prezzo",
+                    "16 sezioni con info su pericoli, manipolazione, stoccaggio, emergenze, smaltimento",
+                    "Solo nome prodotto",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "La SDS (obbligatoria per sostanze/miscele pericolose) ha 16 sezioni: identificazione, pericoli, composizione, primo soccorso, antincendio, stoccaggio, esposizione, proprietà, smaltimento, trasporto, etc."
+            },
+            {
+                question: "Quando è obbligatoria la Scheda di Dati di Sicurezza?",
+                options: [
+                    "Mai",
+                    "Per sostanze/miscele classificate pericolose, PBT/vPvB, autorizzazione REACH",
+                    "Solo su richiesta",
+                    "Solo per acidi"
+                ],
+                correct: 1,
+                explanation: "Art. 31 Reg. REACH: SDS obbligatoria per sostanze/miscele pericolose (CLP), sostanze PBT/vPvB, soggette ad autorizzazione/restrizione REACH."
+            },
+            {
+                question: "Cosa indica il pittogramma GHS02 (fiamma)?",
+                options: [
+                    "Esplosivo",
+                    "Infiammabile (gas, aerosol, liquidi, solidi)",
+                    "Tossico",
+                    "Corrosivo"
+                ],
+                correct: 1,
+                explanation: "GHS02 (fiamma) indica pericoli fisici: gas/aerosol/liquidi/solidi infiammabili, liquidi/solidi piroforici, autoriscaldanti, sostanze che a contatto con acqua sviluppano gas infiammabili."
+            },
+            {
+                question: "Cosa indica il pittogramma GHS05 (corrosione)?",
+                options: [
+                    "Solo per metalli",
+                    "Corrosivo per pelle/occhi e materiali",
+                    "Solo irritante",
+                    "Infiammabile"
+                ],
+                correct: 1,
+                explanation: "GHS05 indica sostanze corrosive: gravi ustioni cutanee/danni oculari (cat. 1), corrosione metalli. Es: acidi/basi forti."
+            },
+            {
+                question: "Qual è la differenza tra pericolo H e consiglio P nelle etichette CLP?",
+                options: [
+                    "Nessuna",
+                    "H = Hazard (indicazioni pericolo); P = Precautionary (consigli prudenza)",
+                    "Solo codici numerici",
+                    "Solo per trasporti"
+                ],
+                correct: 1,
+                explanation: "Reg. CLP 1272/2008: frasi H (Hazard statements) descrivono natura pericolo (es. H225 liquido infiammabile); frasi P (Precautionary) indicano misure di prudenza."
+            },
+            {
+                question: "Cosa si intende per 'incompatibilità chimica'?",
+                options: [
+                    "Prodotti che non si mescolano",
+                    "Sostanze che reagiscono pericolosamente tra loro (incendio, esplosione, gas tossici)",
+                    "Solo differenti pH",
+                    "Niente"
+                ],
+                correct: 1,
+                explanation: "Incompatibilità chimica: sostanze che a contatto possono causare reazioni pericolose (es. acidi+basi, ossidanti+riducenti). Richiedono stoccaggio separato."
+            },
+            {
+                question: "Quali sostanze non vanno MAI stoccate insieme?",
+                options: [
+                    "Tutte possono stare insieme",
+                    "Acidi/basi, ossidanti/riducenti, infiammabili/comburenti, tossici/alimentari",
+                    "Solo liquidi e solidi",
+                    "Nessuna regola"
+                ],
+                correct: 1,
+                explanation: "Separare sempre: acidi da basi forti, ossidanti da riducenti/infiammabili, comburenti da combustibili, tossici da alimenti, incompatibili chimicamente."
+            },
+            {
+                question: "Cosa prevede il bacino di contenimento per liquidi pericolosi?",
+                options: [
+                    "Non serve",
+                    "Capacità ≥110% volume contenitore maggiore o ≥25% volume totale stoccato",
+                    "Solo per grandi quantità",
+                    "Solo su richiesta"
+                ],
+                correct: 1,
+                explanation: "Norme tecniche prevenzione: bacini di contenimento devono contenere almeno 110% del contenitore maggiore (o 100%+50% altri) per evitare dispersione sversamenti."
+            },
+            {
+                question: "Qual è la temperatura di infiammabilità (flash point)?",
+                options: [
+                    "Temperatura di combustione",
+                    "Temperatura minima a cui vapori formano miscela infiammabile con aria",
+                    "Temperatura massima",
+                    "Temperatura ambiente"
+                ],
+                correct: 1,
+                explanation: "Flash point (punto di infiammabilità): temperatura minima alla quale un liquido emette vapori sufficienti a formare miscela infiammabile con aria in presenza di innesco."
+            },
+            {
+                question: "Cosa si intende per 'LEL' e 'UEL'?",
+                options: [
+                    "Niente",
+                    "Lower/Upper Explosion Limit = limiti inferiore/superiore esplosività gas",
+                    "Solo per liquidi",
+                    "Temperature"
+                ],
+                correct: 1,
+                explanation: "LEL (Lower Explosion Limit): concentrazione minima gas/vapore infiammabile in aria per esplodere. UEL (Upper): concentrazione massima. Tra LEL-UEL = campo esplosività."
+            },
+            {
+                question: "Quale tipo di estintore va usato su fuochi di classe D (metalli)?",
+                options: [
+                    "A polvere ABC",
+                    "Estintore specifico per metalli (polvere speciale o sabbia secca)",
+                    "Ad acqua",
+                    "CO2"
+                ],
+                correct: 1,
+                explanation: "Fuochi classe D (metalli combustibili: Mg, Al, Na, K): richiedono polveri speciali (es. grafite, carbonato sodico seccato) o sabbia secca. MAI acqua (reazione violenta)."
+            },
+            {
+                question: "Quando si usa un estintore a CO2?",
+                options: [
+                    "Su tutto",
+                    "Fuochi classe B (liquidi) e rischi elettrici (non conduttivo)",
+                    "Solo su legno",
+                    "Mai"
+                ],
+                correct: 1,
+                explanation: "CO2: ideale per fuochi classe B (liquidi infiammabili), classe C (gas), apparecchiature elettriche (non conduttivo, non lascia residui). Non su classe A (poco efficace)."
+            },
+            {
+                question: "Cosa prevede la gestione dei rifiuti pericolosi?",
+                options: [
+                    "Come normali rifiuti",
+                    "Deposito temporaneo separato, etichettatura, registro carico/scarico, FIR, smaltimento tramite trasportatori autorizzati",
+                    "Solo in discarica",
+                    "Nessuna regola"
+                ],
+                correct: 1,
+                explanation: "D.Lgs. 152/2006: rifiuti pericolosi vanno segregati, etichettati (CER), stoccati in aree idonee, registrati (reg. C/S), smaltiti con FIR tramite gestori autorizzati."
             }
         ];
 
-        // Utility Functions
-        function selectRandomQuestions(questions, count) {
-            const shuffled = questions.sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count);
-        }
+        // ========================================
+        // STATO APPLICAZIONE
+        // ========================================
+        let selectedQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let timer = null;
+        let timeRemaining = TEST_DURATION;
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Color coding
-            if (timeLeft <= 60) { // ultimo minuto
-                timerElement.className = 'text-2xl font-bold text-red-600';
-            } else if (timeLeft <= 300) { // ultimi 5 minuti
-                timerElement.className = 'text-2xl font-bold text-orange-600';
-            } else {
-                timerElement.className = 'text-2xl font-bold text-green-600';
+        // ========================================
+        // FUNZIONI UTILITY
+        // ========================================
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
+            return shuffled;
         }
 
-        function startTimer() {
-            timeLeft = 1200; // 20 minuti = 1200 secondi
-            updateTimerDisplay();
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // ========================================
+        // START QUIZ
+        // ========================================
+        function startQuiz() {
+            // Seleziona 15 domande casuali
+            selectedQuestions = shuffleArray(questionBank).slice(0, TEST_QUESTIONS);
             
+            // Reset stato
+            currentQuestionIndex = 0;
+            userAnswers = new Array(TEST_QUESTIONS).fill(null);
+            timeRemaining = TEST_DURATION;
+
+            // Cambia schermata
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            // Genera minimap
+            generateMinimap();
+
+            // Mostra prima domanda
+            showQuestion(0);
+
+            // Avvia timer
+            startTimer();
+        }
+
+        // ========================================
+        // TIMER
+        // ========================================
+        function startTimer() {
             timer = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
+                timeRemaining--;
                 
-                if (timeLeft <= 0) {
+                const timerEl = document.getElementById('timer');
+                timerEl.textContent = formatTime(timeRemaining);
+
+                // Warning ultimi 2 minuti
+                if (timeRemaining <= 120 && timeRemaining > 0) {
+                    timerEl.classList.add('timer-warning', 'text-red-600');
+                }
+
+                // Tempo scaduto
+                if (timeRemaining <= 0) {
                     clearInterval(timer);
-                    // Tempo scaduto - mostra riepilogo
-                    showSummary();
+                    endQuiz();
                 }
             }, 1000);
         }
 
-        function loadQuestion() {
-            const question = currentTest[currentQuestionIndex];
-            const progress = ((currentQuestionIndex + 1) / TEST_QUESTIONS) * 100;
-            
-            questionNumberElement.textContent = currentQuestionIndex + 1;
-            progressBar.style.width = `${progress}%`;
-            
-            questionContainer.innerHTML = `
-                <div class="question-card">
-                    <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #374151;">
-                        ${question.question}
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        ${question.options.map((option, index) => `
-                            <button 
-                                class="option-btn" 
-                                onclick="selectAnswer('${option.replace(/'/g, "\\'")}', this)"
-                            >
-                                <strong>${String.fromCharCode(65 + index)}.</strong> ${option}
-                            </button>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
+        // ========================================
+        // MINIMAP
+        // ========================================
+        function generateMinimap() {
+            const minimap = document.getElementById('minimap');
+            minimap.innerHTML = '';
 
-        function selectAnswer(selectedOption, button) {
-            const question = currentTest[currentQuestionIndex];
-            const correctAnswer = question.options[question.correct];
-            const isCorrect = selectedOption === correctAnswer;
-            
-            // Store answer
-            userAnswers.push({
-                question: question.question,
-                selectedAnswer: selectedOption,
-                correctAnswer: correctAnswer,
-                isCorrect: isCorrect,
-                explanation: question.explanation
-            });
-            
-            // Advance immediately to next question
-            if (currentQuestionIndex < TEST_QUESTIONS - 1) {
-                currentQuestionIndex++;
-                loadQuestion();
-            } else {
-                // Test completato - ferma timer e mostra riepilogo
-                clearInterval(timer);
-                showSummary();
+            for (let i = 0; i < TEST_QUESTIONS; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'minimap-item w-10 h-10 rounded flex items-center justify-center text-sm font-semibold transition-all';
+                btn.textContent = i + 1;
+                btn.onclick = () => showQuestion(i);
+                
+                updateMinimapItem(btn, i);
+                minimap.appendChild(btn);
             }
         }
 
-        function showSummary() {
+        function updateMinimapItem(btn, index) {
+            if (userAnswers[index] !== null) {
+                btn.className = 'minimap-item w-10 h-10 rounded flex items-center justify-center text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600';
+            } else {
+                btn.className = 'minimap-item w-10 h-10 rounded flex items-center justify-center text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300';
+            }
+        }
+
+        function updateAllMinimapItems() {
+            const buttons = document.querySelectorAll('#minimap button');
+            buttons.forEach((btn, index) => {
+                updateMinimapItem(btn, index);
+            });
+        }
+
+        // ========================================
+        // DISPLAY QUESTION
+        // ========================================
+        function showQuestion(index) {
+            currentQuestionIndex = index;
+            const question = selectedQuestions[index];
+
+            // Update header
+            document.getElementById('currentQ').textContent = index + 1;
+            document.getElementById('questionNumber').textContent = index + 1;
+            document.getElementById('progressPercent').textContent = Math.round((index / TEST_QUESTIONS) * 100) + '%';
+            document.getElementById('progressBar').style.width = ((index / TEST_QUESTIONS) * 100) + '%';
+
+            // Update question text
+            document.getElementById('questionText').textContent = question.question;
+
+            // Generate options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            question.options.forEach((option, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-button w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-purple-400 font-medium';
+                
+                const letter = String.fromCharCode(65 + optIndex); // A, B, C, D
+                btn.innerHTML = `
+                    <span class="inline-block w-8 h-8 rounded-full bg-gray-100 text-center leading-8 mr-3 font-bold text-gray-600">
+                        ${letter}
+                    </span>
+                    <span>${option}</span>
+                `;
+
+                btn.onclick = () => answerQuestion(optIndex);
+                container.appendChild(btn));
+            });
+        }
+
+        // ========================================
+        // ANSWER QUESTION
+        // ========================================
+        function answerQuestion(optionIndex) {
+            // Salva risposta
+            user
+Answers[currentQuestionIndex] = optionIndex;
+
+            // Aggiorna minimap
+            updateAllMinimapItems();
+
+            // Avanza automaticamente alla domanda successiva
+            if (currentQuestionIndex < TEST_QUESTIONS - 1) {
+                setTimeout(() => {
+                    showQuestion(currentQuestionIndex + 1);
+                }, 300);
+            } else {
+                // Ultima domanda - mostra pulsante termina
+                setTimeout(() => {
+                    if (confirm('Hai risposto a tutte le domande. Vuoi terminare il quiz?')) {
+                        endQuiz();
+                    }
+                }, 300);
+            }
+        }
+
+        // ========================================
+        // END QUIZ
+        // ========================================
+        function endQuiz() {
+            clearInterval(timer);
+
+            // Calcola risultati
+            let correctCount = 0;
+            const results = selectedQuestions.map((q, index) => {
+                const isCorrect = userAnswers[index] === q.correct;
+                if (isCorrect) correctCount++;
+
+                return {
+                    question: q.question,
+                    userAnswer: userAnswers[index] !== null ? q.options[userAnswers[index]] : 'Non risposto',
+                    correctAnswer: q.options[q.correct],
+                    isCorrect: isCorrect,
+                    explanation: q.explanation
+                };
+            });
+
+            const score = Math.round((correctCount / TEST_QUESTIONS) * 100);
+            const passed = score >= PASSING_SCORE;
+
+            // Salva in localStorage
+            saveResults({
+                date: new Date().toISOString(),
+                score: score,
+                correct: correctCount,
+                total: TEST_QUESTIONS,
+                passed: passed,
+                timeUsed: TEST_DURATION - timeRemaining,
+                results: results
+            });
+
+            // Mostra schermata risultati
+            showResults(score, correctCount, passed, results);
+        }
+
+        // ========================================
+        // SHOW RESULTS
+        // ========================================
+        function showResults(score, correctCount, passed, results) {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            // Update score display
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('wrongCount').textContent = TEST_QUESTIONS - correctCount;
+
+            // Status message
+            const statusEl = document.getElementById('resultStatus');
+            const statusMsgEl = document.getElementById('resultMessage');
+            
+            if (passed) {
+                statusEl.innerHTML = `
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-green-600 mb-2">SUPERATO!</h2>
+                `;
+                statusMsgEl.textContent = `Complimenti! Hai dimostrato ottima conoscenza della sicurezza in magazzino.`;
+            } else {
+                statusEl.innerHTML = `
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-red-600 mb-2">NON SUPERATO</h2>
+                `;
+                statusMsgEl.textContent = `Purtroppo non hai raggiunto il punteggio minimo. Studia le lezioni e riprova!`;
+            }
+
+            // Generate detailed results
+            const detailsContainer = document.getElementById('detailedResults');
+            detailsContainer.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const div = document.createElement('div');
+                div.className = `p-6 rounded-xl border-2 ${result.isCorrect ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}`;
+                
+                div.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <h3 class="font-bold text-lg flex-1">
+                            <span class="text-gray-500">Domanda ${index + 1}:</span> ${result.question}
+                        </h3>
+                        <span class="ml-4 flex-shrink-0">
+                            ${result.isCorrect 
+                                ? '<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+                                : '<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'
+                            }
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <p>
+                            <span class="font-semibold ${result.isCorrect ? 'text-green-700' : 'text-red-700'}">Tua risposta:</span>
+                            <span class="ml-2">${result.userAnswer}</span>
+                        </p>
+                        ${!result.isCorrect ? `
+                            <p>
+                                <span class="font-semibold text-green-700">Risposta corretta:</span>
+                                <span class="ml-2">${result.correctAnswer}</span>
+                            </p>
+                        ` : ''}
+                        <div class="mt-3 pt-3 border-t ${result.isCorrect ? 'border-green-200' : 'border-red-200'}">
+                            <p class="font-semibold mb-1">💡 Spiegazione:</p>
+                            <p class="text-gray-700">${result.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                
+                detailsContainer.appendChild(div);
+            });
+        }
+
+        // ========================================
+        // SAVE RESULTS TO LOCALSTORAGE
+        // ========================================
+        function saveResults(result) {
+            let history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+            history.unshift(result);
+            
+            // Mantieni solo ultimi 10 tentativi
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            
+            localStorage.setItem('quizHistory', JSON.stringify(history));
+        }
+
+        // ========================================
+        // RESET QUIZ
+        // ========================================
+        function resetQuiz() {
             clearInterval(timer);
             
-            testContainer.classList.add('hidden');
-            summaryContainer.classList.remove('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
             
-            // Calculate results
-            const correctAnswers = userAnswers.filter(a => a.isCorrect).length;
-            const incorrectAnswers = TEST_QUESTIONS - correctAnswers;
-            const percentage = ((correctAnswers / TEST_QUESTIONS) * 100).toFixed(1);
-            const passed = correctAnswers >= 11; // 70% di 15 (10.5 arrotondato a 11)
-            
-            // Update result badge
-            document.getElementById('resultIcon').textContent = passed ? '✅' : '❌';
-            document.getElementById('resultText').textContent = passed ? 'TEST SUPERATO!' : 'TEST NON SUPERATO';
-            document.getElementById('resultBadge').style.background = passed 
-                ? 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' 
-                : 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)';
-            
-            // Stats grid
-            document.getElementById('statsGrid').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value" style="color: #10b981;">${correctAnswers}</div>
-                    <div class="stat-label">Risposte Corrette</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: #ef4444;">${incorrectAnswers}</div>
-                    <div class="stat-label">Risposte Errate</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: #667eea;">${percentage}%</div>
-                    <div class="stat-label">Percentuale</div>
-                </div>
-            `;
-            
-            // Detailed summary
-            const detailedHtml = userAnswers.map((answer, index) => `
-                <div class="summary-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <strong style="color: #374151;">Domanda ${index + 1}</strong>
-                        <span style="font-size: 1.5rem;">${answer.isCorrect ? '✅' : '❌'}</span>
-                    </div>
-                    <p style="color: #6b7280; margin-bottom: 10px;">${answer.question}</p>
-                    <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                        <strong style="color: ${answer.isCorrect ? '#10b981' : '#ef4444'};">La tua risposta:</strong>
-                        <p style="color: #374151;">${answer.selectedAnswer}</p>
-                    </div>
-                    ${!answer.isCorrect ? `
-                        <div style="background: #d1fae5; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                            <strong style="color: #10b981;">Risposta corretta:</strong>
-                            <p style="color: #374151;">${answer.correctAnswer}</p>
-                        </div>
-                    ` : ''}
-                    <div style="background: #f3f4f6; padding: 10px; border-radius: 8px;">
-                        <strong style="color: #6b7280;">💡 Spiegazione:</strong>
-                        <p style="color: #374151; margin-top: 5px;">${answer.explanation}</p>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('detailedSummary').innerHTML = detailedHtml;
-        }
-
-        function startTest() {
-            generateNewTest();
-        }
-
-        function generateNewTest() {
-            currentTest = selectRandomQuestions(allQuestions, TEST_QUESTIONS);
+            // Reset variables
+            selectedQuestions = [];
             currentQuestionIndex = 0;
             userAnswers = [];
-            
-            startScreen.classList.add('hidden');
-            testContainer.classList.remove('hidden');
-            summaryContainer.classList.add('hidden');
-            
-            loadQuestion();
-            startTimer();
+            timeRemaining = TEST_DURATION;
         }
+
+        // ========================================
+        // EXPORT RESULTS AS PDF
+        // ========================================
+        function exportResults() {
+            // Semplice implementazione con window.print()
+            // Per PDF avanzato si può integrare jsPDF
+            const printWindow = window.open('', '_blank');
+            const resultsHTML = document.getElementById('resultsScreen').innerHTML;
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Risultati Quiz - Rischi in Magazzino</title>
+                    <script src="https://cdn.tailwindcss.com"></script>
+                    <style>
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body class="p-8">
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-2xl font-bold mb-4">Quiz Rischi Specifici in Magazzino</h1>
+                        <p class="mb-2"><strong>Data:</strong> ${new Date().toLocaleDateString('it-IT')}</p>
+                        <p class="mb-6"><strong>Docente:</strong> Dott. Salvatore Trono</p>
+                        ${resultsHTML}
+                    </div>
+                    <script>
+                        window.onload = () => {
+                            window.print();
+                        };
+                    </script>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+        }
+
+        // ========================================
+        // VIEW HISTORY
+        // ========================================
+        function viewHistory() {
+            const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+            
+            if (history.length === 0) {
+                alert('Nessun tentativo precedente trovato.');
+                return;
+            }
+
+            let historyHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onclick="this.remove()">
+                    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-auto p-6" onclick="event.stopPropagation()">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold">📊 Storico Tentativi</h2>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+            `;
+
+            history.forEach((attempt, index) => {
+                const date = new Date(attempt.date);
+                const passed = attempt.passed;
+                
+                historyHTML += `
+                    <div class="p-4 rounded-xl border-2 ${passed ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-lg">Tentativo #${history.length - index}</p>
+                                <p class="text-sm text-gray-600">${date.toLocaleString('it-IT')}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-3xl font-bold ${passed ? 'text-green-600' : 'text-red-600'}">${attempt.score}%</p>
+                                <p class="text-sm">${attempt.correct}/${attempt.total} corrette</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t ${passed ? 'border-green-200' : 'border-red-200'}">
+                            <p class="text-sm">
+                                <strong>Tempo impiegato:</strong> ${Math.floor(attempt.timeUsed / 60)}:${(attempt.timeUsed % 60).toString().padStart(2, '0')}
+                            </p>
+                            <p class="text-sm font-semibold ${passed ? 'text-green-600' : 'text-red-600'}">
+                                ${passed ? '✓ SUPERATO' : '✗ NON SUPERATO'}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyHTML += `
+                        </div>
+                        <div class="mt-6 text-center">
+                            <button onclick="if(confirm('Vuoi cancellare tutto lo storico?')) { localStorage.removeItem('quizHistory'); this.closest('.fixed').remove(); }" 
+                                    class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                                🗑️ Cancella Storico
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', historyHTML);
+        }
+
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('retryBtn').addEventListener('click', resetQuiz);
+        document.getElementById('exportBtn').addEventListener('click', exportResults);
+        document.getElementById('homeBtn').addEventListener('click', resetQuiz);
+        document.getElementById('viewHistoryBtn').addEventListener('click', viewHistory);
+
+        // Previeni chiusura accidentale durante quiz
+        window.addEventListener('beforeunload', (e) => {
+            if (timer !== null) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
     </script>
 </body>
 </html>
