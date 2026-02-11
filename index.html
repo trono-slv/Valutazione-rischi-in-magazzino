@@ -3,433 +3,899 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Valutazione Rischi Magazzino - Dott. Salvatore Trono</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Test Analisi dei Rischi Specifici in Magazzino</title>
     <style>
+        /* ==================== RESET E VARIABILI ==================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #FF6B35;
+            --secondary: #1a1a1a;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             min-height: 100vh;
-            color: #1f2937;
+            color: var(--light);
+            overflow-x: hidden;
+            position: relative;
         }
 
+        /* ==================== ANIMAZIONI SFONDO ==================== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* ==================== CONTAINER ==================== */
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            margin-bottom: 20px;
-            animation: fadeIn 0.5s ease;
+        /* ==================== CARD PRINCIPALE ==================== */
+        .card-main {
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(255, 107, 53, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            margin-bottom: 2rem;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header-badge {
-            display: inline-block;
-            background: #1e40af;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            padding: 14px 32px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
+        /* ==================== HEADER ==================== */
+        .header-main {
             text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title-main {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .subtitle-main {
+            font-size: 1.2rem;
+            color: var(--light);
+            opacity: 0.8;
+        }
+
+        /* ==================== ISTRUZIONI ==================== */
+        .instructions {
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .instructions h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .instructions li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* ==================== LINK CARDS ==================== */
+        .links-section {
+            margin: 3rem 0;
+        }
+
+        .links-intro {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .link-card {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.2);
+        }
+
+        .link-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .link-card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .link-card-desc {
+            color: var(--light);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* ==================== PULSANTI ==================== */
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #FFA500 100%);
             color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.6);
         }
 
         .btn-secondary {
-            background: white;
-            color: #1e40af;
-            border: 2px solid #1e40af;
+            background: rgba(108, 117, 125, 0.2);
+            color: var(--light);
+            border: 2px solid var(--light);
         }
 
         .btn-secondary:hover {
-            background: #1e40af;
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-success {
+            background: var(--success);
             color: white;
         }
 
-        .hidden {
-            display: none !important;
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ==================== MODAL DISCLAIMER ==================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: rgba(45, 45, 45, 0.98);
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.5);
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .modal-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            margin: 1.5rem 0;
+        }
+
+        .legal-box {
+            background: rgba(220, 53, 69, 0.2);
+            border: 2px solid var(--danger);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .legal-box h4 {
+            color: var(--danger);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-text {
+            color: var(--light);
+            line-height: 1.8;
+            margin: 1rem 0;
+        }
+
+        .modal-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .modal-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .modal-list li::before {
+            content: "❌";
+            position: absolute;
+            left: 0;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* ==================== QUIZ SCREEN ==================== */
+        .quiz-screen {
+            display: none;
+        }
+
+        .quiz-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .timer {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 12px 24px;
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid var(--primary);
+            padding: 1rem 2rem;
             border-radius: 12px;
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 700;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .timer.warning {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: rgba(220, 53, 69, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
             animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--light);
+            opacity: 0.8;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
-            background: #e5e7eb;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
-            margin: 20px 0;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, var(--primary), #FFA500);
             border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
         }
 
-        .option {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
+        /* ==================== DOMANDE ==================== */
+        .question-container {
+            margin: 2rem 0;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            color: var(--light);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 107, 53, 0.3);
             border-radius: 12px;
-            padding: 16px;
-            margin: 12px 0;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 1rem;
         }
 
-        .option:hover {
-            background: #eff6ff;
-            border-color: #3b82f6;
-            transform: translateX(4px);
+        .option-card:hover {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: var(--primary);
+            transform: translateX(10px);
         }
 
         .option-letter {
             width: 40px;
             height: 40px;
-            background: #1e40af;
-            color: white;
             border-radius: 50%;
+            background: var(--primary);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 1.2rem;
             flex-shrink: 0;
         }
 
-        .score-box {
+        .option-text {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--light);
+        }
+
+        /* ==================== RISULTATI ==================== */
+        .results-screen {
+            display: none;
+        }
+
+        .results-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-card {
             text-align: center;
-            padding: 30px;
-            border-radius: 16px;
-            margin: 20px 0;
-        }
-
-        .score-box.excellent {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .score-box.sufficient {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-        }
-
-        .score-box.insufficient {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .result-item {
-            background: white;
-            border-left: 4px solid;
-            padding: 20px;
-            margin: 16px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .result-item.correct {
-            border-color: #10b981;
-            background: #f0fdf4;
-        }
-
-        .result-item.incorrect {
-            border-color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
+            padding: 3rem;
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid var(--primary);
             border-radius: 20px;
-            font-size: 13px;
+            margin-bottom: 3rem;
+        }
+
+        .score-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-percentage {
+            font-size: 4rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
-        .badge-correct {
-            background: #10b981;
-            color: white;
+        .score-message {
+            font-size: 1.5rem;
+            color: var(--light);
+            margin-bottom: 1rem;
         }
 
-        .badge-incorrect {
-            background: #ef4444;
-            color: white;
+        .score-details {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
         }
 
-        .suggestion-box {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 12px 16px;
-            margin-top: 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #92400e;
+        .score-stat {
+            text-align: center;
         }
 
-        .info-box {
-            background: #eff6ff;
-            border-left: 4px solid #3b82f6;
-            padding: 16px;
-            margin: 16px 0;
-            border-radius: 8px;
+        .score-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
         }
 
-        .disclaimer-box {
-            background: #fef2f2;
-            border: 2px solid #fecaca;
-            padding: 20px;
-            margin: 20px 0;
+        .score-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .review-section {
+            margin-top: 3rem;
+        }
+
+        .review-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .review-item {
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.8;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .review-question {
+            font-size: 1.2rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .review-option {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .review-option.correct {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid var(--success);
+        }
+
+        .review-option.incorrect {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid var(--danger);
+        }
+
+        .review-option.user-answer {
+            font-weight: 600;
+        }
+
+        .review-suggestion {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--light);
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--light);
+            opacity: 0.7;
+        }
+
+        .footer-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .card-main {
+                padding: 1.5rem;
+            }
+
+            .title-main {
+                font-size: 1.8rem;
+            }
+
+            .subtitle-main {
+                font-size: 1rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .timer {
+                justify-content: center;
+            }
+
+            .score-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* ==================== UTILITIES ==================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-3 {
+            margin-bottom: 3rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- SCHERMATA INTRODUZIONE -->
-        <div id="introScreen" class="card">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <span class="header-badge">🎓 FORMAZIONE SSL</span>
-                <h1 style="font-size: 32px; font-weight: 800; color: #1e40af; margin: 16px 0;">
-                    Test Rischi Specifici in Magazzino
-                </h1>
-                <div style="height: 4px; width: 100px; background: linear-gradient(90deg, #1e40af, #3b82f6); margin: 16px auto; border-radius: 10px;"></div>
+        <!-- ==================== WELCOME SCREEN ==================== -->
+        <div id="welcomeScreen" class="card-main">
+            <div class="header-main">
+                <h1 class="title-main">Test Analisi dei Rischi Specifici in Magazzino</h1>
+                <p class="subtitle-main">Verifica le tue competenze sulla sicurezza in magazzino</p>
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <p style="font-size: 20px; font-weight: 600; color: #374151; margin-bottom: 8px;">
-                    👨‍🏫 Dott. Salvatore Trono
-                </p>
-                <p style="font-size: 15px; color: #6b7280; line-height: 1.6;">
-                    Laureato in Servizi Giuridici per l'Impresa<br>
-                    Formatore • Esperto in Sicurezza sui Luoghi di Lavoro
-                </p>
-            </div>
-
-            <div class="info-box">
-                <h3 style="font-size: 18px; font-weight: 700; color: #1e40af; margin-bottom: 12px;">
-                    📋 Informazioni sul Test
-                </h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 8px 0; display: flex; align-items: center;">
-                        <span style="color: #3b82f6; margin-right: 12px; font-size: 20px;">📝</span>
-                        <span><strong>15 domande</strong> estratte casualmente da un paniere di 128</span>
-                    </li>
-                    <li style="padding: 8px 0; display: flex; align-items: center;">
-                        <span style="color: #3b82f6; margin-right: 12px; font-size: 20px;">⏱️</span>
-                        <span><strong>20 minuti</strong> di tempo disponibile</span>
-                    </li>
-                    <li style="padding: 8px 0; display: flex; align-items: center;">
-                        <span style="color: #3b82f6; margin-right: 12px; font-size: 20px;">✅</span>
-                        <span>Superamento test: <strong>≥ 60%</strong> (9 risposte corrette)</span>
-                    </li>
-                    <li style="padding: 8px 0; display: flex; align-items: center;">
-                        <span style="color: #3b82f6; margin-right: 12px; font-size: 20px;">🎯</span>
-                        <span>Opzioni di risposta <strong>randomizzate</strong> per ogni domanda</span>
-                    </li>
+            <!-- Istruzioni -->
+            <div class="instructions">
+                <h3>📋 Istruzioni del Test</h3>
+                <ul>
+                    <li>Il test contiene <strong>15 domande</strong> estratte casualmente</li>
+                    <li>Tempo massimo: <strong>20 minuti</strong></li>
+                    <li>Ogni domanda ha <strong>4 opzioni</strong>, solo 1 è corretta</li>
+                    <li>La risposta viene salvata <strong>automaticamente</strong> al click</li>
+                    <li>Non è possibile tornare indietro</li>
+                    <li>Soglia superamento: <strong>60%</strong> (9 risposte corrette)</li>
                 </ul>
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <a href="https://trono-slv.github.io/Valutazione-dei-rischi-in-magazzino/" target="_blank" class="btn btn-secondary" style="margin: 10px;">
-                    📚 Prima di procedere al test puoi studiare i rischi a questo link
-                </a>
-            </div>
-<!-- NUOVO LINK FORMAZIONE GENERALE -->
-<div class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-blue-200">
-    <p class="text-gray-700 mb-3 text-center">
-        ⚖️ Per il test sugli aspetti giuridico-normativi della sicurezza sul lavoro:
-    </p>
-    <a href="https://trono-slv.github.io/test-SSL---BASE/" 
-       target="_blank" 
-       class="text-lg font-semibold text-blue-600 hover:text-blue-700 hover:translate-x-2 transition-all duration-300 flex items-center justify-center gap-2">
-        ➡️ Test Formazione Generale
-    </a>
-    <p class="text-sm text-gray-600 mt-3 text-center italic">
-        📖 domande su obblighi normativi, diritti, procedure di sicurezza
-    </p>
-</div>
-
-            <div class="disclaimer-box">
-                <h3 style="font-size: 16px; font-weight: 700; color: #991b1b; margin-bottom: 12px;">
-                    ⚠️ DISCLAIMER LEGALE
-                </h3>
-                <p style="font-size: 14px; line-height: 1.8; color: #7f1d1d;">
-                    Questo test è uno <strong>strumento didattico</strong> e NON sostituisce:
-                </p>
-                <ul style="margin: 12px 0 12px 24px; font-size: 14px; color: #7f1d1d;">
-                    <li>La formazione obbligatoria prevista dal D.Lgs. 81/2008</li>
-                    <li>Le valutazioni specifiche del datore di lavoro</li>
-                    <li>L'addestramento pratico sui luoghi di lavoro</li>
-                </ul>
-                <p style="font-size: 13px; color: #991b1b; margin-top: 12px;">
-                    Il materiale ha esclusivo scopo <strong>informativo ed educativo</strong>. Per la formazione certificata rivolgersi a enti accreditati.
-                </p>
+            <!-- Link Esterni -->
+            <div class="links-section">
+                <p class="links-intro">💡 <strong>Prima di iniziare, ti consigliamo di consultare:</strong></p>
+                <div class="links-grid">
+                    <a href="https://trono-slv.github.io/Valutazione-dei-rischi-in-magazzino/" target="_blank" class="link-card">
+                        <div class="link-card-icon">📚</div>
+                        <div class="link-card-title">Teoria Rischi Specifici</div>
+                        <div class="link-card-desc">Leggi il materiale didattico prima di iniziare il test</div>
+                    </a>
+                    <a href="https://trono-slv.github.io/test-SSL---BASE" target="_blank" class="link-card">
+                        <div class="link-card-icon">📝</div>
+                        <div class="link-card-title">Test Formazione Generale</div>
+                        <div class="link-card-desc">Completa prima il test sulla parte giuridico-normativa del D.Lgs. 81/08</div>
+                    </a>
+                </div>
             </div>
 
-            <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center;">
-                <p style="font-size: 13px; color: #6b7280; line-height: 1.6;">
-                    <strong>Credits:</strong> Dott. Salvatore Trono<br>
-                    Laureato in Servizi Giuridici per l'Impresa • Formatore • Esperto in Sicurezza sui Luoghi di Lavoro<br>
-                    <span style="font-size: 12px; color: #9ca3af;">
-                        Materiale didattico conforme alla normativa vigente in materia di SSL
-                    </span>
-                </p>
-            </div>
-
-            <div style="text-align: center; margin-top: 40px;">
-                <button onclick="startQuiz()" class="btn btn-primary" style="font-size: 20px; padding: 18px 48px;">
-                    🚀 Avvia Test
-                </button>
+            <!-- Pulsante Start -->
+            <div class="text-center">
+                <button class="btn btn-primary" onclick="showDisclaimer()">🚀 Inizia Test</button>
             </div>
         </div>
 
-        <!-- SCHERMATA QUIZ -->
-        <div id="quizScreen" class="hidden">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-                    <div>
-                        <span style="font-size: 14px; color: #6b7280;">Domanda</span>
-                        <h2 style="font-size: 28px; font-weight: 800; color: #1e40af;">
-                            <span id="currentQuestion">1</span> / 15
-                        </h2>
+        <!-- ==================== QUIZ SCREEN ==================== -->
+        <div id="quizScreen" class="quiz-screen">
+            <div class="card-main">
+                <!-- Header Quiz -->
+                <div class="quiz-header">
+                    <div class="timer" id="timer">
+                        <span>⏰</span>
+                        <span id="timerDisplay">20:00</span>
                     </div>
-                    <div id="timer" class="timer">
-                        ⏱️ <span id="timeLeft">20:00</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-info">
+                            <span>Domanda <span id="currentQuestion">1</span> di 15</span>
+                            <span id="progressPercentage">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="progress-bar">
-                    <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
-                </div>
-
-                <div style="margin: 30px 0;">
-                    <h3 id="questionText" style="font-size: 20px; font-weight: 600; color: #1f2937; line-height: 1.6;">
-                        <!-- Testo domanda -->
-                    </h3>
-                </div>
-
-                <div id="optionsContainer">
-                    <!-- Opzioni di risposta -->
+                <!-- Domanda -->
+                <div class="question-container">
+                    <h2 class="question-text" id="questionText"></h2>
+                    <div class="options-grid" id="optionsContainer"></div>
                 </div>
             </div>
         </div>
 
-        <!-- SCHERMATA RISULTATI -->
-        <div id="resultsScreen" class="hidden">
-            <div class="card">
-                <div style="text-align: center;">
-                    <span class="header-badge">📊 RISULTATI TEST</span>
-                    <h1 style="font-size: 32px; font-weight: 800; color: #1e40af; margin: 16px 0;">
-                        Test Completato!
-                    </h1>
-                </div>
-
-                <div id="scoreBox" class="score-box">
-                    <div style="font-size: 72px; font-weight: 900; margin: 20px 0;" id="scorePercentage">
-                        0%
-                    </div>
-                    <h2 style="font-size: 32px; font-weight: 700; margin: 16px 0;" id="scoreMessage">
-                        <!-- Messaggio risultato -->
-                    </h2>
-                    <p style="font-size: 18px; opacity: 0.9;" id="scoreDetail">
-                        <!-- Dettaglio punteggio -->
-                    </p>
-                </div>
-
-                <div style="text-align: center; margin: 30px 0; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="retryQuiz()" class="btn btn-primary">
-                        🔄 Ripeti Test (stesse domande)
-                    </button>
-                    <button onclick="newQuiz()" class="btn btn-secondary">
-                        🎲 Genera Nuovo Test
-                    </button>
-                    <button onclick="backToHome()" class="btn btn-secondary">
-                        🏠 Torna alla Home
-                    </button>
-                </div>
-
-                <div style="margin-top: 40px;">
-                    <h3 style="font-size: 24px; font-weight: 700; color: #1e40af; margin-bottom: 20px;">
-                        📝 Riepilogo Risposte
-                    </h3>
-                    <div id="resultsContainer">
-                        <!-- Riepilogo dettagliato -->
+        <!-- ==================== RESULTS SCREEN ==================== -->
+        <div id="resultsScreen" class="results-screen">
+            <div class="card-main">
+                <!-- Score Card -->
+                <div class="score-card">
+                    <div class="score-icon" id="scoreIcon">🏆</div>
+                    <div class="score-percentage" id="scorePercentage">0%</div>
+                    <div class="score-message" id="scoreMessage"></div>
+                    <div class="score-details">
+                        <div class="score-stat">
+                            <span class="score-stat-value" id="correctAnswers" style="color: var(--success)">0</span>
+                            <span class="score-stat-label">Corrette</span>
+                        </div>
+                        <div class="score-stat">
+                            <span class="score-stat-value" id="wrongAnswers" style="color: var(--danger)">0</span>
+                            <span class="score-stat-label">Errate</span>
+                        </div>
+                        <div class="score-stat">
+                            <span class="score-stat-value" id="timeUsed" style="color: var(--primary)">0:00</span>
+                            <span class="score-stat-label">Tempo</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Review Section -->
+                <div class="review-section">
+                    <h2 class="review-title">📝 Revisione Risposte</h2>
+                    <div id="reviewContainer"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="repeatSameTest()">🔄 Ripeti Test</button>
+                    <button class="btn btn-primary" onclick="generateNewTest()">🎲 Genera Nuovo Test</button>
+                    <button class="btn btn-success" onclick="goToHome()">🏠 Torna alla Home</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== FOOTER ==================== -->
+        <div class="footer">
+            <div class="footer-title">Credits: Dott. Salvatore Trono</div>
+            <div>Laureato in Servizi Giuridici per l'Impresa • Formatore • Esperto in Sicurezza sui Luoghi di Lavoro</div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL DISCLAIMER ==================== -->
+    <div id="disclaimerModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">
+                <span>⚠️</span>
+                <span>ATTENZIONE</span>
+            </div>
+            <div class="modal-divider"></div>
+
+            <div class="legal-box">
+                <h4>⚖️ AVVERTENZE LEGALI</h4>
+                <p class="modal-text">
+                    Il presente test è protetto da diritto d'autore.
+                </p>
+                <p class="modal-text" style="font-weight: 600;">
+                    È severamente vietato:
+                </p>
+                <ul class="modal-list">
+                    <li>Copiare, riprodurre o distribuire senza autorizzazione scritta</li>
+                    <li>Utilizzare per scopi commerciali</li>
+                    <li>Modificare o alterare i contenuti</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255, 193, 7, 0.1); border-left: 4px solid var(--warning); padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                <h4 style="color: var(--warning); margin-bottom: 0.5rem;">⚠️ FINALITÀ DIDATTICA</h4>
+                <p class="modal-text">
+                    Questo strumento è destinato <strong>ESCLUSIVAMENTE</strong> a scopo formativo e di autovalutazione. 
+                    <strong>NON sostituisce</strong> la formazione obbligatoria ai sensi del D.Lgs. 81/2008.
+                </p>
+            </div>
+
+            <div style="background: rgba(40, 167, 69, 0.1); border-left: 4px solid var(--success); padding: 1rem; border-radius: 8px;">
+                <h4 style="color: var(--success); margin-bottom: 0.5rem;">✅ AUTORIZZAZIONE RICHIESTA</h4>
+                <p class="modal-text">
+                    Per qualsiasi utilizzo contattare:<br>
+                    <strong>Dott. Salvatore Trono - Esperto SSL</strong>
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDisclaimer()">❌ Annulla</button>
+                <button class="btn btn-primary" onclick="acceptDisclaimer()">✅ Accetto</button>
             </div>
         </div>
     </div>
 
     <script>
-        // PANIERE COMPLETO 128 DOMANDE
-        const quizData = [
+        // ==================== VARIABILI GLOBALI ====================
+        const questions = [
             {
-                question: "Quale norma disciplina la sicurezza nei luoghi di lavoro in Italia?",
+                question: "Quale DPI è obbligatorio per la movimentazione manuale dei carichi?",
+                options: ["Guanti antitaglio", "Scarpe antinfortunistiche", "Casco", "Occhiali protettivi"],
+                correct: 1,
+                suggestion: "Le scarpe antinfortunistiche proteggono da schiacciamenti e cadute di materiali (D.Lgs. 81/2008, Art. 169)."
+            },
+            {
+                question: "Qual è il peso massimo raccomandato per la movimentazione manuale occasionale?",
+                options: ["15 kg", "20 kg", "25 kg", "30 kg"],
+                correct: 2,
+                suggestion: "La norma ISO 11228-1 indica 25 kg come limite per adulti in condizioni ideali, occasionalmente."
+            },
+            {
+                question: "Cosa indica il pittogramma GHS con fiamma?",
+                options: ["Sostanza corrosiva", "Sostanza infiammabile", "Sostanza tossica", "Sostanza radioattiva"],
+                correct: 1,
+                suggestion: "Il pittogramma con fiamma identifica sostanze infiammabili secondo il Regolamento CLP (CE) 1272/2008."
+            },
+            {
+                question: "Quale attrezzatura NON richiede formazione specifica obbligatoria?",
+                options: ["Muletto", "Transpallet manuale", "Carrello elevatore", "Gru a bandiera"],
+                correct: 1,
+                suggestion: "Il transpallet manuale non rientra nelle attrezzature di cui all'Accordo Stato-Regioni 22/02/2012."
+            },
+            {
+                question: "Ogni quanto va verificato un carrello elevatore?",
+                options: ["Ogni mese", "Ogni anno", "Ogni 2 anni", "Ogni 5 anni"],
+                correct: 1,
+                suggestion: "I carrelli elevatori devono essere verificati almeno annualmente (D.Lgs. 81/2008, All. VI)."
+            },
+            {
+             question: "Quale norma disciplina la sicurezza nei luoghi di lavoro in Italia?",
                 options: ["D.Lgs. 81/2008", "Legge 626/94", "D.Lgs. 152/2006", "Legge 300/70"],
                 correct: 0,
                 suggestion: "Il Testo Unico sulla Sicurezza (D.Lgs. 81/2008) è la normativa di riferimento per la salute e sicurezza sul lavoro."
@@ -1466,207 +1932,256 @@
                 correct: 0,
                 suggestion: "Accessibilità: rampe ≤8%, ascensori, bagni attrezzati, parcheggi riservati, segnaletica tattile, piano evacuazione."
             }
+
         ];
 
-        // VARIABILI GLOBALI
-        let currentQuizData = [];
-        let currentQuestion = 0;
+        let currentTest = [];
+        let currentQuestionIndex = 0;
         let userAnswers = [];
         let timerInterval;
         let timeRemaining = 1200; // 20 minuti in secondi
+        let startTime;
 
-        // FUNZIONE INIZIO QUIZ
-        function startQuiz() {
-            // Estrai 15 domande casuali
-            currentQuizData = [...quizData].sort(() => Math.random() - 0.5).slice(0, 15);
+        // ==================== FUNZIONI DISCLAIMER ====================
+        function showDisclaimer() {
+            document.getElementById('disclaimerModal').classList.add('active');
+        }
+
+        function closeDisclaimer() {
+            document.getElementById('disclaimerModal').classList.remove('active');
+        }
+
+        function acceptDisclaimer() {
+            closeDisclaimer();
+            generateNewTest();
+        }
+
+        // ==================== FUNZIONI QUIZ ====================
+        function generateNewTest() {
+            // Mescola domande e prendi le prime 15
+            const shuffled = [...questions].sort(() => Math.random() - 0.5);
+            currentTest = shuffled.slice(0, Math.min(15, questions.length));
             
-            // Randomizza posizione opzioni per ogni domanda
-            currentQuizData = currentQuizData.map(q => {
-                const correctAnswer = q.options[q.correct];
-                const shuffled = [...q.options].sort(() => Math.random() - 0.5);
-                return {
-                    ...q,
-                    options: shuffled,
-                    correct: shuffled.indexOf(correctAnswer)
-                };
-            });
-
-            currentQuestion = 0;
+            // Reset variabili
+            currentQuestionIndex = 0;
             userAnswers = [];
             timeRemaining = 1200;
-
-            document.getElementById('introScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-
-            showQuestion();
+            
+            // Mostra quiz screen
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            document.getElementById('resultsScreen').classList.remove('active');
+            
+            // Avvia timer e mostra prima domanda
             startTimer();
+            showQuestion();
         }
 
-        // FUNZIONE MOSTRA DOMANDA
-        function showQuestion() {
-            const question = currentQuizData[currentQuestion];
-            const letters = ['A', 'B', 'C', 'D'];
-
-            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
-            document.getElementById('questionText').textContent = question.question;
-            document.getElementById('progressBar').style.width = ((currentQuestion / 15) * 100) + '%';
-
-            const optionsHTML = question.options.map((option, index) => `
-                <div class="option" onclick="selectAnswer(${index})">
-                    <div class="option-letter">${letters[index]}</div>
-                    <div style="flex: 1; font-size: 16px;">${option}</div>
-                </div>
-            `).join('');
-
-            document.getElementById('optionsContainer').innerHTML = optionsHTML;
+        function repeatSameTest() {
+            // Reset variabili mantenendo le stesse domande
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            timeRemaining = 1200;
+            
+            // Mostra quiz screen
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            
+            // Avvia timer e mostra prima domanda
+            startTimer();
+            showQuestion();
         }
 
-        // FUNZIONE SELEZIONE RISPOSTA
-        function selectAnswer(index) {
-            userAnswers.push({
-                question: currentQuizData[currentQuestion].question,
-                userAnswer: index,
-                correctAnswer: currentQuizData[currentQuestion].correct,
-                options: currentQuizData[currentQuestion].options,
-                suggestion: currentQuizData[currentQuestion].suggestion
-            });
-
-            currentQuestion++;
-
-            if (currentQuestion < 15) {
-                showQuestion();
-            } else {
-                finishQuiz();
-            }
+        function goToHome() {
+            // Reset completo
+            clearInterval(timerInterval);
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('welcomeScreen').style.display = 'block';
         }
 
-        // FUNZIONE TIMER
         function startTimer() {
+            startTime = Date.now();
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerElement = document.getElementById('timer');
+            
             timerInterval = setInterval(() => {
                 timeRemaining--;
-
+                
                 const minutes = Math.floor(timeRemaining / 60);
                 const seconds = timeRemaining % 60;
-                document.getElementById('timeLeft').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-                if (timeRemaining < 300) {
-                    document.getElementById('timer').classList.add('warning');
+                timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Alert quando mancano 5 minuti
+                if (timeRemaining === 300) {
+                    timerElement.classList.add('warning');
+                    alert('⏰ Attenzione! Rimangono meno di 5 minuti!');
                 }
-
+                
+                // Fine tempo
                 if (timeRemaining <= 0) {
-                    finishQuiz();
+                    clearInterval(timerInterval);
+                    finishTest();
                 }
             }, 1000);
         }
 
-        // FUNZIONE FINE QUIZ
-        function finishQuiz() {
-            clearInterval(timerInterval);
-
-            const correctCount = userAnswers.filter(a => a.userAnswer === a.correctAnswer).length;
-            const percentage = Math.round((correctCount / 15) * 100);
-
-            let scoreClass, scoreMessage, emoji;
-            if (percentage >= 80) {
-                scoreClass = 'excellent';
-                scoreMessage = '🏆 Eccellente!';
-                emoji = '🎉';
-            } else if (percentage >= 60) {
-                scoreClass = 'sufficient';
-                scoreMessage = '✅ Sufficiente';
-                emoji = '👍';
-            } else {
-                scoreClass = 'insufficient';
-                scoreMessage = '❌ Insufficiente';
-                emoji = '📚';
-            }
-
-            document.getElementById('scoreBox').className = `score-box ${scoreClass}`;
-            document.getElementById('scorePercentage').textContent = percentage + '%';
-            document.getElementById('scoreMessage').textContent = scoreMessage;
-            document.getElementById('scoreDetail').textContent = 
-                `${correctCount} risposte corrette su 15 ${emoji}`;
-
-            const resultsHTML = userAnswers.map((answer, index) => {
-                const letters = ['A', 'B', 'C', 'D'];
-                const isCorrect = answer.userAnswer === answer.correctAnswer;
+        function showQuestion() {
+            const question = currentTest[currentQuestionIndex];
+            
+            // Aggiorna header
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            const progress = ((currentQuestionIndex + 1) / currentTest.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressPercentage').textContent = `${Math.round(progress)}%`;
+            
+            // Mostra domanda
+            document.getElementById('questionText').textContent = question.question;
+            
+            // Mescola opzioni
+            const shuffledOptions = question.options.map((opt, idx) => ({text: opt, originalIndex: idx}))
+                .sort(() => Math.random() - 0.5);
+            
+            // Crea opzioni
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            shuffledOptions.forEach((option, idx) => {
+                const optionCard = document.createElement('div');
+                optionCard.className = 'option-card';
+                optionCard.onclick = () => selectAnswer(option.originalIndex);
                 
-                return `
-                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                            <div style="flex: 1;">
-                                <span class="badge ${isCorrect ? 'badge-correct' : 'badge-incorrect'}">
-                                    Domanda ${index + 1}
-                                </span>
-                                <p style="font-size: 16px; font-weight: 600; color: #1f2937; margin-top: 8px;">
-                                    ${answer.question}
-                                </p>
-                            </div>
-                            <div style="font-size: 28px; margin-left: 16px;">
-                                ${isCorrect ? '✅' : '❌'}
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 12px 0;">
-                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 6px;">
-                                <strong>Tua risposta:</strong>
-                            </p>
-                            <p style="font-size: 15px; color: ${isCorrect ? '#059669' : '#dc2626'}; font-weight: 600;">
-                                ${letters[answer.userAnswer]}. ${answer.options[answer.userAnswer]}
-                            </p>
-                        </div>
+                optionCard.innerHTML = `
+                    <div class="option-letter">${letters[idx]}</div>
+                    <div class="option-text">${option.text}</div>
+                `;
+                
+                optionsContainer.appendChild(optionCard);
+            });
+        }
 
-                        ${!isCorrect ? `
-                            <div style="margin: 12px 0;">
-                                <p style="font-size: 14px; color: #6b7280; margin-bottom: 6px;">
-                                    <strong>Risposta corretta:</strong>
-                                </p>
-                                <p style="font-size: 15px; color: #059669; font-weight: 600;">
-                                    ${letters[answer.correctAnswer]}. ${answer.options[answer.correctAnswer]}
-                                </p>
-                            </div>
-                        ` : ''}
+        function selectAnswer(answerIndex) {
+            userAnswers.push(answerIndex);
+            
+            if (currentQuestionIndex < currentTest.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                finishTest();
+            }
+        }
 
-                        <div class="suggestion-box">
-                            <strong>💡 Suggerimento:</strong><br>
-                            ${answer.suggestion}
+        function finishTest() {
+            clearInterval(timerInterval);
+            
+            // Calcola risultati
+            const timeUsed = 1200 - timeRemaining;
+            let correctCount = 0;
+            
+            currentTest.forEach((question, idx) => {
+                if (userAnswers[idx] === question.correct) {
+                    correctCount++;
+                }
+            });
+            
+            const percentage = Math.round((correctCount / currentTest.length) * 100);
+            const wrongCount = currentTest.length - correctCount;
+            
+            // Mostra schermata risultati
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            
+            // Aggiorna statistiche
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('correctAnswers').textContent = correctCount;
+            document.getElementById('wrongAnswers').textContent = wrongCount;
+            
+            const minutes = Math.floor(timeUsed / 60);
+            const seconds = timeUsed % 60;
+            document.getElementById('timeUsed').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Messaggio e icona
+            let icon, message, messageColor;
+            if (percentage >= 80) {
+                icon = '🏆';
+                message = 'Eccellente! Hai dimostrato un\'ottima conoscenza dei rischi specifici in magazzino.';
+                messageColor = 'var(--success)';
+            } else if (percentage >= 60) {
+                icon = '👍';
+                message = 'Buon risultato! Continua ad approfondire per migliorare ulteriormente.';
+                messageColor = 'var(--warning)';
+            } else {
+                icon = '📚';
+                message = 'Approfondisci la teoria e riprova. La sicurezza è fondamentale!';
+                messageColor = 'var(--danger)';
+            }
+            
+            document.getElementById('scoreIcon').textContent = icon;
+            document.getElementById('scoreMessage').textContent = message;
+            document.getElementById('scoreMessage').style.color = messageColor;
+            
+            // Crea review
+            showReview();
+        }
+
+        function showReview() {
+            const reviewContainer = document.getElementById('reviewContainer');
+            reviewContainer.innerHTML = '';
+            
+            currentTest.forEach((question, idx) => {
+                const userAnswer = userAnswers[idx];
+                const isCorrect = userAnswer === question.correct;
+                
+                const reviewItem = document.createElement('div');
+                reviewItem.className = 'review-item';
+                
+                let optionsHTML = '';
+                question.options.forEach((option, optIdx) => {
+                    let optionClass = '';
+                    let icon = '';
+                    
+                    if (optIdx === question.correct) {
+                        optionClass = 'review-option correct';
+                        icon = '✅';
+                    }
+                    
+                    if (optIdx === userAnswer && !isCorrect) {
+                        optionClass = 'review-option incorrect user-answer';
+                        icon = '❌';
+                    }
+                    
+                    if (optIdx === userAnswer && isCorrect) {
+                        optionClass = 'review-option correct user-answer';
+                        icon = '✅';
+                    }
+                    
+                    optionsHTML += `
+                        <div class="${optionClass}">
+                            <span>${icon}</span>
+                            <span>${option}</span>
                         </div>
+                    `;
+                });
+                
+                reviewItem.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span style="font-size: 2rem;">${isCorrect ? '✅' : '❌'}</span>
+                        <strong style="color: var(--primary);">Domanda ${idx + 1}</strong>
+                    </div>
+                    <div class="review-question">${question.question}</div>
+                    ${optionsHTML}
+                    <div class="review-suggestion">
+                        <strong>💡 Suggerimento:</strong> ${question.suggestion}
                     </div>
                 `;
-            }).join('');
-
-            document.getElementById('resultsContainer').innerHTML = resultsHTML;
-
-            document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('resultsScreen').classList.remove('hidden');
+                
+                reviewContainer.appendChild(reviewItem);
+            });
         }
 
-        // FUNZIONE RIPETI TEST
-        function retryQuiz() {
-            currentQuestion = 0;
-            userAnswers = [];
-            timeRemaining = 1200;
-
-            document.getElementById('resultsScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-
-            showQuestion();
-            startTimer();
-        }
-
-        // FUNZIONE NUOVO TEST
-        function newQuiz() {
-            startQuiz();
-            document.getElementById('resultsScreen').classList.add('hidden');
-        }
-
-        // FUNZIONE TORNA HOME
-        function backToHome() {
-            document.getElementById('resultsScreen').classList.add('hidden');
-            document.getElementById('introScreen').classList.remove('hidden');
-        }
+        // ==================== INIT ====================
+        // Il quiz parte solo dopo aver accettato il disclaimer
     </script>
 </body>
 </html>
-
